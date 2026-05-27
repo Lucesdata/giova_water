@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Player } from '@remotion/player';
 import { ScrollBG } from '../remotion/ScrollBG.jsx';
 
-const TOTAL_FRAMES = 479;
+const MAX_FRAME = 479;
 
 export function ScrollBackground() {
   const playerRef = useRef(null);
@@ -31,7 +31,7 @@ export function ScrollBackground() {
         rafRef.current = null;
         const max = document.body.scrollHeight - window.innerHeight;
         const progress = max > 0 ? window.scrollY / max : 0;
-        playerRef.current?.seekTo(Math.round(progress * TOTAL_FRAMES));
+        playerRef.current?.seekTo(Math.round(progress * MAX_FRAME));
       });
     };
     window.addEventListener('scroll', onScroll, { passive: true });

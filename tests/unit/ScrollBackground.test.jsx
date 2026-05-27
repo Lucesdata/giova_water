@@ -43,7 +43,8 @@ describe('ScrollBackground', () => {
       window.dispatchEvent(new Event('scroll'));
     });
 
-    expect(seekToSpy).toHaveBeenCalledWith(expect.any(Number));
+    // scrollY=600, max=2000-800=1200, progress=0.5, frame=Math.round(0.5*479)=240
+    expect(seekToSpy).toHaveBeenCalledWith(240);
   });
 
   it('does not mount Player when prefers-reduced-motion is reduce', () => {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 import { interpolate } from 'remotion';
 import { C } from '../colors.js';
 
@@ -17,6 +17,8 @@ function interp(frame, f0, f1, v0, v1) {
 }
 
 export function ContactScene({ frame }) {
+  const clipId = useId();
+
   if (frame < START || frame > END) return null;
 
   const lf = frame - START;
@@ -42,12 +44,12 @@ export function ContactScene({ frame }) {
         );
       })}
       <circle cx={CX} cy={CY} r="5" fill={C.accent} />
-      <clipPath id="gps-reveal">
+      <clipPath id={clipId}>
         <rect x={CX - gpsWidth / 2} y={CY + 58} width={gpsWidth} height={28} />
       </clipPath>
       <text x={CX} y={CY + 78}
         fontFamily={C.fMono} fontSize="12" fill={C.ink1} textAnchor="middle"
-        clipPath="url(#gps-reveal)"
+        clipPath={`url(#${clipId})`}
       >
         {GPS}
       </text>
