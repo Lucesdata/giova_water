@@ -1,8 +1,8 @@
 import React from 'react';
-import { Composition } from 'remotion';
+import { Composition, registerRoot } from 'remotion';
 import { HeroPTAP } from './HeroPTAP.jsx';
 
-export const RemotionRoot = () => {
+const RemotionRoot = () => {
   return (
     <Composition
       id="PTAPIntro"
@@ -14,3 +14,5 @@ export const RemotionRoot = () => {
     />
   );
 };
+
+registerRoot(RemotionRoot);
