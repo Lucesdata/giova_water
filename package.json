@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:update": "playwright test --update-snapshots",
-    "render:hero": "node src/remotion/render.mjs"
+    "render:hero": "node src/remotion/render.mjs",
+    "render:cards": "node src/remotion/cards/render-cards.mjs"
   },
   "dependencies": {
     "@remotion/bundler": "^4.0.468",

@@ -8,6 +8,7 @@ uploads/
 
 # Remotion rendered outputs
 public/assets/ptap-intro.mp4
+public/assets/cards/
 
 # tests
 test-results
