@@ -6,6 +6,9 @@ dist
 .claude/
 uploads/
 
+# Remotion rendered outputs
+public/assets/ptap-intro.mp4
+
 # tests
 test-results
 playwright-report
