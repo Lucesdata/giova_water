@@ -8,6 +8,7 @@ import Projects from './Projects.jsx';
 import ProjectModal from './ProjectModal.jsx';
 import DigitalTwins from './DigitalTwins.jsx';
 import { Contact, Footer } from './Contact.jsx';
+import { ScrollBackground } from './ScrollBackground.jsx';
 
 function ScrollRail({ active }) {
   const p = useScrollProgress();
@@ -169,6 +170,7 @@ export default function App() {
     <>
       <a href="#main" className="skip-link">Saltar al contenido</a>
       {tweaks.grid && <div className="grid-bg" aria-hidden="true"/>}
+      <ScrollBackground />
       <Nav active={active} />
       <ScrollRail active={active} />
       <main id="main" style={{ position: 'relative', zIndex: 1, padding: '120px 64px 0', maxWidth: 1440, margin: '0 auto' }}>
