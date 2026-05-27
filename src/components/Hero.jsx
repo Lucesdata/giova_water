@@ -179,6 +179,14 @@ function HydraulicSchematic() {
 
 function HeroSchematic() {
   const t = useT();
+  const [phase, setPhase] = useState('video');
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setPhase('live');
+    }
+  }, []);
+
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.05fr) minmax(0, 1fr)', gap: 48, alignItems: 'center', minHeight: 'calc(100vh - 76px)', padding: '64px 0 48px' }}>
       <div>
@@ -236,15 +244,33 @@ function HeroSchematic() {
           <span>{t('hero.fig')}</span>
           <StatusDot label={t('hero.streaming')} />
         </div>
-        <div style={{
-          border: '1px solid var(--line-hi)',
-          background: 'linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%)',
-          padding: 14,
-          aspectRatio: '800/440',
-          width: '100%',
-        }}>
-          <HydraulicSchematic />
-        </div>
+        {phase === 'video' ? (
+          <video
+            autoPlay
+            muted
+            playsInline
+            src="/assets/ptap-intro.mp4"
+            aria-label="Secuencia de arranque del sistema PTAP"
+            style={{
+              border: '1px solid var(--line-hi)',
+              background: 'linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%)',
+              aspectRatio: '800/440',
+              width: '100%',
+              display: 'block',
+            }}
+            onEnded={() => setPhase('live')}
+          />
+        ) : (
+          <div style={{
+            border: '1px solid var(--line-hi)',
+            background: 'linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%)',
+            padding: 14,
+            aspectRatio: '800/440',
+            width: '100%',
+          }}>
+            <HydraulicSchematic />
+          </div>
+        )}
         <div style={{ position: 'relative', border: '1px solid var(--line-hi)', overflow: 'hidden', aspectRatio: '3/1.4' }}>
           <img src="/assets/giovanni-field.jpg" alt="Giovanni Guevara Duque en obra de saneamiento del Sistema MP/PER1"
             loading="lazy"
