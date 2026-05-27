@@ -1,3 +1,14 @@
 .DS_Store
-uploads/
+node_modules
+dist
+.vercel
 .thumbnail
+.claude/
+uploads/
+
+# tests
+test-results
+playwright-report
+playwright/.cache
+tests/e2e/__screenshots__/*-actual.png
+tests/e2e/__screenshots__/*-diff.png
