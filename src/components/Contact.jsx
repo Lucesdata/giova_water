@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { SectionIndex, StatusDot, Logo, Copyable } from './primitives.jsx';
 import { useT } from '../i18n.jsx';
+import { useBreakpoint } from '../hooks/useBreakpoint.js';
 
 export function Contact() {
+  const { isMobile } = useBreakpoint();
   const t = useT();
   const [form, setForm] = useState({ name: '', email: '', org: '', type: '', msg: '' });
   const [sent, setSent] = useState(false);
@@ -18,7 +20,7 @@ export function Contact() {
 
   return (
     <section id="contacto" className="section" aria-labelledby="contact-title">
-      <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 32, marginBottom: 48 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '180px 1fr', gap: 32, marginBottom: 48 }}>
         <SectionIndex n="04" kicker={t('contact.kicker')} title={t('contact.title')} />
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
           <h2 id="contact-title" style={{
@@ -31,7 +33,7 @@ export function Contact() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: 48 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '340px 1fr', gap: isMobile ? 32 : 48 }}>
         <div>
           <div style={{ border: '1px solid var(--line-hi)', background: 'var(--bg-1)' }}>
             <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between' }}>
@@ -114,7 +116,7 @@ export function Contact() {
               </div>
             ) : (
               <>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16, marginBottom: 16 }}>
                   <div>
                     <label htmlFor="f-name" className="label" style={{ display: 'block', marginBottom: 6 }}>{F.name}</label>
                     <input id="f-name" required value={form.name} onChange={onChange('name')} placeholder={F.namePh}/>
@@ -155,10 +157,11 @@ export function Contact() {
 }
 
 export function Footer() {
+  const { isMobile } = useBreakpoint();
   const t = useT();
   return (
     <footer style={{ borderTop: '1px solid var(--line)', padding: '40px 0 24px', marginTop: 40 }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 32, marginBottom: 40 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : '2fr 1fr 1fr 1fr', gap: isMobile ? 24 : 32, marginBottom: 40 }}>
         <div>
           <Logo />
           <p style={{ margin: '16px 0 0', color: 'var(--ink-2)', fontSize: 12.5, lineHeight: 1.6, maxWidth: 340 }}>
