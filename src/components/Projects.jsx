@@ -70,6 +70,24 @@ function ProjectCard({ p, onOpen }) {
             </div>
           </>
         )}
+        {p.video && (
+          <video
+            src={p.video}
+            autoPlay
+            muted
+            loop
+            playsInline
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              opacity: hover ? 1 : 0,
+              transition: 'opacity 350ms var(--ease)',
+            }}
+          />
+        )}
         {[[8,8],[null,8],[8,null],[null,null]].map(([l,top],i) => (
           <div key={i} aria-hidden="true" style={{
             position: 'absolute',
