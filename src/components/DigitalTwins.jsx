@@ -3,12 +3,12 @@ import { useTick, useInView, jitter, SectionIndex, StatusDot, Tag, Sparkline } f
 import { useT } from '../i18n.jsx';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
 
-function DashGauge({ label, value, unit, min, max, warn, alert, inView }) {
+function DashGauge({ label, value, unit, min, max, warn, alert, inView, showBorder = true }) {
   const pct = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100));
   const status = value >= alert ? 'ALERT' : value >= warn ? 'WARN' : 'OK';
   const color = status === 'ALERT' ? 'var(--alert)' : status === 'WARN' ? 'var(--warn)' : 'var(--accent)';
   return (
-    <div style={{ padding: 16, borderRight: '1px solid var(--line)' }}>
+    <div style={{ padding: 16, borderRight: showBorder ? '1px solid var(--line)' : 'none' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
         <span className="label">{label}</span>
         <span className="mono" style={{ fontSize: 9.5, color, letterSpacing: '0.1em' }}>● {status}</span>
@@ -261,14 +261,20 @@ export default function DigitalTwins() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', borderBottom: '1px solid var(--line)' }}>
-          <DashGauge label={D.gauges.caudal} value={caudal} unit="L/s" min={0} max={60} warn={50} alert={55} inView={inView} />
-          <DashGauge label={D.gauges.presion} value={presion} unit="bar" min={0} max={5} warn={4} alert={4.5} inView={inView} />
-          <DashGauge label={D.gauges.turbidez} value={turbidez} unit="NTU" min={0} max={2} warn={1.2} alert={1.5} inView={inView} />
-          <DashGauge label={D.gauges.ph} value={ph} unit="pH" min={6} max={8.5} warn={8} alert={8.3} inView={inView} />
+          {[
+            { label: D.gauges.caudal,   value: caudal,    unit: 'L/s', min: 0, max: 60,  warn: 50,  alert: 55  },
+            { label: D.gauges.presion,  value: presion,   unit: 'bar', min: 0, max: 5,   warn: 4,   alert: 4.5 },
+            { label: D.gauges.turbidez, value: turbidez,  unit: 'NTU', min: 0, max: 2,   warn: 1.2, alert: 1.5 },
+            { label: D.gauges.ph,       value: ph,        unit: 'pH',  min: 6, max: 8.5, warn: 8,   alert: 8.3 },
+          ].map((g, i) => (
+            <DashGauge key={i} {...g} inView={inView}
+              showBorder={isMobile ? i % 2 === 0 : true}
+            />
+          ))}
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '3fr 1fr', borderBottom: '1px solid var(--line)' }}>
-          <div style={{ padding: 16, borderRight: '1px solid var(--line)' }}>
+          <div style={{ padding: 16, borderRight: isMobile ? 'none' : '1px solid var(--line)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
               <span className="label">{D.lghLabel}</span>
               <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)' }}>{D.scale}</span>
@@ -325,7 +331,11 @@ export default function DigitalTwins() {
 
       <div style={{ marginTop: 48, display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 0, border: '1px solid var(--line)' }}>
         {(Array.isArray(features) ? features : []).map((c, i) => (
-          <div key={i} style={{ padding: 24, borderLeft: i > 0 ? '1px solid var(--line)' : 'none' }}>
+          <div key={i} style={{
+            padding: 24,
+            borderLeft: (!isMobile && i > 0) ? '1px solid var(--line)' : 'none',
+            borderTop: (isMobile && i > 0) ? '1px solid var(--line)' : 'none',
+          }}>
             <div className="mono" style={{ fontSize: 11, color: 'var(--accent)', letterSpacing: '0.1em', marginBottom: 14 }}>{t('twins.featurePrefix')} · {c.k}</div>
             <h3 style={{ margin: '0 0 8px', fontSize: 16, fontWeight: 500 }}>{c.t}</h3>
             <p style={{ margin: 0, color: 'var(--ink-1)', fontSize: 13, lineHeight: 1.6 }}>{c.d}</p>
