@@ -26,7 +26,7 @@ const bundled = await bundle({
 
 for (const p of projects) {
   const compId = p.filters.includes('agua') ? 'AguaCardVideo' : 'DigitalCardVideo';
-  const slug = p.id.toLowerCase().replace('-', ''); // 'P-001' → 'p001'
+  const slug = p.id.toLowerCase().replaceAll('-', ''); // 'P-001' → 'p001'
   const outputLocation = path.join(outDir, `${slug}.mp4`);
 
   console.log(`Rendering ${p.id} → ${slug}.mp4 (${compId})...`);

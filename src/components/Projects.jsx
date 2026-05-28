@@ -72,11 +72,13 @@ function ProjectCard({ p, onOpen }) {
         )}
         {p.video && (
           <video
+            aria-hidden="true"
             src={p.video}
             autoPlay
             muted
             loop
             playsInline
+            preload="auto"
             style={{
               position: 'absolute',
               inset: 0,
