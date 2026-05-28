@@ -1,9 +1,9 @@
 import React from 'react';
-import { Composition } from 'remotion';
+import { Composition, registerRoot } from 'remotion';
 import { AguaCardVideo } from './AguaCardVideo.jsx';
 import { DigitalCardVideo } from './DigitalCardVideo.jsx';
 
-export function RootCards() {
+function RootCards() {
   return (
     <>
       <Composition
@@ -27,3 +27,5 @@ export function RootCards() {
     </>
   );
 }
+
+registerRoot(RootCards);
