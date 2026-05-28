@@ -13,6 +13,7 @@ export function ScrollBackground() {
   });
   const [reduced] = useState(
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+         || window.innerWidth <= 768
   );
 
   useEffect(() => {

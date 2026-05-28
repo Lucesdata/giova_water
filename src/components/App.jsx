@@ -9,6 +9,7 @@ import ProjectModal from './ProjectModal.jsx';
 import DigitalTwins from './DigitalTwins.jsx';
 import { Contact, Footer } from './Contact.jsx';
 import { ScrollBackground } from './ScrollBackground.jsx';
+import { useBreakpoint } from '../hooks/useBreakpoint.js';
 
 function ScrollRail({ active }) {
   const p = useScrollProgress();
@@ -139,6 +140,7 @@ const TWEAKS_STORAGE = 'giova_water:tweaks';
 
 export default function App() {
   const active = useActiveSection(['inicio', 'sobre', 'proyectos', 'gemelos', 'contacto']);
+  const { isMobile } = useBreakpoint();
   const [tweaks, setTweaks] = useState(() => {
     if (typeof window === 'undefined') return TWEAK_DEFAULTS;
     try {
@@ -172,8 +174,8 @@ export default function App() {
       {tweaks.grid && <div className="grid-bg" aria-hidden="true"/>}
       <ScrollBackground />
       <Nav active={active} />
-      <ScrollRail active={active} />
-      <main id="main" style={{ position: 'relative', zIndex: 1, padding: '120px 64px 0', maxWidth: 1440, margin: '0 auto' }}>
+      {!isMobile && <ScrollRail active={active} />}
+      <main id="main" style={{ position: 'relative', zIndex: 1, padding: isMobile ? '72px 16px 0' : '120px 64px 0', maxWidth: 1440, margin: '0 auto' }}>
         <section id="inicio" aria-label="Inicio">
           <Hero variant={tweaks.hero}/>
         </section>
@@ -183,8 +185,8 @@ export default function App() {
         <Contact />
         <Footer />
       </main>
-      <TweaksToggle onClick={() => setPanelOpen(o => !o)} />
-      <TweaksPanel open={panelOpen} tweaks={tweaks} setTweaks={setTweaks} onClose={() => setPanelOpen(false)} />
+      {!isMobile && <TweaksToggle onClick={() => setPanelOpen(o => !o)} />}
+      {!isMobile && <TweaksPanel open={panelOpen} tweaks={tweaks} setTweaks={setTweaks} onClose={() => setPanelOpen(false)} />}
       <ProjectModal project={openProject} onClose={() => setOpenProject(null)} />
     </>
   );

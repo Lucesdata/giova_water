@@ -23,6 +23,7 @@ describe('ScrollBackground', () => {
       writable: true,
       value: vi.fn().mockReturnValue({ matches: false }),
     });
+    Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true });
     vi.stubGlobal('requestAnimationFrame', (fn) => { fn(); return 0; });
     vi.stubGlobal('cancelAnimationFrame', () => {});
   });
@@ -49,6 +50,12 @@ describe('ScrollBackground', () => {
 
   it('does not mount Player when prefers-reduced-motion is reduce', () => {
     window.matchMedia = vi.fn().mockReturnValue({ matches: true });
+    const { queryByTestId } = render(<ScrollBackground />);
+    expect(queryByTestId('remotion-player')).toBeNull();
+  });
+
+  it('does not mount Player when isMobile (innerWidth <= 768)', () => {
+    Object.defineProperty(window, 'innerWidth', { value: 375, configurable: true });
     const { queryByTestId } = render(<ScrollBackground />);
     expect(queryByTestId('remotion-player')).toBeNull();
   });
