@@ -1,15 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { SectionIndex, Tag } from './primitives.jsx';
 import { useT } from '../i18n.jsx';
 import { projectsData } from '../data/projects.js';
+import { useBreakpoint } from '../hooks/useBreakpoint.js';
 
 function ProjectCard({ p, onOpen }) {
+  const { isMobile } = useBreakpoint();
+  const cardRef = useRef(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (!isMobile || !p.video) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold: 0.4 }
+    );
+    if (cardRef.current) observer.observe(cardRef.current);
+    return () => observer.disconnect();
+  }, [isMobile, p.video]);
+
   const t = useT();
   const [hover, setHover] = useState(false);
   const i18n = t(`projects.data.${p.id}`) || {};
   const metrics = p.metricKeys.map(k => ({ k, v: i18n.metrics?.[k] ?? '—' }));
   return (
     <article
+      ref={cardRef}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       style={{
@@ -85,7 +101,7 @@ function ProjectCard({ p, onOpen }) {
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              opacity: hover ? 1 : 0,
+              opacity: isMobile ? (visible ? 1 : 0) : (hover ? 1 : 0),
               transition: 'opacity 350ms var(--ease)',
             }}
           />
@@ -153,6 +169,7 @@ function ProjectCard({ p, onOpen }) {
 }
 
 export default function Projects({ onOpen }) {
+  const { isMobile } = useBreakpoint();
   const t = useT();
   const [filter, setFilter] = useState('all');
   const filters = [
@@ -164,7 +181,7 @@ export default function Projects({ onOpen }) {
 
   return (
     <section id="proyectos" className="section" aria-labelledby="projects-title">
-      <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 32, marginBottom: 48 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '180px 1fr', gap: 32, marginBottom: 48 }}>
         <SectionIndex n="02" kicker={t('projects.kicker')} title={t('projects.title')} />
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
           <h2 id="projects-title" style={{
@@ -209,7 +226,7 @@ export default function Projects({ onOpen }) {
         <div className="mono" style={{ fontSize: 10.5, color: 'var(--ink-3)' }}>{t('projects.sort')}</div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 20 }}>
         {visible.map(p => <ProjectCard key={p.id} p={p} onOpen={onOpen} />)}
       </div>
 
