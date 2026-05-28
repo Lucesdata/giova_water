@@ -29,7 +29,11 @@ describe('Hero schematic — intro video phase', () => {
   beforeEach(() => {
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
-      value: vi.fn().mockReturnValue({ matches: false }),
+      value: vi.fn().mockReturnValue({
+        matches: false,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      }),
     });
   });
 
@@ -55,7 +59,7 @@ describe('Hero schematic — intro video phase', () => {
   });
 
   it('skips video and shows SVG immediately when prefers-reduced-motion is reduce', () => {
-    window.matchMedia = vi.fn().mockReturnValue({ matches: true });
+    window.matchMedia = vi.fn().mockReturnValue({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() });
     const { container } = render(<Hero />);
     expect(container.querySelector('video')).toBeNull();
     expect(container.querySelector('svg')).not.toBeNull();

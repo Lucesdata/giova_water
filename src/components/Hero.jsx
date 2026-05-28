@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTick, jitter, StatusDot } from './primitives.jsx';
 import { useT } from '../i18n.jsx';
+import { useBreakpoint } from '../hooks/useBreakpoint.js';
 
 function HydraulicSchematic() {
   const t = useTick(120);
@@ -178,6 +179,7 @@ function HydraulicSchematic() {
 }
 
 function HeroSchematic() {
+  const { isMobile } = useBreakpoint();
   const t = useT();
   const [phase, setPhase] = useState('video');
 
@@ -188,7 +190,7 @@ function HeroSchematic() {
   }, []);
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.05fr) minmax(0, 1fr)', gap: 48, alignItems: 'center', minHeight: 'calc(100vh - 76px)', padding: '64px 0 48px' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'minmax(0, 1.05fr) minmax(0, 1fr)', gap: isMobile ? 32 : 48, alignItems: 'center', minHeight: 'calc(100vh - 76px)', padding: isMobile ? '48px 0' : '64px 0 48px' }}>
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 28 }}>
           <span className="label-accent">{t('hero.kicker')}</span>
@@ -217,7 +219,7 @@ function HeroSchematic() {
         </div>
 
         <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
+          display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
           borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)',
           padding: '18px 0',
         }}>
@@ -308,6 +310,7 @@ function HeroSchematic() {
 }
 
 function HeroTypographic() {
+  const { isMobile } = useBreakpoint();
   const t = useT();
   const tick = useTick(1000);
   return (
@@ -343,7 +346,7 @@ function HeroTypographic() {
         </span>
       </h1>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 48, marginTop: 56, borderTop: '1px solid var(--line)', paddingTop: 32 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: isMobile ? 24 : 48, marginTop: 56, borderTop: '1px solid var(--line)', paddingTop: 32 }}>
         <p style={{ color: 'var(--ink-1)', fontSize: 14.5, lineHeight: 1.6, margin: 0 }}>{t('hero.typo.bio')}</p>
         <div>
           <div className="label">{t('hero.typo.specialties')}</div>
@@ -363,6 +366,7 @@ function HeroTypographic() {
 }
 
 function HeroTerminal() {
+  const { isMobile } = useBreakpoint();
   const t = useT();
   const tick = useTick(200);
   const lines = [
@@ -386,7 +390,7 @@ function HeroTerminal() {
     { c: 'var(--accent)', s: '> ready. type \'proyectos\' to continue _' },
   ];
   return (
-    <div style={{ minHeight: 'calc(100vh - 76px)', padding: '48px 0', display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.1fr)', gap: 48, alignItems: 'center' }}>
+    <div style={{ minHeight: 'calc(100vh - 76px)', padding: '48px 0', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'minmax(0, 1fr) minmax(0, 1.1fr)', gap: isMobile ? 24 : 48, alignItems: 'center' }}>
       <div>
         <div className="label-accent" style={{ marginBottom: 20 }}>{t('hero.terminal.kicker')}</div>
         <h1 style={{
