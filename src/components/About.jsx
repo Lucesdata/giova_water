@@ -1,6 +1,7 @@
 import React from 'react';
 import { useInView, AnimatedNumber, SectionIndex, Tag, Copyable } from './primitives.jsx';
 import { useT } from '../i18n.jsx';
+import { useBreakpoint } from '../hooks/useBreakpoint.js';
 
 function interpolate(template, replacements) {
   if (typeof template !== 'string') return template;
@@ -47,11 +48,12 @@ function SkillBar({ name, level, code }) {
 }
 
 function TimelineRow({ year, role, org, body, location, tags }) {
+  const { isMobile } = useBreakpoint();
   const [ref, inView] = useInView({ threshold: 0.2 });
   return (
     <div ref={ref} style={{
-      display: 'grid', gridTemplateColumns: '140px 1fr',
-      gap: 32, padding: '28px 0',
+      display: 'grid', gridTemplateColumns: isMobile ? '80px 1fr' : '140px 1fr',
+      gap: isMobile ? 16 : 32, padding: '28px 0',
       borderTop: '1px solid var(--line)',
       opacity: inView ? 1 : 0,
       transform: inView ? 'translateY(0)' : 'translateY(12px)',
@@ -84,6 +86,7 @@ const TIMELINE_TAGS = [
 ];
 
 export default function About() {
+  const { isMobile } = useBreakpoint();
   const t = useT();
   const rows = t('about.timeline.rows');
   const skills = t('about.skills');
@@ -92,7 +95,7 @@ export default function About() {
 
   return (
     <section id="sobre" className="section" aria-labelledby="about-title">
-      <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 32, marginBottom: 48 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '180px 1fr', gap: 32, marginBottom: 48 }}>
         <SectionIndex n="01" kicker={t('about.kicker')} title={t('about.title')} />
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
           <h2 id="about-title" style={{
@@ -105,7 +108,7 @@ export default function About() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: 48 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '340px 1fr', gap: isMobile ? 32 : 48 }}>
         <div>
           <div style={{ border: '1px solid var(--line-hi)', background: 'var(--bg-1)' }}>
             <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between' }}>
@@ -213,7 +216,7 @@ export default function About() {
           </p>
 
           <div className="label-accent" style={{ marginBottom: 20 }}>{t('about.skillsLabel')}</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 40px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 0 : '0 40px' }}>
             <div>
               <SkillBar code="SK.01" name={skills.epanet} level={92} />
               <SkillBar code="SK.02" name={skills.python} level={82} />
