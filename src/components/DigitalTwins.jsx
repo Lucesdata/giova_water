@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTick, useInView, jitter, SectionIndex, StatusDot, Tag, Sparkline } from './primitives.jsx';
 import { useT } from '../i18n.jsx';
+import { useBreakpoint } from '../hooks/useBreakpoint.js';
 
 function DashGauge({ label, value, unit, min, max, warn, alert, inView }) {
   const pct = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100));
@@ -198,6 +199,7 @@ export default function DigitalTwins() {
   const t = useT();
   const tick = useTick(200);
   const [ref, inView] = useInView({ threshold: 0.15 });
+  const { isMobile } = useBreakpoint();
 
   const caudal = 42.3 + jitter(0, 1.2, tick);
   const presion = 3.24 + jitter(0, 0.05, tick + 3);
@@ -225,7 +227,7 @@ export default function DigitalTwins() {
 
   return (
     <section id="gemelos" className="section" ref={ref} aria-labelledby="twins-title">
-      <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 32, marginBottom: 48 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '180px 1fr', gap: 32, marginBottom: 48 }}>
         <SectionIndex n="03" kicker={t('twins.kicker')} title={t('twins.title')} />
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
           <h2 id="twins-title" style={{
@@ -258,14 +260,14 @@ export default function DigitalTwins() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', borderBottom: '1px solid var(--line)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', borderBottom: '1px solid var(--line)' }}>
           <DashGauge label={D.gauges.caudal} value={caudal} unit="L/s" min={0} max={60} warn={50} alert={55} inView={inView} />
           <DashGauge label={D.gauges.presion} value={presion} unit="bar" min={0} max={5} warn={4} alert={4.5} inView={inView} />
           <DashGauge label={D.gauges.turbidez} value={turbidez} unit="NTU" min={0} max={2} warn={1.2} alert={1.5} inView={inView} />
           <DashGauge label={D.gauges.ph} value={ph} unit="pH" min={6} max={8.5} warn={8} alert={8.3} inView={inView} />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr', borderBottom: '1px solid var(--line)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '3fr 1fr', borderBottom: '1px solid var(--line)' }}>
           <div style={{ padding: 16, borderRight: '1px solid var(--line)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
               <span className="label">{D.lghLabel}</span>
@@ -301,7 +303,7 @@ export default function DigitalTwins() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)' }}>
           <SparkTile label={D.sparks.q} series={series.q} value={caudal.toFixed(1)} unit="L/s" delta={2.1} />
           <SparkTile label={D.sparks.p} series={series.p} value={presion.toFixed(2)} unit="bar" delta={-0.4} />
           <SparkTile label={D.sparks.turb} series={series.tu} value={turbidez.toFixed(2)} unit="NTU" delta={1.8} color="var(--warn)" />
@@ -321,7 +323,7 @@ export default function DigitalTwins() {
         </div>
       </div>
 
-      <div style={{ marginTop: 48, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0, border: '1px solid var(--line)' }}>
+      <div style={{ marginTop: 48, display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 0, border: '1px solid var(--line)' }}>
         {(Array.isArray(features) ? features : []).map((c, i) => (
           <div key={i} style={{ padding: 24, borderLeft: i > 0 ? '1px solid var(--line)' : 'none' }}>
             <div className="mono" style={{ fontSize: 11, color: 'var(--accent)', letterSpacing: '0.1em', marginBottom: 14 }}>{t('twins.featurePrefix')} · {c.k}</div>
