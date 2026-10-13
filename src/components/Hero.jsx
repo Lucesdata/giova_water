@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useOnScreen, usePrefersReducedMotion } from './primitives.jsx';
 import { useT } from '../i18n.jsx';
-import { useBreakpoint } from '../hooks/useBreakpoint.js';
 
 // Fixed example readings. The diagram is illustrative: nothing here is measured.
 const EXAMPLE = { caudal: '42.3', presion: '3.24', turbidez: '0.80', ph: '7.21' };
@@ -173,7 +172,6 @@ function HydraulicSchematic({ animate, compact }) {
 }
 
 export default function Hero() {
-  const { isMobile } = useBreakpoint();
   const t = useT();
   const figRef = useRef(null);
   const frameRef = useRef(null);
@@ -187,55 +185,58 @@ export default function Hero() {
     [L.sensors.caudal, EXAMPLE.caudal, 'L/s'], [L.sensors.presion, EXAMPLE.presion, 'bar'],
     [L.sensors.turb, EXAMPLE.turbidez, 'NTU'], [L.sensors.ph, EXAMPLE.ph, ''],
   ];
+  // The closing phrase of the headline takes the accent colour; if a language
+  // does not provide it the headline is shown as plain text.
+  const h1 = t('hero.h1');
+  const accent = t('hero.h1Accent');
+  const split = typeof accent === 'string' && typeof h1 === 'string' && h1.endsWith(accent) && accent !== h1;
 
   // No entry animation here: the first screen reads immediately.
   return (
-    <div style={{
-      display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'minmax(0, 1.05fr) minmax(0, 1fr)',
-      gap: isMobile ? 28 : 48, alignItems: 'center',
-      padding: isMobile ? '12px 0 40px' : '32px 0 56px',
-    }}>
-      <div style={{ minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
-          <span className="label-accent">{t('hero.kicker')}</span>
-          <span aria-hidden="true" style={{ flex: 1, height: 1, background: 'var(--accent-line)', minWidth: 24 }}/>
-          <span className="label">{t('hero.role')}</span>
+    <div>
+      <div className="hero">
+        <div className="hero-photo">
+          <img src="/assets/giovanni-field.jpg" alt="" width="1600" height="1066" fetchpriority="high" />
+          <span className="chip hero-photo-note">{t('hero.imageNote')}</span>
         </div>
-        <h1 style={{
-          fontFamily: 'var(--f-mono)',
-          fontSize: 'clamp(30px, 3.7vw, 54px)',
-          lineHeight: 1.08,
-          letterSpacing: '-0.03em',
-          fontWeight: 500,
-          margin: '0 0 20px',
-          textWrap: 'balance',
-        }}>
-          {t('hero.h1')}
-        </h1>
-        <p className="prose" style={{ maxWidth: 560, fontSize: 17, margin: '0 0 28px' }}>
-          {t('hero.intro')}
-        </p>
-        <div className="hero-actions" style={{ display: 'flex', gap: 12, marginBottom: 28, flexWrap: 'wrap' }}>
-          <a href="#proyectos" className="btn primary">{t('hero.ctaProjects')}</a>
-          <a href="#contacto" className="btn">{t('hero.ctaContact')}</a>
+        <div className="hero-copy">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
+            <span className="label-accent">{t('hero.kicker')}</span>
+            <span aria-hidden="true" style={{ flex: 1, height: 1, background: 'var(--accent-line)', minWidth: 24 }}/>
+            <span className="label" style={{ color: 'var(--ink-1)' }}>{t('hero.role')}</span>
+          </div>
+          <h1 style={{
+            fontFamily: 'var(--f-mono)',
+            fontSize: 'clamp(32px, 4.2vw, 62px)',
+            lineHeight: 1.06,
+            letterSpacing: '-0.03em',
+            fontWeight: 600,
+            margin: '0 0 20px',
+            textWrap: 'balance',
+          }}>
+            {split ? <>{h1.slice(0, h1.length - accent.length)}<span style={{ color: 'var(--accent)', whiteSpace: 'nowrap' }}>{accent}</span></> : h1}
+          </h1>
+          <p className="prose" style={{ maxWidth: 520, fontSize: 18, margin: '0 0 28px', color: 'var(--ink)' }}>
+            {t('hero.intro')}
+          </p>
+          <div className="hero-actions" style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <a href="#proyectos" className="btn primary">{t('hero.ctaProjects')} <span aria-hidden="true">→</span></a>
+            <a href="#contacto" className="btn hero-secondary">{t('hero.ctaContact')} <span aria-hidden="true">→</span></a>
+          </div>
         </div>
+      </div>
 
-        <dl style={{
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 16,
-          borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)',
-          padding: '16px 0', margin: 0,
-        }}>
+      <div className="hero-below">
+        <dl className="hero-stats">
           {(Array.isArray(stats) ? stats : []).map((s, i) => (
             <div key={i}>
-              <dt style={{ fontFamily: 'var(--f-mono)', fontSize: 20, color: 'var(--ink)', letterSpacing: '-0.02em' }}>{s.v}</dt>
+              <dt style={{ fontFamily: 'var(--f-mono)', fontSize: 22, color: 'var(--ink)', letterSpacing: '-0.02em' }}>{s.v}</dt>
               <dd className="label" style={{ margin: '4px 0 0' }}>{s.l}</dd>
             </div>
           ))}
         </dl>
-      </div>
 
-      <div style={{ position: 'relative', minWidth: 0 }}>
-        <figure ref={figRef} style={{ margin: 0 }}>
+        <figure ref={figRef} style={{ margin: 0, minWidth: 0 }}>
           <figcaption style={{
             display: 'flex', justifyContent: 'space-between', gap: 4, flexWrap: 'wrap', marginBottom: 12,
             fontFamily: 'var(--f-mono)', fontSize: 13, color: 'var(--ink-1)',

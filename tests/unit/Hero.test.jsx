@@ -58,11 +58,20 @@ describe('Hero — portada sin vídeo', () => {
     expect(h1s[0].textContent).toBe('hero.h1');
   });
 
+  it('puts the field photo behind the headline as a decorative image, labelled as illustrative', () => {
+    mockMotion(false);
+    const { container, getByText } = render(<Hero />);
+    const img = container.querySelector('.hero-photo img');
+    expect(img.getAttribute('src')).toBe('/assets/giovanni-field.jpg');
+    expect(img.getAttribute('alt')).toBe('');
+    expect(getByText('hero.imageNote')).toBeTruthy();
+  });
+
   it('has one primary and one secondary call to action', () => {
     mockMotion(false);
     const { container } = render(<Hero />);
     const links = [...container.querySelectorAll('a.btn')].map(a => [a.getAttribute('href'), a.textContent]);
-    expect(links).toEqual([['#proyectos', 'hero.ctaProjects'], ['#contacto', 'hero.ctaContact']]);
+    expect(links).toEqual([['#proyectos', 'hero.ctaProjects →'], ['#contacto', 'hero.ctaContact →']]);
   });
 
   it('animates the flow when motion is allowed', () => {

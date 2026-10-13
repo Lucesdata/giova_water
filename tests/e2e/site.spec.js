@@ -590,13 +590,53 @@ test.describe('responsive y accesibilidad', () => {
     });
   }
 
-  test('the hero is compact: it does not impose a full-screen height', async ({ page }) => {
+  test('the hero is compact: the photo banner does not impose a full-screen height', async ({ page }) => {
     for (const vp of [WIDTHS[4], WIDTHS[1]]) {
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await page.goto('/');
-      const h = await page.locator('#inicio').evaluate((el) => el.getBoundingClientRect().height);
-      if (vp.width > 1000) expect(h).toBeLessThan(vp.height);
-      expect(await page.locator('#inicio').evaluate((el) => el.firstElementChild.style.minHeight)).toBe('');
+      const h = await page.locator('.hero').evaluate((el) => el.getBoundingClientRect().height);
+      if (vp.width > 1000) expect(h).toBeLessThan(vp.height - 150);
+      expect(await page.locator('.hero').evaluate((el) => parseFloat(getComputedStyle(el).minHeight) || 0)).toBe(0);
+    }
+  });
+
+  test('the hero photo sits behind the text on desktop, above it on phones, and is marked illustrative', async ({ page }) => {
+    await page.goto('/');
+    const d = await page.evaluate(() => {
+      const ph = document.querySelector('.hero-photo').getBoundingClientRect();
+      const hero = document.querySelector('.hero').getBoundingClientRect();
+      const copy = document.querySelector('.hero-copy').getBoundingClientRect();
+      return { phW: ph.width, heroW: hero.width, overlap: copy.left < ph.right && copy.top < ph.bottom };
+    });
+    expect(d.phW).toBeGreaterThan(d.heroW - 4);
+    expect(d.overlap).toBe(true);
+    await expect(page.locator('.hero-photo-note')).toContainText('Imagen ilustrativa');
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    const m = await page.evaluate(() => ({ ph: document.querySelector('.hero-photo').getBoundingClientRect().height, bottom: document.querySelector('.hero-photo').getBoundingClientRect().bottom, copyTop: document.querySelector('.hero-copy h1').getBoundingClientRect().top }));
+    expect(m.ph).toBeLessThanOrEqual(240);
+    expect(m.copyTop).toBeGreaterThanOrEqual(m.bottom);
+  });
+
+  test('hero text keeps AA contrast over the photo (measured on the rendered pixels)', async ({ page }) => {
+    for (const vp of [WIDTHS[4], WIDTHS[3], WIDTHS[1]]) {
+      await page.setViewportSize({ width: vp.width, height: vp.height });
+      await page.goto('/');
+      await page.addStyleTag({ content: '.hero-copy *{color:transparent!important;border-color:transparent!important;background:transparent!important}.hero-copy .btn{background:transparent!important}' });
+      await page.waitForTimeout(300);
+      const boxes = await page.evaluate(() => [...document.querySelectorAll('.hero-copy h1, .hero-copy p, .hero-copy .label, .hero-copy .label-accent')].map((e) => { const r = e.getBoundingClientRect(); return { x: r.left, y: r.top + scrollY, w: r.width, h: r.height }; }));
+      const shot = await page.screenshot({ fullPage: true });
+      const worst = await page.evaluate(async ({ b64, boxes }) => {
+        const img = new Image(); img.src = 'data:image/png;base64,' + b64; await img.decode();
+        const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height; const cx = cv.getContext('2d'); cx.drawImage(img, 0, 0);
+        const lum = (r, g, bl) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(bl); };
+        let max = 0;
+        for (const b of boxes) { const d = cx.getImageData(Math.max(0, b.x), Math.max(0, b.y), Math.max(1, Math.min(b.w, img.width - b.x)), Math.max(1, b.h)).data; for (let i = 0; i < d.length; i += 16) max = Math.max(max, lum(d[i], d[i + 1], d[i + 2])); }
+        return max;
+      }, { b64: shot.toString('base64'), boxes });
+      // Lightest pixel behind any hero text vs. the weakest text colour used there (--ink-1 #aab4c0).
+      const text = 0.4505; // relative luminance of #aab4c0
+      expect((text + 0.05) / (worst + 0.05), vp.name).toBeGreaterThanOrEqual(4.5);
     }
   });
 
