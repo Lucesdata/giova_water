@@ -9,6 +9,7 @@ import ProjectModal from './ProjectModal.jsx';
 import DigitalTwins from './DigitalTwins.jsx';
 import { Contact, Footer } from './Contact.jsx';
 import Tagline from './Tagline.jsx';
+import PlantJourney from './PlantJourney.jsx';
 import Faq from './Faq.jsx';
 import { ScrollBackground } from './ScrollBackground.jsx';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
@@ -165,6 +166,7 @@ export default function App() {
           <Hero />
         </section>
         <Tagline />
+        <PlantJourney />
         <About onOpenProject={setOpenProject} />
         <Projects onOpen={setOpenProject} />
         <DigitalTwins />

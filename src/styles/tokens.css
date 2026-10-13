@@ -504,3 +504,38 @@ a.text-link { display: inline-flex; align-items: center; min-height: 44px; }
   .reveal { opacity: 1; transform: none; filter: none; transition: none; }
   .tagline-word { opacity: 1; transition: none; }
 }
+
+/* === Plant journey (pinned scene) === */
+.pj-stage-box {
+  position: sticky;
+  top: 112px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 40px;
+  align-items: center;
+  min-height: calc(100vh - 160px);
+  min-height: calc(100svh - 160px);
+}
+.pj-scene {
+  border: 1px solid var(--line-hi);
+  background: var(--bg-1);
+  aspect-ratio: 800 / 440;
+  width: 100%;
+  overflow: hidden;
+}
+.pj-stage { transition: opacity 500ms var(--ease-heavy); }
+.pj-dim { opacity: 0.28; }
+.pj-text { animation: fadeUp 500ms var(--ease-heavy) both; }
+@media (max-width: 768px) {
+  .pj-stage-box {
+    grid-template-columns: minmax(0, 1fr);
+    top: 96px;
+    gap: 20px;
+    align-items: start;
+    min-height: calc(100svh - 112px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pj-text { animation: none; }
+  .pj-stage { transition: none; }
+}
