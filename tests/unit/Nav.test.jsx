@@ -25,20 +25,33 @@ describe('Nav — mobile', () => {
 
   it('renders hamburger button in mobile', () => {
     render(<Nav active="inicio" />);
-    expect(screen.getByLabelText('Abrir menú')).toBeTruthy();
+    expect(screen.getByLabelText('nav.aria.openMenu')).toBeTruthy();
   });
 
   it('opens overlay when hamburger is clicked', () => {
     render(<Nav active="inicio" />);
-    fireEvent.click(screen.getByLabelText('Abrir menú'));
-    expect(screen.getByLabelText('Cerrar menú')).toBeTruthy();
+    fireEvent.click(screen.getByLabelText('nav.aria.openMenu'));
+    expect(screen.getByLabelText('nav.aria.closeMenu')).toBeTruthy();
     expect(screen.getAllByRole('link').length).toBeGreaterThan(0);
   });
 
   it('closes overlay on Escape key', () => {
     render(<Nav active="inicio" />);
-    fireEvent.click(screen.getByLabelText('Abrir menú'));
+    fireEvent.click(screen.getByLabelText('nav.aria.openMenu'));
     fireEvent.keyDown(document, { key: 'Escape' });
-    expect(screen.queryByLabelText('Cerrar menú')).toBeNull();
+    expect(screen.queryByLabelText('nav.aria.closeMenu')).toBeNull();
+  });
+
+  it('returns focus to the menu button after closing', () => {
+    render(<Nav active="inicio" />);
+    const toggle = screen.getByLabelText('nav.aria.openMenu');
+    fireEvent.click(toggle);
+    fireEvent.click(screen.getByLabelText('nav.aria.closeMenu'));
+    expect(document.activeElement).toBe(toggle);
+  });
+
+  it('shows no clock or coordinates in the banner', () => {
+    const { container } = render(<Nav active="inicio" />);
+    expect(container.textContent).not.toMatch(/UTC|°N|°E/);
   });
 });

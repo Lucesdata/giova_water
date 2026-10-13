@@ -2,7 +2,7 @@
 
 Portafolio personal de **Giovanni X. Guevara Duque** — Ingeniero de Procesos especializado en agua potable, saneamiento, infraestructura industrial y gemelos digitales / SCADA / IoT.
 
-Sitio en producción desplegado en Vercel.
+Sitio desplegado en Vercel (https://giovawater.vercel.app). Esta rama es una versión para revisar en local; no está desplegada.
 
 ---
 
@@ -12,7 +12,7 @@ Single-page application en **React 18 + Vite 6**, trilingüe (ES/EN/FR), con cua
 
 - **Idiomas:** Español (default), Inglés, Francés — switch persistente en `localStorage`.
 - **Audiencia:** clientes, recruiters técnicos y socios de proyecto (UE / LATAM).
-- **Mensaje núcleo:** 11 años · 42 plantas · 150 000+ habitantes servidos · €6M+ en obra pública.
+- **Mensaje núcleo:** «Ingeniería del agua, de la necesidad a la operación». 11 años de experiencia profesional; proyectos con responsabilidad, resultado y evidencia. Las cifras en disputa (capacidad y coste de Montebello, población atendida) no se muestran hasta confirmarlas.
 
 ---
 
@@ -26,7 +26,7 @@ Single-page application en **React 18 + Vite 6**, trilingüe (ES/EN/FR), con cua
 | i18n | Context + hook propio (`src/i18n.jsx`), diccionario único en memoria, persistencia en `localStorage` |
 | Tipografía | JetBrains Mono · Inter · Instrument Serif (Google Fonts) |
 | Tests unitarios | Vitest + Testing Library + jsdom |
-| Tests visuales | Playwright (Chromium) — 3 hero variants × 4 paletas |
+| Tests e2e | Playwright (Chromium): estructura, filtros, modal, contacto, responsive 390/768/1440, consola y red sin errores |
 | Hosting | Vercel (framework preset `vite`) |
 | Gráficos | SVG inline + Canvas 2D (LGH) — sin librerías de charts en el bundle |
 
@@ -68,7 +68,7 @@ giova_water/
     │   ├── i18n.test.jsx         # Resolución, fallback, persistencia, completeness
     │   └── primitives.test.jsx   # Determinismo de jitter()
     └── e2e/
-        ├── visual.spec.js        # 3 heroes × 4 paletas + smoke
+        ├── site.spec.js          # e2e: estructura, proyectos, contacto, responsive
         └── __screenshots__/      # Baselines visual regression (en git)
 ```
 
@@ -154,7 +154,6 @@ Vercel detecta automáticamente el framework Vite (ver [vercel.json](vercel.json
 Datos en código (intencionalmente públicos — es un portafolio):
 - Email: `lucesproject@gmail.com`
 - Tel: `+34 673 506 760`
-- NIE: `Z3214507D`
 - Licencia: `CPQCOL PQ-6061`
 - Ubicación: Sant Feliu de Llobregat (`41.3879°N, 2.0456°E`)
 

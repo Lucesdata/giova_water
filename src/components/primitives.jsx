@@ -1,13 +1,47 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 /* Utility: tick hook for live data */
-export function useTick(interval = 1000) {
+export function useTick(interval = 1000, enabled = true) {
   const [t, setT] = useState(0);
   useEffect(() => {
+    if (!enabled) return undefined;
     const id = setInterval(() => setT(v => v + 1), interval);
     return () => clearInterval(id);
-  }, [interval]);
+  }, [interval, enabled]);
   return t;
+}
+
+/* prefers-reduced-motion, kept in sync with the OS setting */
+export function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(() =>
+    typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    if (!mq) return undefined;
+    const onChange = (e) => setReduced(e.matches);
+    mq.addEventListener?.('change', onChange);
+    return () => mq.removeEventListener?.('change', onChange);
+  }, []);
+  return reduced;
+}
+
+/* True while the element is on screen AND the tab is visible. Unlike useInView
+   it flips back to false, so animations can stop when nobody sees them. */
+export function useOnScreen(ref, rootMargin = '80px') {
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === 'undefined') { setOn(true); return undefined; }
+    let intersecting = false;
+    let visible = typeof document === 'undefined' || document.visibilityState !== 'hidden';
+    const update = () => setOn(intersecting && visible);
+    const io = new IntersectionObserver(([entry]) => { intersecting = entry.isIntersecting; update(); }, { rootMargin });
+    io.observe(el);
+    const onVis = () => { visible = document.visibilityState !== 'hidden'; update(); };
+    document.addEventListener('visibilitychange', onVis);
+    return () => { io.disconnect(); document.removeEventListener('visibilitychange', onVis); };
+  }, [ref, rootMargin]);
+  return on;
 }
 
 /* Utility: seeded pseudo-random jitter */
@@ -100,9 +134,9 @@ export function useBodyScrollLock(locked) {
 }
 
 /* Logo mark */
-export function Logo() {
+export function Logo({ label = 'giova_water' }) {
   return (
-    <a href="#inicio" aria-label="giova_water — Inicio" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: 'var(--ink)' }}>
+    <a href="#inicio" aria-label={label} style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: 'var(--ink)' }}>
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
         <rect x="0.5" y="0.5" width="21" height="21" stroke="currentColor" opacity="0.35"/>
         <path d="M6 15 L11 5 L16 15" stroke="var(--accent)" strokeWidth="1.5" fill="none"/>
@@ -121,7 +155,7 @@ export function SectionIndex({ n, title, kicker }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
         <div style={{
-          fontFamily: 'var(--f-mono)', fontSize: 11, color: 'var(--accent)',
+          fontFamily: 'var(--f-mono)', fontSize: 12, color: 'var(--accent)',
           letterSpacing: '0.14em', borderTop: '1px solid var(--accent-line)',
           paddingTop: 6,
         }}>§ {n}</div>
@@ -136,7 +170,7 @@ export function SectionIndex({ n, title, kicker }) {
 /* Status light */
 export function StatusDot({ color = 'var(--accent)', label }) {
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'var(--f-mono)', fontSize: 11, color: 'var(--ink-1)' }}>
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'var(--f-mono)', fontSize: 12, color: 'var(--ink-1)' }}>
       <span className="blink" aria-hidden="true" style={{
         width: 7, height: 7, borderRadius: '50%',
         background: color, boxShadow: `0 0 8px ${color}`,
@@ -160,13 +194,9 @@ export function Copyable({ value, children, ariaLabel }) {
     setTimeout(() => setCopied(false), 1200);
   };
   return (
-    <button onClick={onClick} aria-label={ariaLabel || `Copiar ${value}`} style={{
-      background: 'transparent', border: 'none', color: 'inherit',
-      cursor: 'pointer', padding: 0, font: 'inherit', display: 'inline-flex',
-      alignItems: 'center', gap: 6,
-    }}>
+    <button onClick={onClick} aria-label={ariaLabel || value} className="copyable">
       {children}
-      <span className="mono" aria-hidden="true" style={{ fontSize: 10, color: copied ? 'var(--accent)' : 'var(--ink-3)' }}>
+      <span className="mono" aria-hidden="true" style={{ fontSize: 12, color: copied ? 'var(--accent)' : 'var(--ink-3)' }}>
         {copied ? '✓' : '⎘'}
       </span>
     </button>
@@ -174,7 +204,7 @@ export function Copyable({ value, children, ariaLabel }) {
 }
 
 /* Sparkline */
-export function Sparkline({ data, color = 'var(--accent)', height = 32, width = 120, fill = true }) {
+export function Sparkline({ data, color = 'var(--accent)', height = 32, width = 120, fill = true, label = '' }) {
   const min = Math.min(...data);
   const max = Math.max(...data);
   const range = max - min || 1;
@@ -186,7 +216,7 @@ export function Sparkline({ data, color = 'var(--accent)', height = 32, width = 
   const path = `M ${pts.join(' L ')}`;
   const fillPath = fill ? `${path} L ${width},${height} L 0,${height} Z` : '';
   return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Sparkline trend" style={{ display: 'block' }}>
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} role="img" aria-label={label} style={{ display: 'block', width: '100%', height: 'auto', maxWidth: width }}>
       {fill && <path d={fillPath} fill={color} opacity="0.1"/>}
       <path d={path} stroke={color} strokeWidth="1.25" fill="none"/>
       <circle cx={pts[pts.length - 1].split(',')[0]} cy={pts[pts.length - 1].split(',')[1]} r="2" fill={color}/>

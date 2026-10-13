@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useActiveSection, useScrollProgress } from './primitives.jsx';
 import { useT } from '../i18n.jsx';
 import Nav from './Nav.jsx';
@@ -26,7 +26,7 @@ function ScrollRail({ active }) {
       zIndex: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14,
     }}>
       <div className="mono" style={{
-        writingMode: 'vertical-rl', fontSize: 9.5, color: 'var(--ink-3)',
+        writingMode: 'vertical-rl', fontSize: 11, color: 'var(--ink-3)',
         letterSpacing: '0.2em', marginBottom: 6,
       }}>SCROLL · {(p * 100).toFixed(0)}%</div>
       <div style={{ position: 'relative', width: 2, height: 180, background: 'var(--line)' }}>
@@ -38,8 +38,8 @@ function ScrollRail({ active }) {
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 10 }}>
         {sections.map(s => (
-          <a key={s.id} href={`#${s.id}`} title={s.id} style={{
-            fontFamily: 'var(--f-mono)', fontSize: 9.5,
+          <a key={s.id} href={`#${s.id}`} tabIndex={-1} style={{
+            fontFamily: 'var(--f-mono)', fontSize: 11,
             color: active === s.id ? 'var(--accent)' : 'var(--ink-3)',
             textDecoration: 'none',
           }}>{s.n}</a>
@@ -59,45 +59,24 @@ function TweaksPanel({ open, tweaks, setTweaks, onClose }) {
       fontFamily: 'var(--f-mono)',
     }}>
       <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: 11, color: 'var(--ink)' }}>{t('common.tweaks')}</span>
-        <button onClick={onClose} aria-label={t('common.closeAria')} style={{ background: 'none', border: 'none', color: 'var(--ink-2)', cursor: 'pointer', fontSize: 14 }}>×</button>
+        <span style={{ fontSize: 12, color: 'var(--ink)' }}>{t('common.tweaks')}</span>
+        <button onClick={onClose} aria-label={t('common.closeAria')} className="icon-btn" style={{ color: 'var(--ink-1)', fontSize: 18 }}>×</button>
       </div>
       <div style={{ padding: 14 }}>
-        <div style={{ marginBottom: 16 }}>
-          <div className="label-accent" style={{ marginBottom: 8 }}>{t('common.heroVariant')}</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 4 }}>
-            {[
-              { v: 'schematic', l: 'SCHEMATIC' },
-              { v: 'typographic', l: 'TYPO' },
-              { v: 'terminal', l: 'TERMINAL' },
-            ].map(opt => (
-              <button key={opt.v}
-                onClick={() => setTweaks({ ...tweaks, hero: opt.v })}
-                aria-pressed={tweaks.hero === opt.v}
-                style={{
-                  padding: '6px 4px', fontSize: 10, letterSpacing: '0.08em',
-                  background: tweaks.hero === opt.v ? 'var(--accent)' : 'transparent',
-                  color: tweaks.hero === opt.v ? 'var(--bg)' : 'var(--ink-1)',
-                  border: '1px solid ' + (tweaks.hero === opt.v ? 'var(--accent)' : 'var(--line-2)'),
-                  fontFamily: 'inherit', cursor: 'pointer',
-                }}>{opt.l}</button>
-            ))}
-          </div>
-        </div>
         <div style={{ marginBottom: 16 }}>
           <div className="label-accent" style={{ marginBottom: 8 }}>{t('common.palette')}</div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
             {[
-              { v: 'instrument', l: 'CYAN', c: '#4ee8d1' },
-              { v: 'teal', l: 'TEAL', c: '#3dd9a8' },
-              { v: 'copper', l: 'COPPER', c: '#e89558' },
-              { v: 'paper', l: 'PAPER', c: '#0e6354' },
+              { v: 'instrument', c: '#4ee8d1' },
+              { v: 'teal', c: '#3dd9a8' },
+              { v: 'copper', c: '#e89558' },
+              { v: 'paper', c: '#0e6354' },
             ].map(opt => (
               <button key={opt.v}
                 onClick={() => setTweaks({ ...tweaks, palette: opt.v })}
                 aria-pressed={tweaks.palette === opt.v}
                 style={{
-                  padding: '6px 8px', fontSize: 10, textAlign: 'left',
+                  padding: '8px 10px', fontSize: 12, textAlign: 'left', minHeight: 44,
                   background: tweaks.palette === opt.v ? 'var(--bg-3)' : 'transparent',
                   color: 'var(--ink-1)',
                   border: '1px solid ' + (tweaks.palette === opt.v ? 'var(--accent)' : 'var(--line-2)'),
@@ -105,15 +84,15 @@ function TweaksPanel({ open, tweaks, setTweaks, onClose }) {
                   display: 'flex', alignItems: 'center', gap: 6,
                 }}>
                 <span aria-hidden="true" style={{ width: 8, height: 8, background: opt.c, border: '1px solid rgba(255,255,255,0.2)' }}/>
-                {opt.l}
+                {t(`common.palettes.${opt.v}`)}
               </button>
             ))}
           </div>
         </div>
         <div style={{ marginBottom: 8 }}>
           <div className="label-accent" style={{ marginBottom: 8 }}>{t('common.gridBackdrop')}</div>
-          <label style={{ display: 'flex', gap: 8, fontSize: 11, color: 'var(--ink-1)', cursor: 'pointer' }}>
-            <input type="checkbox" checked={tweaks.grid} onChange={e => setTweaks({ ...tweaks, grid: e.target.checked })}/>
+          <label style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 13, color: 'var(--ink-1)', cursor: 'pointer', minHeight: 44 }}>
+            <input type="checkbox" style={{ width: 20, minHeight: 0, padding: 0 }} checked={tweaks.grid} onChange={e => setTweaks({ ...tweaks, grid: e.target.checked })}/>
             {t('common.gridLabel')}
           </label>
         </div>
@@ -125,9 +104,9 @@ function TweaksPanel({ open, tweaks, setTweaks, onClose }) {
 function TweaksToggle({ onClick }) {
   const t = useT();
   return (
-    <button onClick={onClick} aria-label={t('common.tweaksAria')} title="Tweaks" style={{
+    <button onClick={onClick} aria-label={t('common.tweaksAria')} title={t('common.tweaks')} style={{
       position: 'fixed', bottom: 20, right: 20, zIndex: 99,
-      width: 40, height: 40,
+      width: 44, height: 44,
       background: 'var(--bg-1)', border: '1px solid var(--line-hi)',
       color: 'var(--accent)', cursor: 'pointer',
       fontFamily: 'var(--f-mono)', fontSize: 14,
@@ -135,7 +114,7 @@ function TweaksToggle({ onClick }) {
   );
 }
 
-const TWEAK_DEFAULTS = { hero: 'schematic', palette: 'instrument', grid: true };
+const TWEAK_DEFAULTS = { palette: 'instrument', grid: true };
 const TWEAKS_STORAGE = 'giova_water:tweaks';
 
 export default function App() {
@@ -145,11 +124,15 @@ export default function App() {
     if (typeof window === 'undefined') return TWEAK_DEFAULTS;
     try {
       const saved = window.localStorage?.getItem(TWEAKS_STORAGE);
-      return saved ? { ...TWEAK_DEFAULTS, ...JSON.parse(saved) } : TWEAK_DEFAULTS;
+      if (!saved) return TWEAK_DEFAULTS;
+      const { palette, grid } = JSON.parse(saved);   // drops the retired `hero` key
+      return { ...TWEAK_DEFAULTS, ...(palette ? { palette } : {}), ...(typeof grid === 'boolean' ? { grid } : {}) };
     } catch { return TWEAK_DEFAULTS; }
   });
   const [panelOpen, setPanelOpen] = useState(false);
   const [openProject, setOpenProject] = useState(null);
+  const t = useT();
+  const closeProject = useCallback(() => setOpenProject(null), []);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-palette', tweaks.palette);
@@ -170,16 +153,16 @@ export default function App() {
 
   return (
     <>
-      <a href="#main" className="skip-link">Saltar al contenido</a>
+      <a href="#main" className="skip-link">{t('nav.aria.skip')}</a>
       {tweaks.grid && <div className="grid-bg" aria-hidden="true"/>}
       <ScrollBackground />
       <Nav active={active} />
       {!isMobile && <ScrollRail active={active} />}
-      <main id="main" style={{ position: 'relative', zIndex: 1, padding: isMobile ? '72px 16px 0' : '120px 64px 0', maxWidth: 1440, margin: '0 auto' }}>
-        <section id="inicio" aria-label="Inicio">
-          <Hero variant={tweaks.hero}/>
+      <main id="main" style={{ position: 'relative', zIndex: 1, padding: isMobile ? '104px 16px 0' : '112px 64px 0', maxWidth: 1440, margin: '0 auto' }}>
+        <section id="inicio" aria-label={t('nav.items.inicio')}>
+          <Hero />
         </section>
-        <About />
+        <About onOpenProject={setOpenProject} />
         <Projects onOpen={setOpenProject} />
         <DigitalTwins />
         <Contact />
@@ -187,7 +170,7 @@ export default function App() {
       </main>
       {!isMobile && <TweaksToggle onClick={() => setPanelOpen(o => !o)} />}
       {!isMobile && <TweaksPanel open={panelOpen} tweaks={tweaks} setTweaks={setTweaks} onClose={() => setPanelOpen(false)} />}
-      <ProjectModal project={openProject} onClose={() => setOpenProject(null)} />
+      <ProjectModal project={openProject} onClose={closeProject} />
     </>
   );
 }

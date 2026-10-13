@@ -79,34 +79,51 @@ describe('i18n', () => {
 });
 
 describe('dictionary completeness', () => {
-  // Walk every key path in `es` and verify it exists in `en` and `fr`.
-  function walk(obj, prefix = []) {
+  // Every leaf of `es` must exist in `en` and `fr`, with arrays of the same length.
+  function leaves(obj, prefix = []) {
     const out = [];
     for (const k of Object.keys(obj)) {
       const v = obj[k];
       const path = [...prefix, k];
-      if (v && typeof v === 'object' && !Array.isArray(v)) {
-        out.push(...walk(v, path));
+      if (Array.isArray(v)) {
+        out.push([path.join('.'), 'array', v.length]);
+        v.forEach((item, i) => {
+          if (item && typeof item === 'object') out.push(...leaves(item, [...path, String(i)]));
+        });
+      } else if (v && typeof v === 'object') {
+        out.push(...leaves(v, path));
       } else {
-        out.push(path.join('.'));
+        out.push([path.join('.'), 'string']);
       }
     }
     return out;
   }
+  const get = (obj, path) => path.split('.').reduce((cur, p) => (cur == null ? undefined : cur[p]), obj);
 
-  // Pull the dictionary out by invoking the t() machinery through the provider.
-  // Easier: import the module and read it directly.
-  it('every es leaf key resolves in en and fr', async () => {
+  it.each(['en', 'fr'])('every es key exists in %s with the same shape', async (lang) => {
+    const { dictionary } = await import('../../src/i18n.jsx');
+    for (const [path, kind, len] of leaves(dictionary.es)) {
+      const v = get(dictionary[lang], path);
+      expect(v, `${lang}: ${path}`).toBeDefined();
+      if (kind === 'array') {
+        expect(Array.isArray(v), `${lang}: ${path} is an array`).toBe(true);
+        expect(v.length, `${lang}: ${path} length`).toBe(len);
+      } else {
+        expect(typeof v, `${lang}: ${path} type`).toBe('string');
+        // `types.0.v` is the intentionally empty value of the default <option>.
+        if (!path.endsWith('.v')) expect(v.trim().length, `${lang}: ${path} is empty`).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('resolves sampled keys in every language through t()', async () => {
     const mod = await import('../../src/i18n.jsx');
-    // Render once in each language and check t() returns a non-key value for sampled paths.
     const sampleKeys = [
-      'nav.items.inicio', 'hero.kicker', 'hero.role', 'hero.intro',
-      'hero.schematicLabels.captacion', 'about.kicker', 'about.idcard.role',
-      'projects.h2a', 'projects.data.P-001.title', 'projects.data.P-003.cat',
-      'twins.h2a', 'twins.dashboard.title', 'contact.h2a',
-      'contact.form.submit', 'footer.copy', 'common.tweaks',
+      'nav.items.inicio', 'hero.h1', 'hero.intro', 'hero.schematicLabels.captacion',
+      'about.cycle.title', 'about.budgets.title', 'projects.h2a',
+      'projects.data.P-001.title', 'projects.data.P-007.title',
+      'twins.badge', 'contact.form.prepare', 'footer.copy', 'common.tweaks',
     ];
-
     for (const lang of ['es', 'en', 'fr']) {
       const probe = { current: null };
       function Collect() {
@@ -117,15 +134,10 @@ describe('dictionary completeness', () => {
         return null;
       }
       await act(async () => {
-        render(
-          <mod.LangProvider>
-            <Collect />
-          </mod.LangProvider>
-        );
+        render(<mod.LangProvider><Collect /></mod.LangProvider>);
       });
       for (const { k, v } of probe.current) {
         expect(v, `lang=${lang} key=${k}`).not.toBe(k);
-        expect(v, `lang=${lang} key=${k}`).toBeDefined();
       }
     }
   });
