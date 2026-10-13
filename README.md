@@ -51,15 +51,20 @@ giova_water/
 │   ├── main.jsx                  # Entry — monta <App/> con <LangProvider/>
 │   ├── i18n.jsx                  # LangProvider, useT, useLang + diccionario ES/EN/FR
 │   ├── styles/tokens.css         # Tokens, paletas, focus rings, skip-link, modal
-│   ├── data/projects.js          # Metadata lang-agnostic de proyectos
+│   ├── data/projects.js          # Metadata lang-agnostic de proyectos: slug, destacado, ficheros de evidencia
+│   ├── data/sections.js          # Orden y numeración de las secciones (nav, rail, pie)
+│   ├── hooks/useNavigation.js    # Altura real de la cabecera (--nav-h) y scroll inicial a un fragmento
+│   ├── lib/twinSim.js            # Simulación ilustrativa de la demo (escenarios, estados, reducer)
 │   └── components/
-│       ├── App.jsx               # Shell: ScrollRail, TweaksPanel, modal wiring
-│       ├── Nav.jsx               # Nav fija + reloj UTC + selector ES/EN/FR
-│       ├── Hero.jsx              # 3 variantes: schematic / typographic / terminal
-│       ├── About.jsx             # ID card, bio, skills, timeline
-│       ├── Projects.jsx          # Grid filtrable de 6 proyectos
-│       ├── ProjectModal.jsx      # Detalle con focus trap, Escape, body scroll lock
-│       ├── DigitalTwins.jsx      # Dashboard SCADA con gauges, sparklines, LGH canvas
+│       ├── App.jsx               # Shell: ScrollRail, TweaksPanel, ficha de proyecto en la URL
+│       ├── Nav.jsx               # Nav fija + selector ES/EN/FR; publica su altura
+│       ├── Hero.jsx              # Titular, dos acciones y esquema PTAP (compacto en pantallas estrechas)
+│       ├── Projects.jsx          # Tres destacados, «Ver todos», filtros con contadores
+│       ├── About.jsx             # Perfil, competencias con enlaces a proyectos, cronología
+│       ├── Method.jsx            # Método en cuatro etapas con detalle desplegable
+│       ├── ProjectModal.jsx      # Ficha con focus trap, Escape, URL estable, presupuestos de P-007
+│       ├── DigitalTwins.jsx      # Demo con escenarios, pausa y restablecer
+│       ├── Faq.jsx               # Preguntas frecuentes (details nativos)
 │       ├── Contact.jsx           # Form + tarjeta + Footer (export nombrado)
 │       └── primitives.jsx        # Hooks + componentes compartidos
 └── tests/
@@ -78,11 +83,14 @@ giova_water/
 
 | § | id | Componente | Contenido |
 |---|---|---|---|
-| 00 | `inicio` | `Hero` | Tres variantes intercambiables (default: schematic con sensores en vivo + foto en campo). |
-| 01 | `sobre` | `About` | ID card con foto + bio en tres párrafos + 8 skill bars + timeline 2009–2025. |
-| 02 | `proyectos` | `Projects` + `ProjectModal` | 6 cards filtrables (Todos / Agua & Saneamiento / Digital & IoT) — abren modal de detalle. |
-| 03 | `gemelos` | `DigitalTwins` | Dashboard SCADA con gauges, sparklines y canvas de LGH (Línea de Gradiente Hidráulico). |
-| 04 | `contacto` | `Contact` | Form de contacto + tarjeta con email, teléfono, ubicación. |
+| 00 | `inicio` | `Hero` | Titular, «Ver proyectos» (principal) y «Consultar un proyecto», esquema PTAP ilustrativo. |
+| 01 | `proyectos` | `Projects` + `ProjectModal` | Tres destacados (Montebello, PTAPs rurales UAESP, La Vorágine), «Ver todos los proyectos» (7) y filtros con contadores. |
+| 02 | `sobre` | `About` + `Method` | Perfil, competencias ↔ proyectos, método en cuatro etapas y cronología breve. |
+| 03 | `gemelos` | `DigitalTwins` | Demo con datos simulados: escenarios, pausa y restablecer. |
+| 04 | `faq` | `Faq` | Preguntas frecuentes. |
+| 05 | `contacto` | `Contact` | Formulario que prepara un email, tarjeta de contacto y pie. |
+
+Cada proyecto tiene una URL estable `/#proyecto/<slug>` (los slugs están en `src/data/projects.js` y no se renombran). Es una ruta por fragmento: no necesita reescrituras en el servidor y abre la ficha correcta al cargarla directamente.
 
 Elementos transversales:
 - **`Nav`** fija con coordenadas, reloj UTC, status dot y switcher ES/EN/FR.
@@ -133,9 +141,9 @@ npm run dev          # Vite dev server (HMR) en http://localhost:5173
 npm run build        # Compila a dist/
 npm run preview      # Sirve dist/ en http://localhost:4173
 
-npm test             # Vitest una vez (9 tests)
+npm test             # Vitest una vez
 npm run test:watch   # Vitest en watch mode
-npm run test:e2e     # Playwright (necesita `npx playwright install chromium` la 1ª vez)
+npm run test:e2e     # Playwright (necesita `npx playwright install chromium` la 1ª vez; con CHROMIUM_PATH=/ruta/a/chromium usa uno ya instalado)
 npm run test:e2e:update  # Regenera baselines visuales tras cambios intencionales
 ```
 
@@ -163,10 +171,11 @@ Datos en código (intencionalmente públicos — es un portafolio):
 
 ## 10. Pendientes conocidos
 
-- **Form de contacto** — sigue en modo stub (sólo `setSent(true)`). Próximo paso: `mailto:` o servicio externo (decisión pendiente).
-- **Modal de proyecto** — solo abre con click, sin trap de Tab perfecto (Escape + body scroll lock sí están).
+- **Form de contacto** — prepara un email en la aplicación del visitante (`mailto:`); no envía nada. El envío directo queda pendiente de definir proveedor, configuración y tratamiento de datos.
 - **i18n** — sin extracción a archivos `.json` por idioma; todo en `src/i18n.jsx`. Si crece, conviene separar.
 
 ---
 
-_Última revisión: 2026-05-27_
+Recursos y requisitos pendientes de la mejora de octubre de 2026: [docs/mejora-2026-10.md](docs/mejora-2026-10.md).
+
+_Última revisión: 2026-10-13_

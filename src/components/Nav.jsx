@@ -2,14 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Logo, StatusDot } from './primitives.jsx';
 import { useT, useLang } from '../i18n.jsx';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
+import { useNavHeight } from '../hooks/useNavigation.js';
+import { SECTIONS } from '../data/sections.js';
 
-const ITEMS = [
-  { id: 'inicio', n: '00' },
-  { id: 'sobre', n: '01' },
-  { id: 'proyectos', n: '02' },
-  { id: 'gemelos', n: '03' },
-  { id: 'contacto', n: '04' },
-];
+const ITEMS = SECTIONS;
 
 export default function Nav({ active }) {
   const t = useT();
@@ -18,7 +14,9 @@ export default function Nav({ active }) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
   const toggleRef = useRef(null);
+  const navRef = useRef(null);
   const wasOpen = useRef(false);
+  useNavHeight(navRef);
 
   // Escape closes the menu; Tab stays inside it while it is open.
   useEffect(() => {
@@ -60,7 +58,7 @@ export default function Nav({ active }) {
 
   return (
     <>
-      <nav aria-label={t('nav.aria.main')} style={{
+      <nav ref={navRef} aria-label={t('nav.aria.main')} style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
         backdropFilter: 'blur(10px)',
         background: 'color-mix(in srgb, var(--bg) 82%, transparent)',
@@ -103,7 +101,7 @@ export default function Nav({ active }) {
                     color: active === it.id ? 'var(--accent)' : 'var(--ink-1)',
                     borderBottom: active === it.id ? '2px solid var(--accent)' : '2px solid transparent',
                   }}>
-                    <span style={{ fontSize: 11, color: active === it.id ? 'var(--accent)' : 'var(--ink-3)' }}>
+                    <span style={{ fontSize: 12, color: active === it.id ? 'var(--accent)' : 'var(--ink-3)' }}>
                       {it.n}
                     </span>
                     {t(`nav.items.${it.id}`)}

@@ -10,7 +10,6 @@ const T = {
     sensors: { caudal: 'Caudal', presion: 'Presión', turb: 'Turbidez', ph: 'pH' },
   },
   'hero.stats': [{ v: '11', l: 'años' }],
-  'hero.focus': ['Ingeniería del agua'],
 };
 vi.mock('../../src/i18n.jsx', () => ({
   useT: () => (key) => (key in T ? T[key] : key),

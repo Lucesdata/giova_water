@@ -120,7 +120,7 @@ describe('dictionary completeness', () => {
     const mod = await import('../../src/i18n.jsx');
     const sampleKeys = [
       'nav.items.inicio', 'hero.h1', 'hero.intro', 'hero.schematicLabels.captacion',
-      'about.cycle.title', 'about.budgets.title', 'projects.h2a',
+      'about.method.title', 'projects.h2a', 'projects.data.P-007.budgets.title', 'twins.scenarios.items.alta.name',
       'projects.data.P-001.title', 'projects.data.P-007.title',
       'twins.badge', 'contact.form.prepare', 'footer.copy', 'common.tweaks',
     ];

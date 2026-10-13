@@ -60,12 +60,22 @@ describe('presupuestos UAESP (datos del autor, sin sumar)', () => {
     expect(text('fr')).toContain('9 433 328 555');
   });
   it.each(LANGS)('%s: sin equivalencias en euros ni dólares', (lang) => {
-    const b = JSON.stringify(dictionary[lang].about.budgets) + JSON.stringify(dictionary[lang].projects.data['P-007']);
+    const b = JSON.stringify(dictionary[lang].projects.data['P-007']);
     expect(b).not.toMatch(/€|\bEUR\b|US\$|USD|\$ ?\d/);
   });
   it.each(LANGS)('%s: lenguaje de participación, no de gestión directa', (lang) => {
-    expect(dictionary[lang].about.cycle.note).toBeTruthy();
-    expect(dictionary[lang].about.budgets.label).toBeTruthy();
+    expect(dictionary[lang].about.method.note).toBeTruthy();
+    expect(dictionary[lang].projects.data['P-007'].budgets.label).toBeTruthy();
+    expect(dictionary[lang].projects.data['P-007'].budgets.participation).toBeTruthy();
+  });
+  it.each(LANGS)('%s: los cinco importes están solo en la ficha de monitoreo y automatización, sin sumar', (lang) => {
+    const d = dictionary[lang];
+    expect(d.about.budgets).toBeUndefined();
+    expect(d.projects.data['P-007'].budgets.items).toHaveLength(5);
+    // The card (result + metrics) never uses an amount as a headline figure.
+    const card = JSON.stringify([d.projects.data['P-007'].result, d.projects.data['P-007'].metrics]);
+    expect(card).not.toMatch(/COP\s?\d|\d\.\d{3}\.\d{3}|\d{1,3}(,\d{3}){2,}|\d{1,3}( \d{3}){2,}/);
+    expect(d.projects.data['P-007'].budgets.note).toMatch(/\S/);
   });
   void only;
 });
@@ -95,6 +105,49 @@ describe('proyectos', () => {
     const d = dictionary.es.projects.data['P-007'];
     expect(d.metrics.find(m => m.v === '11')).toBeDefined();
     expect(d.resultFull).toMatch(/no es el alcance técnico de 11/);
+  });
+});
+
+describe('estructura de la página', () => {
+  it('secciones en el orden pedido y con numeración consecutiva', async () => {
+    const { SECTIONS } = await import('../../src/data/sections.js');
+    expect(SECTIONS.map((x) => x.id)).toEqual(['inicio', 'proyectos', 'sobre', 'gemelos', 'faq', 'contacto']);
+    expect(SECTIONS.map((x) => x.n)).toEqual(['00', '01', '02', '03', '04', '05']);
+    for (const lang of LANGS) for (const { id } of SECTIONS) {
+      expect(dictionary[lang].nav.items[id], `${lang} nav.items.${id}`).toBeTruthy();
+    }
+  });
+  it('cada proyecto tiene una URL estable única y los destacados son Montebello, PTAPs rurales y La Vorágine', () => {
+    const slugs = projectsData.map((p) => p.slug);
+    expect(new Set(slugs).size).toBe(projectsData.length);
+    for (const s of slugs) expect(s).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
+    expect(projectsData.filter((p) => p.featured).map((p) => p.id)).toEqual(['P-001', 'P-002', 'P-003']);
+    expect(projectsData).toHaveLength(7);
+  });
+  it.each(LANGS)('%s: horario en hora de Madrid, sin CET ni React · Vite en el pie', (lang) => {
+    expect(dictionary[lang].contact.card.hoursValue).not.toMatch(/CET/);
+    expect(dictionary[lang].contact.card.hoursValue).toMatch(/Madrid/);
+    expect(JSON.stringify(dictionary[lang].footer)).not.toMatch(/React|Vite/);
+  });
+  it.each(LANGS)('%s: el hero conserva el titular y sus dos acciones, con descripción de dos frases', (lang) => {
+    const h = dictionary[lang].hero;
+    expect(h.ctaProjects).toBeTruthy();
+    expect(h.ctaContact).toBeTruthy();
+    expect(h.intro.split(/[.!?]\s/).length).toBe(2);
+    expect(h.focus).toBeUndefined();
+  });
+  it.each(LANGS)('%s: los cargos de la trayectoria no mezclan idiomas', (lang) => {
+    const roles = dictionary[lang].about.timeline.rows.map((r) => r.role).join(' ');
+    if (lang !== 'en') expect(roles).not.toMatch(/Project Lead|Technical Director|Water & Sanitation|\bSpecialist\b/);
+  });
+  it.each(LANGS)('%s: la demo conserva la etiqueta persistente y tres escenarios completos', (lang) => {
+    const t = dictionary[lang].twins;
+    expect(t.disclaimer.length).toBeGreaterThan(20);
+    for (const id of ['normal', 'alta', 'reducido']) {
+      const s = t.scenarios.items[id];
+      expect(s.name && s.changed && s.check, `${lang} ${id}`).toBeTruthy();
+    }
+    expect(t.scenarios.pause && t.scenarios.reset).toBeTruthy();
   });
 });
 
