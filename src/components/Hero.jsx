@@ -200,23 +200,23 @@ export default function Hero() {
           <span className="chip hero-photo-note">{t('hero.imageNote')}</span>
         </div>
         <div className="hero-copy">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14, flexWrap: 'wrap' }}>
             <span className="label-accent">{t('hero.kicker')}</span>
             <span aria-hidden="true" style={{ flex: 1, height: 1, background: 'var(--accent-line)', minWidth: 24 }}/>
             <span className="label" style={{ color: 'var(--ink-1)' }}>{t('hero.role')}</span>
           </div>
           <h1 style={{
             fontFamily: 'var(--f-mono)',
-            fontSize: 'clamp(32px, 4.2vw, 62px)',
+            fontSize: 'clamp(28px, 3.4vw, 48px)',
             lineHeight: 1.06,
             letterSpacing: '-0.03em',
             fontWeight: 600,
-            margin: '0 0 20px',
+            margin: '0 0 14px',
             textWrap: 'balance',
           }}>
             {split ? <>{h1.slice(0, h1.length - accent.length)}<span style={{ color: 'var(--accent)', whiteSpace: 'nowrap' }}>{accent}</span></> : h1}
           </h1>
-          <p className="prose" style={{ maxWidth: 520, fontSize: 18, margin: '0 0 28px', color: 'var(--ink)' }}>
+          <p className="prose" style={{ maxWidth: 560, fontSize: 17, margin: '0 0 22px', color: 'var(--ink)' }}>
             {t('hero.intro')}
           </p>
           <div className="hero-actions" style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
