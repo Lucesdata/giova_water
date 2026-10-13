@@ -2,9 +2,11 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
 import { LangProvider } from '../../src/i18n.jsx';
-import Tagline from '../../src/components/Tagline.jsx';
 import Faq from '../../src/components/Faq.jsx';
-import CycleFlow from '../../src/components/CycleFlow.jsx';
+import Method from '../../src/components/Method.jsx';
+import fs from 'node:fs';
+import path from 'node:path';
+import { dictionary } from '../../src/i18n.jsx';
 import { Reveal } from '../../src/components/primitives.jsx';
 
 let observers;
@@ -58,72 +60,44 @@ describe('Reveal', () => {
   });
 });
 
-describe('Tagline', () => {
-  it('has at least two lines of copy and wakes words one at a time, in reading order', () => {
+describe('Method', () => {
+  const method = dictionary.es.about.method;
+  it('shows four stages as a plain list and keeps the contracting note', () => {
     motion(false);
-    const { container } = wrap(<Tagline />);
-    const words = [...container.querySelectorAll('.tagline-word')];
-    expect(words.length).toBeGreaterThan(12);
-    expect(words.some(w => w.classList.contains('on'))).toBe(false);
-
-    // Words report their position relative to the trigger line (viewport y = 500).
-    const tops = new Map(words.map((w) => [w, 900]));
-    words.forEach((w) => { w.getBoundingClientRect = () => ({ top: tops.get(w) }); });
-    const io = observers[0];
-    const fire = (target) => act(() => io.cb([{ target, rootBounds: { bottom: 500 } }]));
-
-    words.slice(0, 3).forEach((w) => tops.set(w, 100));
-    fire(words[2]);
-    expect(words.slice(0, 3).every(w => w.classList.contains('on'))).toBe(true);
-    expect(words[3].classList.contains('on')).toBe(false);
-
-    // Scrolling back up: the word goes below the line and dims again.
-    tops.set(words[2], 900);
-    fire(words[2]);
-    expect(words[2].classList.contains('on')).toBe(false);
-    expect(words[1].classList.contains('on')).toBe(true);
+    const { container } = render(<Method method={method} />);
+    expect(container.querySelectorAll('.method-stage')).toHaveLength(4);
+    expect(container.textContent).toMatch(/decisiones de contratación y adjudicación corresponden a cada entidad/);
   });
-  it('catches up after a jump: words that were skipped over are lit too', () => {
+  it('puts the detail of every stage in an accessible native disclosure, closed by default', () => {
     motion(false);
-    const { container } = wrap(<Tagline />);
-    const words = [...container.querySelectorAll('.tagline-word')];
-    // Everything but the last 3 words is now above the line; only the last ones were observed.
-    words.forEach((w, i) => { w.getBoundingClientRect = () => ({ top: i < words.length - 3 ? -300 : 900 }); });
-    act(() => observers[0].cb([{ target: words[words.length - 4], rootBounds: { bottom: 500 } }]));
-    expect(words.filter(w => w.classList.contains('on'))).toHaveLength(words.length - 3);
+    const { container } = render(<Method method={method} />);
+    const details = [...container.querySelectorAll('details')];
+    expect(details).toHaveLength(4);
+    expect(details.every((d) => !d.open && d.querySelector('summary'))).toBe(true);
   });
-  it('shows the full text, with no dimming, under reduced motion', () => {
-    motion(true);
-    const { container } = wrap(<Tagline />);
-    const words = [...container.querySelectorAll('.tagline-word')];
-    expect(words.every(w => w.classList.contains('on'))).toBe(true);
-  });
-  it('keeps the sentence readable as plain text for assistive tech', () => {
-    motion(false);
-    const { container } = wrap(<Tagline />);
-    expect(container.querySelector('p').textContent).toMatch(/necesidad de agua en un proyecto ejecutable/);
+  it('covers the seven original steps inside the four stages', () => {
+    const steps = method.stages.flatMap((s) => s.steps);
+    expect(steps).toHaveLength(7);
   });
 });
 
-describe('CycleFlow', () => {
-  const cycle = { label: 'Cómo trabajo', title: 'T', note: 'N', steps: [{ t: 'Uno', d: 'a' }, { t: 'Dos', d: 'b' }, { t: 'Tres', d: 'c' }] };
-  it('follows the scroll: the active step changes when a sentinel crosses the centre band', () => {
-    motion(false);
-    const { container } = wrap(<CycleFlow cycle={cycle} />);
-    expect(container.querySelector('.cycle-stage')).not.toBeNull();
-    const items = () => [...container.querySelectorAll('.cycle-item')];
-    expect(items()[0].getAttribute('aria-current')).toBe('step');
-    const sentinels = [...container.querySelectorAll('[data-i]')];
-    act(() => observers[0].cb([{ isIntersecting: true, target: sentinels[2] }]));
-    expect(items()[2].getAttribute('aria-current')).toBe('step');
-    expect(items()[0].getAttribute('aria-current')).toBeNull();
-    expect(container.textContent).toContain('Paso 3 de 3');
+describe('motion rules (stylesheet)', () => {
+  const css = fs.readFileSync(path.resolve(__dirname, '../../src/styles/tokens.css'), 'utf8');
+  it('has no blur on entry animations and no entry transition longer than 250 ms', () => {
+    const reveal = css.slice(css.indexOf('.reveal {'), css.indexOf('.reveal.is-in'));
+    expect(reveal).not.toMatch(/blur|filter/);
+    const times = [...css.matchAll(/(?:transition|animation)[^;{}]*?(\d+)ms/g)].map((m) => Number(m[1]));
+    expect(Math.max(...times)).toBeLessThanOrEqual(250);
+    const shift = reveal.match(/translateY\((\d+)px\)/);
+    expect(Number(shift[1])).toBeLessThanOrEqual(12);
   });
-  it('falls back to a plain list with reduced motion', () => {
-    motion(true);
-    const { container } = wrap(<CycleFlow cycle={cycle} />);
-    expect(container.querySelector('.cycle-stage')).toBeNull();
-    expect(container.querySelectorAll('li')).toHaveLength(3);
+  it('turns smooth scrolling on only when the visitor has not asked for reduced motion', () => {
+    expect(css).toMatch(/@media \(prefers-reduced-motion: no-preference\)\s*\{\s*html \{ scroll-behavior: smooth; \}/);
+    expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\)[\s\S]*scroll-behavior: auto/);
+  });
+  it('keeps one single anchor offset: scroll-padding from the real header height', () => {
+    expect(css).toMatch(/scroll-padding-top: var\(--nav-h/);
+    expect(css).not.toMatch(/scroll-margin-top/);
   });
 });
 

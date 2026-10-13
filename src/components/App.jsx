@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useActiveSection, useScrollProgress } from './primitives.jsx';
+import { SECTIONS, SECTION_IDS } from '../data/sections.js';
+import { projectFromHash, projectHash } from '../data/projects.js';
+import { useInitialHashScroll } from '../hooks/useNavigation.js';
 import { useT } from '../i18n.jsx';
 import Nav from './Nav.jsx';
 import Hero from './Hero.jsx';
@@ -8,20 +11,13 @@ import Projects from './Projects.jsx';
 import ProjectModal from './ProjectModal.jsx';
 import DigitalTwins from './DigitalTwins.jsx';
 import { Contact, Footer } from './Contact.jsx';
-import Tagline from './Tagline.jsx';
 import Faq from './Faq.jsx';
 import { ScrollBackground } from './ScrollBackground.jsx';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
 
 function ScrollRail({ active }) {
   const p = useScrollProgress();
-  const sections = [
-    { id: 'inicio', n: '00' },
-    { id: 'sobre', n: '01' },
-    { id: 'proyectos', n: '02' },
-    { id: 'gemelos', n: '03' },
-    { id: 'contacto', n: '04' },
-  ];
+  const sections = SECTIONS;
   return (
     <div aria-hidden="true" style={{
       position: 'fixed', right: 20, top: '50%', transform: 'translateY(-50%)',
@@ -41,7 +37,7 @@ function ScrollRail({ active }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 10 }}>
         {sections.map(s => (
           <a key={s.id} href={`#${s.id}`} tabIndex={-1} style={{
-            fontFamily: 'var(--f-mono)', fontSize: 11,
+            fontFamily: 'var(--f-mono)', fontSize: 12,
             color: active === s.id ? 'var(--accent)' : 'var(--ink-3)',
             textDecoration: 'none',
           }}>{s.n}</a>
@@ -120,7 +116,8 @@ const TWEAK_DEFAULTS = { palette: 'instrument', grid: true };
 const TWEAKS_STORAGE = 'giova_water:tweaks';
 
 export default function App() {
-  const active = useActiveSection(['inicio', 'sobre', 'proyectos', 'gemelos', 'contacto']);
+  const active = useActiveSection(SECTION_IDS);
+  useInitialHashScroll();
   const { isMobile } = useBreakpoint();
   const [tweaks, setTweaks] = useState(() => {
     if (typeof window === 'undefined') return TWEAK_DEFAULTS;
@@ -132,9 +129,34 @@ export default function App() {
     } catch { return TWEAK_DEFAULTS; }
   });
   const [panelOpen, setPanelOpen] = useState(false);
-  const [openProject, setOpenProject] = useState(null);
+  // The open project is part of the address (#proyecto/<slug>), so a project can
+  // be opened directly, shared, and closed with the browser's Back button.
+  const [openProject, setOpenProject] = useState(() => projectFromHash(window.location.hash) || null);
   const t = useT();
-  const closeProject = useCallback(() => setOpenProject(null), []);
+
+  const openProjectFromUi = useCallback((p) => {
+    window.history.pushState({ modal: true }, '', projectHash(p));
+    setOpenProject(p);
+  }, []);
+
+  // `nextHash`: where to go after closing (e.g. #contacto). Without it the page
+  // returns to where it was, or to the projects section if it was opened directly.
+  const closeProject = useCallback((nextHash) => {
+    const target = typeof nextHash === 'string' ? nextHash : null;
+    if (!target && window.history.state?.modal) { window.history.back(); return; }
+    window.history.replaceState(null, '', target || '#proyectos');
+    setOpenProject(null);
+    requestAnimationFrame(() => {
+      document.getElementById((target || '#proyectos').slice(1))?.scrollIntoView({ block: 'start' });
+    });
+  }, []);
+
+  useEffect(() => {
+    const sync = () => setOpenProject(projectFromHash(window.location.hash) || null);
+    window.addEventListener('popstate', sync);
+    window.addEventListener('hashchange', sync);
+    return () => { window.removeEventListener('popstate', sync); window.removeEventListener('hashchange', sync); };
+  }, []);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-palette', tweaks.palette);
@@ -160,13 +182,12 @@ export default function App() {
       <ScrollBackground />
       <Nav active={active} />
       {!isMobile && <ScrollRail active={active} />}
-      <main id="main" style={{ position: 'relative', zIndex: 1, padding: isMobile ? '104px 16px 0' : '112px 64px 0', maxWidth: 1440, margin: '0 auto' }}>
+      <main id="main" tabIndex={-1} className="page">
         <section id="inicio" aria-label={t('nav.items.inicio')}>
           <Hero />
         </section>
-        <Tagline />
-        <About onOpenProject={setOpenProject} />
-        <Projects onOpen={setOpenProject} />
+        <Projects onOpen={openProjectFromUi} />
+        <About onOpenProject={openProjectFromUi} />
         <DigitalTwins />
         <Faq />
         <Contact />

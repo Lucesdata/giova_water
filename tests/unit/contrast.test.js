@@ -42,3 +42,20 @@ describe('contraste WCAG AA de los tokens de texto', () => {
     }
   }
 });
+
+describe('contraste de controles (WCAG 1.4.11, 3:1)', () => {
+  const palettes = parsePalettes();
+  for (const [name, tokens] of Object.entries(palettes)) {
+    for (const bg of ['bg', 'bg-1', 'bg-2']) {
+      it(`${name}: --ctl (borde de botones y campos) sobre --${bg} ≥ 3:1`, () => {
+        expect(ratio(tokens.ctl, tokens[bg])).toBeGreaterThanOrEqual(3);
+      });
+    }
+    it(`${name}: texto del botón principal (--bg sobre --accent) ≥ 4.5:1`, () => {
+      expect(ratio(tokens.bg, tokens.accent)).toBeGreaterThanOrEqual(4.5);
+    });
+    it(`${name}: anillo de foco (--accent) sobre --bg ≥ 3:1`, () => {
+      expect(ratio(tokens.accent, tokens.bg)).toBeGreaterThanOrEqual(3);
+    });
+  }
+});

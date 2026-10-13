@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { jitter } from '../lib/jitter.js';
+
+export { jitter };
 
 /* Utility: tick hook for live data */
 export function useTick(interval = 1000, enabled = true) {
@@ -44,13 +47,6 @@ export function useOnScreen(ref, rootMargin = '80px') {
   return on;
 }
 
-/* Utility: seeded pseudo-random jitter */
-export function jitter(base, amp, seed) {
-  const s = Math.sin(seed * 12.9898) * 43758.5453;
-  const r = s - Math.floor(s);
-  return base + (r - 0.5) * 2 * amp;
-}
-
 /* Animated number (ease-in toward target when visible) */
 export function AnimatedNumber({ value, duration = 1200, format = (v) => v.toFixed(0), trigger = true }) {
   const [v, setV] = useState(0);
@@ -86,10 +82,13 @@ export function useInView(opts = { threshold: 0.2 }) {
   return [ref, inView];
 }
 
-/* Gentle "heavy" fade-up when the element enters the viewport. Uses one
-   IntersectionObserver per element (no scroll listeners) and shows the content
-   straight away when the visitor prefers reduced motion. */
-export function Reveal({ as: Tag = 'div', delay = 0, className = '', style, children, ...rest }) {
+/* Short fade-up (opacity + 12 px, 200 ms) when the element enters the viewport.
+   One IntersectionObserver per element (no scroll listeners). It never delays
+   reading: no blur, no stagger (`delay` is accepted for old call sites and
+   ignored), and the content is shown at once when the visitor prefers reduced
+   motion or the browser has no IntersectionObserver. */
+// eslint-disable-next-line no-unused-vars
+export function Reveal({ as: Tag = 'div', delay, className = '', style, children, ...rest }) {
   const ref = useRef(null);
   const reduced = usePrefersReducedMotion();
   const [shown, setShown] = useState(false);
@@ -98,13 +97,12 @@ export function Reveal({ as: Tag = 'div', delay = 0, className = '', style, chil
     if (reduced || !el || typeof IntersectionObserver === 'undefined') { setShown(true); return undefined; }
     const io = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) { setShown(true); io.disconnect(); }
-    }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+    }, { threshold: 0, rootMargin: '0px 0px -4% 0px' });
     io.observe(el);
     return () => io.disconnect();
   }, [reduced]);
   return (
-    <Tag ref={ref} className={`reveal${shown ? ' is-in' : ''} ${className}`.trim()}
-         style={{ '--d': `${delay}ms`, ...style }} {...rest}>
+    <Tag ref={ref} className={`reveal${shown ? ' is-in' : ''} ${className}`.trim()} style={style} {...rest}>
       {children}
     </Tag>
   );
@@ -126,23 +124,37 @@ export function useScrollProgress() {
   return p;
 }
 
-/* Active section from scroll position */
+/* Active section from scroll position. A section becomes active once its top
+   is above the header height plus 30 % of the viewport, so an anchor jump (which
+   puts the section right under the header) always activates the target. At the
+   very bottom of the page the last section wins, because it may be too short to
+   ever reach the top. Positions come from getBoundingClientRect, not offsetTop
+   (offsetTop is relative to the offset parent, not to the page). */
 export function useActiveSection(ids) {
   const [active, setActive] = useState(ids[0]);
   useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY + window.innerHeight * 0.3;
+    let raf = 0;
+    const compute = () => {
+      raf = 0;
+      const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 0;
+      const line = header + window.innerHeight * 0.3;
+      const doc = document.documentElement;
+      if (window.scrollY + window.innerHeight >= doc.scrollHeight - 2) { setActive(ids[ids.length - 1]); return; }
       for (let i = ids.length - 1; i >= 0; i--) {
         const el = document.getElementById(ids[i]);
-        if (el && el.offsetTop <= y) {
-          setActive(ids[i]);
-          return;
-        }
+        if (el && el.getBoundingClientRect().top <= line) { setActive(ids[i]); return; }
       }
+      setActive(ids[0]);
     };
-    onScroll();
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(compute); };
+    compute();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, [ids.join(',')]);
   return active;
 }

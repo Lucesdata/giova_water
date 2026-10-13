@@ -1,34 +1,37 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useTick, useInView, useOnScreen, usePrefersReducedMotion, jitter, SectionIndex, Tag, Sparkline, Reveal } from './primitives.jsx';
+import React, { useState, useEffect, useReducer, useRef } from 'react';
+import { useInView, useOnScreen, usePrefersReducedMotion, SectionIndex, Tag, Sparkline, Reveal } from './primitives.jsx';
+import { SCENARIO_IDS, LIMITS, statusOf, simReducer, initialState } from '../lib/twinSim.js';
+import { sectionNumber } from '../data/sections.js';
 import { useT } from '../i18n.jsx';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
 
-function DashGauge({ label, value, unit, min, max, warn, alert, inView, statusLabels, showBorder = true }) {
+function DashGauge({ label, value, unit, k, decimals, inView, statusLabels, dirLabels, showBorder = true }) {
+  const { min, max } = LIMITS[k];
   const pct = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100));
-  const status = value >= alert ? 'alert' : value >= warn ? 'warn' : 'ok';
+  const { status, dir } = statusOf(k, value);
   const color = status === 'alert' ? 'var(--alert)' : status === 'warn' ? 'var(--warn)' : 'var(--accent)';
   return (
     <div style={{ padding: 16, borderRight: showBorder ? '1px solid var(--line)' : 'none' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
         <span className="label">{label}</span>
-        <span className="mono" style={{ fontSize: 12, color, letterSpacing: '0.08em' }}>● {statusLabels[status]}</span>
+        <span className="mono" style={{ fontSize: 12, color, letterSpacing: '0.06em' }}>● {statusLabels[status]}{dir ? ` · ${dirLabels[dir]}` : ''}</span>
       </div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 10 }}>
         <span style={{ fontFamily: 'var(--f-mono)', fontSize: 28, color: 'var(--ink)', letterSpacing: '-0.02em' }}>
-          {value.toFixed(unit === 'pH' || unit === 'bar' ? 2 : 1)}
+          {value.toFixed(decimals)}
         </span>
-        <span className="mono" style={{ fontSize: 12, color: 'var(--ink-2)' }}>{unit}</span>
+        <span className="mono" style={{ fontSize: 13, color: 'var(--ink-1)' }}>{unit}</span>
       </div>
-      <div role="progressbar" aria-valuenow={value} aria-valuemin={min} aria-valuemax={max} aria-label={label}
-           style={{ height: 2, background: 'var(--line)', position: 'relative' }}>
+      <div role="progressbar" aria-valuenow={Number(value.toFixed(decimals))} aria-valuemin={min} aria-valuemax={max} aria-label={label}
+           style={{ height: 3, background: 'var(--line)', position: 'relative' }}>
         <div style={{
           position: 'absolute', left: 0, top: 0, bottom: 0,
           width: inView ? `${pct}%` : '0%',
           background: color,
-          transition: 'width 800ms var(--ease)',
+          transition: 'width 250ms var(--ease)',
         }}/>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5, fontFamily: 'var(--f-mono)', fontSize: 11, color: 'var(--ink-2)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5, fontFamily: 'var(--f-mono)', fontSize: 12, color: 'var(--ink-2)' }}>
         <span>{min}</span>
         <span>{max}</span>
       </div>
@@ -49,14 +52,14 @@ function SparkTile({ label, series, unit, value, color = 'var(--accent)' }) {
       </div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 10 }}>
         <span style={{ fontFamily: 'var(--f-mono)', fontSize: 22, color: 'var(--ink)' }}>{value}</span>
-        <span className="mono" style={{ fontSize: 12, color: 'var(--ink-2)' }}>{unit}</span>
+        <span className="mono" style={{ fontSize: 13, color: 'var(--ink-1)' }}>{unit}</span>
       </div>
       <Sparkline data={series} color={color} width={180} height={28} label={label} />
     </div>
   );
 }
 
-function LGHCanvas({ animate, label }) {
+function LGHCanvas({ animate, label, slope = 0.02 }) {
   const ref = useRef();
   useEffect(() => {
     let raf, t = 0;
@@ -109,7 +112,7 @@ function LGHCanvas({ animate, label }) {
       ctx.stroke();
 
       const lgh = (x) => {
-        const base = h * 0.25 - x * 0.02;
+        const base = h * 0.25 - x * slope;
         return base - Math.sin(t * 0.02 + x * 0.008) * 4;
       };
       ctx.strokeStyle = 'rgba(78, 232, 209, 0.9)';
@@ -163,12 +166,12 @@ function LGHCanvas({ animate, label }) {
         ctx.arc(x, yl, 6 + (Math.sin(t*0.08 + i) * 2), 0, Math.PI * 2);
         ctx.stroke();
         ctx.fillStyle = 'rgba(170,180,192,0.8)';
-        ctx.font = '11px JetBrains Mono, monospace';
+        ctx.font = '12px JetBrains Mono, monospace';
         ctx.fillText(`N${i+1}`, x - 8, yl - 10);
       });
 
       ctx.fillStyle = 'rgba(170,180,192,0.85)';
-      ctx.font = '11px JetBrains Mono, monospace';
+      ctx.font = '12px JetBrains Mono, monospace';
       ctx.fillText('z [m]', 8, 14);
       ctx.fillText('x [m]', w - 40, h - 6);
 
@@ -180,53 +183,46 @@ function LGHCanvas({ animate, label }) {
     const onResize = () => { if (!animate) draw(); };
     window.addEventListener('resize', onResize);
     return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', onResize); };
-  }, [animate]);
+  }, [animate, slope]);
   return <canvas ref={ref} role="img" aria-label={label} style={{ width: '100%', height: '100%', display: 'block' }}/>;
 }
 
-const seedSeries = (base, amp, seed, n = 30) =>
-  Array.from({ length: n }, (_, i) => base + Math.sin(i / 3) * amp + jitter(0, amp / 3, seed + i));
+// Illustrative slope of the hydraulic gradient line per scenario (more flow, steeper line).
+const LGH_SLOPE = { normal: 0.02, alta: 0.045, reducido: 0.008 };
+const TICK_MS = 1000;
 
 export default function DigitalTwins() {
   const t = useT();
   const sectionRef = useRef(null);
   const onScreen = useOnScreen(sectionRef);
   const reduced = usePrefersReducedMotion();
-  const animate = onScreen && !reduced;
-  // The sampling clock only runs while the panel is visible and motion is allowed.
-  const tick = useTick(200, animate);
   const [seenRef, inView] = useInView({ threshold: 0.15 });
   const { isMobile } = useBreakpoint();
+  const [sim, dispatch] = useReducer(simReducer, undefined, initialState);
+  // With reduced motion the simulation starts paused; the visitor can resume it.
+  const [paused, setPaused] = useState(reduced);
+  useEffect(() => { if (reduced) setPaused(true); }, [reduced]);
 
-  const caudal = 42.3 + jitter(0, 1.2, tick);
-  const presion = 3.24 + jitter(0, 0.05, tick + 3);
-  const turbidez = 0.82 + jitter(0, 0.12, tick + 7);
-  const ph = 7.21 + jitter(0, 0.05, tick + 11);
-
-  const [series, setSeries] = useState(() => ({
-    q: seedSeries(40, 3, 100),
-    p: seedSeries(3.2, 0.15, 200),
-    tu: seedSeries(0.8, 0.2, 300),
-    ph: seedSeries(7.2, 0.08, 400),
-  }));
+  // Samples are taken only while the panel is on screen and not paused.
   useEffect(() => {
-    if (!tick) return;
-    setSeries(s => ({
-      q: [...s.q.slice(1), caudal],
-      p: [...s.p.slice(1), presion],
-      tu: [...s.tu.slice(1), turbidez],
-      ph: [...s.ph.slice(1), ph],
-    }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tick]);
+    if (paused || !onScreen) return undefined;
+    const id = setInterval(() => dispatch({ type: 'tick' }), TICK_MS);
+    return () => clearInterval(id);
+  }, [paused, onScreen]);
 
+  const animateCanvas = onScreen && !reduced && !paused;
+  const { q: caudal, p: presion, tu: turbidez, ph } = sim.readings;
   const D = t('twins.dashboard');
   const features = t('twins.features');
+  const S = t('twins.scenarios');
+  const current = S.items[sim.scenario];
+
+  const reset = () => { dispatch({ type: 'reset' }); setPaused(reduced); };
 
   return (
     <section id="gemelos" className="section" ref={(el) => { sectionRef.current = el; seenRef.current = el; }} aria-labelledby="twins-title">
-      <Reveal style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '180px 1fr', gap: 32, marginBottom: 32 }}>
-        <SectionIndex n="03" kicker={t('twins.kicker')} title={t('twins.title')} />
+      <Reveal style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '180px 1fr', gap: isMobile ? 16 : 32, marginBottom: 24 }}>
+        <SectionIndex n={sectionNumber('gemelos')} kicker={t('twins.kicker')} title={t('twins.title')} />
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
           <h2 id="twins-title" className="h2">
             {t('twins.h2a')} <span style={{ fontFamily: 'var(--f-serif)', fontStyle: 'italic', color: 'var(--ink-1)' }}>{t('twins.h2b')}</span>
@@ -235,30 +231,55 @@ export default function DigitalTwins() {
         </div>
       </Reveal>
 
-      <Reveal as="p" delay={90} style={{ maxWidth: 720, color: 'var(--ink-1)', fontSize: 16, lineHeight: 1.65, margin: '0 0 40px', textWrap: 'pretty' }}>
-        {t('twins.intro')}
-      </Reveal>
+      <p className="prose" style={{ maxWidth: 720, margin: '0 0 28px' }}>{t('twins.intro')}</p>
 
-      <Reveal delay={120} style={{ border: '1px solid var(--line-hi)', background: 'var(--bg-1)' }}>
+      <div style={{ border: '1px solid var(--line-hi)', background: 'var(--bg-1)' }}>
+        <p className="mono" style={{
+          margin: 0, padding: '10px 18px', borderBottom: '1px solid var(--line-hi)', fontSize: 14,
+          color: 'var(--accent)', background: 'var(--accent-soft)',
+        }}>
+          {t('twins.disclaimer')}
+        </p>
+
         <div style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap',
           padding: '12px 18px', borderBottom: '1px solid var(--line-hi)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-            <span className="mono" style={{ fontSize: 13, color: 'var(--ink)' }}>{D.title}</span>
-            <span className="mono" style={{ fontSize: 12, color: 'var(--ink-2)' }}>{D.sensors}</span>
+            <span className="mono" style={{ fontSize: 14, color: 'var(--ink)' }}>{D.title}</span>
+            <span className="mono" style={{ fontSize: 13, color: 'var(--ink-1)' }}>{D.sensors}</span>
           </div>
-          <span className="chip accent">{t('twins.badge')}</span>
+          <span className="chip accent">{paused ? S.paused : t('twins.badge')}</span>
+        </div>
+
+        <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--line)', display: 'grid', gap: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+            <div role="group" aria-label={S.label} className="seg">
+              {SCENARIO_IDS.map((id) => (
+                <button key={id} type="button" aria-pressed={sim.scenario === id} onClick={() => dispatch({ type: 'scenario', id })}>
+                  {S.items[id].name}
+                </button>
+              ))}
+            </div>
+            <div className="seg">
+              <button type="button" onClick={() => setPaused(p => !p)}>{paused ? S.resume : S.pause}</button>
+              <button type="button" onClick={reset}>{S.reset}</button>
+            </div>
+          </div>
+          <div role="status" aria-live="polite" style={{ display: 'grid', gap: 6, fontSize: 16, lineHeight: 1.55, color: 'var(--ink-1)' }}>
+            <p style={{ margin: 0 }}><strong style={{ color: 'var(--ink)', fontWeight: 500 }}>{S.changedLabel}</strong> {current.changed}</p>
+            <p style={{ margin: 0 }}><strong style={{ color: 'var(--ink)', fontWeight: 500 }}>{S.checkLabel}</strong> {current.check}</p>
+          </div>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, minmax(0, 1fr))' : 'repeat(4, minmax(0, 1fr))', borderBottom: '1px solid var(--line)' }}>
           {[
-            { label: D.gauges.caudal,   value: caudal,    unit: 'L/s', min: 0, max: 60,  warn: 50,  alert: 55  },
-            { label: D.gauges.presion,  value: presion,   unit: 'bar', min: 0, max: 5,   warn: 4,   alert: 4.5 },
-            { label: D.gauges.turbidez, value: turbidez,  unit: 'NTU', min: 0, max: 2,   warn: 1.2, alert: 1.5 },
-            { label: D.gauges.ph,       value: ph,        unit: 'pH',  min: 6, max: 8.5, warn: 8,   alert: 8.3 },
+            { k: 'q',  label: D.gauges.caudal,   value: caudal,   unit: 'L/s', decimals: 1 },
+            { k: 'p',  label: D.gauges.presion,  value: presion,  unit: 'bar', decimals: 2 },
+            { k: 'tu', label: D.gauges.turbidez, value: turbidez, unit: 'NTU', decimals: 2 },
+            { k: 'ph', label: D.gauges.ph,       value: ph,       unit: 'pH',  decimals: 2 },
           ].map((g, i) => (
-            <DashGauge key={i} {...g} inView={inView} statusLabels={D.status}
+            <DashGauge key={g.k} {...g} inView={inView} statusLabels={D.status} dirLabels={D.dir}
               showBorder={isMobile ? i % 2 === 0 : i < 3}
             />
           ))}
@@ -268,24 +289,24 @@ export default function DigitalTwins() {
           <div style={{ padding: 16, borderRight: isMobile ? 'none' : '1px solid var(--line)', minWidth: 0 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
               <span className="label">{D.lghLabel}</span>
-              <span className="mono" style={{ fontSize: 12, color: 'var(--ink-2)' }}>{D.scale}</span>
+              <span className="mono" style={{ fontSize: 13, color: 'var(--ink-1)' }}>{D.scale}</span>
             </div>
             <div style={{ height: isMobile ? 220 : 280, border: '1px solid var(--line)', background: 'var(--bg-2)' }}>
-              <LGHCanvas animate={animate} label={D.canvasAlt} />
+              <LGHCanvas animate={animateCanvas} label={D.canvasAlt} slope={LGH_SLOPE[sim.scenario]} />
             </div>
-            {reduced && <p className="mono" style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--ink-2)' }}>{D.paused}</p>}
+            {reduced && <p className="mono" style={{ margin: '8px 0 0', fontSize: 13, color: 'var(--ink-1)' }}>{D.paused}</p>}
           </div>
           <div style={{ padding: 16 }}>
             <div className="label" style={{ marginBottom: 12 }}>{D.stack}</div>
             {[[D.data, ['MQTT', 'InfluxDB', 'SCADA', 'Modbus']], [D.sim, ['EPANET-Python', 'WaterGEMS', 'HEC-RAS']], [D.viz, ['Three.js', 'Chart.js', 'React', 'D3']]].map(([lab, tags]) => (
               <div key={lab} style={{ marginBottom: 14 }}>
-                <div className="mono" style={{ fontSize: 12, color: 'var(--ink-2)', marginBottom: 6 }}>{lab}</div>
+                <div className="mono" style={{ fontSize: 13, color: 'var(--ink-1)', marginBottom: 6 }}>{lab}</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                   {tags.map(x => <Tag key={x}>{x}</Tag>)}
                 </div>
               </div>
             ))}
-            <p style={{ margin: '0 0 14px', color: 'var(--ink-2)', fontSize: 12, lineHeight: 1.5 }}>{D.stackNote}</p>
+            <p style={{ margin: '0 0 14px', color: 'var(--ink-1)', fontSize: 14, lineHeight: 1.5 }}>{D.stackNote}</p>
             <a href="#contacto" className="btn primary" style={{ width: '100%', justifyContent: 'center' }}>
               {D.openTwin}
             </a>
@@ -293,29 +314,26 @@ export default function DigitalTwins() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, minmax(0, 1fr))' : 'repeat(4, minmax(0, 1fr))' }}>
-          <SparkTile label={D.sparks.q} series={series.q} value={caudal.toFixed(1)} unit="L/s" />
-          <SparkTile label={D.sparks.p} series={series.p} value={presion.toFixed(2)} unit="bar" />
-          <SparkTile label={D.sparks.turb} series={series.tu} value={turbidez.toFixed(2)} unit="NTU" color="var(--warn)" />
-          <SparkTile label={D.sparks.ph} series={series.ph} value={ph.toFixed(2)} unit="pH" color="var(--accent-2)" />
+          <SparkTile label={D.sparks.q} series={sim.series.q} value={caudal.toFixed(1)} unit="L/s" />
+          <SparkTile label={D.sparks.p} series={sim.series.p} value={presion.toFixed(2)} unit="bar" />
+          <SparkTile label={D.sparks.turb} series={sim.series.tu} value={turbidez.toFixed(2)} unit="NTU" color="var(--warn)" />
+          <SparkTile label={D.sparks.ph} series={sim.series.ph} value={ph.toFixed(2)} unit="pH" color="var(--accent-2)" />
         </div>
 
-        <div style={{
-          padding: '10px 18px',
-          fontFamily: 'var(--f-mono)', fontSize: 12, color: 'var(--ink-2)',
-        }}>
-          <span style={{ color: 'var(--accent)' }}>{D.log.replace('{tick}', `#${tick}`)}</span>
+        <div style={{ padding: '10px 18px', fontFamily: 'var(--f-mono)', fontSize: 13, color: 'var(--ink-1)' }}>
+          <span style={{ color: 'var(--accent)' }}>{D.log.replace('{tick}', `#${sim.tick}`)}</span>
         </div>
-      </Reveal>
+      </div>
 
-      <div style={{ marginTop: 48 }}>
+      <div style={{ marginTop: 40 }}>
         <h3 className="label-accent" style={{ margin: '0 0 16px', fontWeight: 400 }}>{t('twins.utilityLabel')}</h3>
         <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', border: '1px solid var(--line)' }}>
           {(Array.isArray(features) ? features : []).map((c, i) => (
-            <Reveal as="li" key={i} delay={i * 110} style={{ padding: 24, borderLeft: i > 0 ? '1px solid var(--line)' : 'none', borderTop: '1px solid transparent' }}>
-              <div className="mono" style={{ fontSize: 12, color: 'var(--accent)', letterSpacing: '0.1em', marginBottom: 14 }}>{t('twins.featurePrefix')} · {c.k}</div>
-              <h4 style={{ margin: '0 0 8px', fontSize: 16, fontWeight: 500 }}>{c.t}</h4>
-              <p style={{ margin: 0, color: 'var(--ink-1)', fontSize: 14, lineHeight: 1.6 }}>{c.d}</p>
-            </Reveal>
+            <li key={i} style={{ padding: 24, borderLeft: !isMobile && i > 0 ? '1px solid var(--line)' : 'none', borderTop: isMobile && i > 0 ? '1px solid var(--line)' : 'none' }}>
+              <div className="mono" style={{ fontSize: 13, color: 'var(--accent)', letterSpacing: '0.1em', marginBottom: 14 }}>{t('twins.featurePrefix')} · {c.k}</div>
+              <h4 style={{ margin: '0 0 8px', fontSize: 17, fontWeight: 500 }}>{c.t}</h4>
+              <p className="prose" style={{ margin: 0 }}>{c.d}</p>
+            </li>
           ))}
         </ul>
       </div>

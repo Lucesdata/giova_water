@@ -3,6 +3,7 @@ import { SectionIndex, StatusDot, Logo, Copyable, Reveal } from './primitives.js
 import { useT } from '../i18n.jsx';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
 import { CONTACT, whatsappUrl, telUrl, validateContact, buildMailto } from '../lib/contact.js';
+import { SECTIONS, sectionNumber } from '../data/sections.js';
 
 const GITHUB_URL = 'https://github.com/Lucesdata';
 
@@ -61,7 +62,7 @@ export function Contact() {
   return (
     <section id="contacto" className="section" aria-labelledby="contact-title">
       <Reveal style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '180px 1fr', gap: 32, marginBottom: 48 }}>
-        <SectionIndex n="04" kicker={t('contact.kicker')} title={t('contact.title')} />
+        <SectionIndex n={sectionNumber('contacto')} kicker={t('contact.kicker')} title={t('contact.title')} />
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
           <h2 id="contact-title" className="h2">
             {t('contact.h2a')} <span style={{ fontFamily: 'var(--f-serif)', fontStyle: 'italic', color: 'var(--accent)' }}>{t('contact.h2b')}</span>
@@ -145,10 +146,10 @@ export function Contact() {
               <div className="mono" style={{ textAlign: 'right', fontSize: 12, color: 'var(--ink-2)', marginTop: 4 }}>{form.msg.length}/1000</div>
             </Field>
 
-            <p style={{ margin: '0 0 16px', color: 'var(--ink-1)', fontSize: 14, lineHeight: 1.55 }}>{F.explain}</p>
+            <p className="prose" style={{ margin: '0 0 16px' }}>{F.explain}</p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', paddingTop: 16, borderTop: '1px solid var(--line)' }}>
               <button type="submit" className="btn primary">{F.prepare}</button>
-              <span style={{ color: 'var(--ink-2)', fontSize: 13 }}>
+              <span style={{ color: 'var(--ink-1)', fontSize: 14 }}>
                 {F.fallback.replace('{email}', CONTACT.email)}
               </span>
             </div>
@@ -196,7 +197,7 @@ export function Footer() {
         <nav aria-label={t('footer.sections')}>
           <div className="label-accent" style={{ marginBottom: 8 }}>{t('footer.sections')}</div>
           <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', fontFamily: 'var(--f-mono)', fontSize: 13 }}>
-            {['inicio','sobre','proyectos','gemelos','contacto'].map(id => (
+            {SECTIONS.map(({ id }) => (
               <li key={id}><a href={`#${id}`} className="footer-link">{t(`nav.items.${id}`)}</a></li>
             ))}
           </ul>
@@ -213,8 +214,8 @@ export function Footer() {
         <div>
           <div className="label-accent" style={{ marginBottom: 8 }}>{t('footer.meta')}</div>
           <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 6, fontFamily: 'var(--f-mono)', fontSize: 13, color: 'var(--ink-1)' }}>
-            <li>{t('footer.tech')}</li>
             <li>{t('footer.langs')}</li>
+            <li style={{ lineHeight: 1.5 }}>{t('footer.note')}</li>
           </ul>
         </div>
       </div>
