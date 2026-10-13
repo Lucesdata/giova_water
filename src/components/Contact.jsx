@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { SectionIndex, StatusDot, Logo, Copyable } from './primitives.jsx';
+import { SectionIndex, StatusDot, Logo, Copyable, Reveal } from './primitives.jsx';
 import { useT } from '../i18n.jsx';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
 import { CONTACT, whatsappUrl, telUrl, validateContact, buildMailto } from '../lib/contact.js';
@@ -60,7 +60,7 @@ export function Contact() {
 
   return (
     <section id="contacto" className="section" aria-labelledby="contact-title">
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '180px 1fr', gap: 32, marginBottom: 48 }}>
+      <Reveal style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '180px 1fr', gap: 32, marginBottom: 48 }}>
         <SectionIndex n="04" kicker={t('contact.kicker')} title={t('contact.title')} />
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
           <h2 id="contact-title" className="h2">
@@ -68,7 +68,7 @@ export function Contact() {
           </h2>
           <StatusDot label={card.availableLong} />
         </div>
-      </div>
+      </Reveal>
 
       <div style={{
         display: 'grid', gap: isMobile ? 32 : 48,
@@ -76,7 +76,7 @@ export function Contact() {
         gridTemplateAreas: isMobile ? '"card" "form" "map"' : '"card form" "map form"',
         alignItems: 'start',
       }}>
-        <div style={{ ...area('card'), border: '1px solid var(--line-hi)', background: 'var(--bg-1)' }}>
+        <Reveal style={{ ...area('card'), border: '1px solid var(--line-hi)', background: 'var(--bg-1)' }}>
           <div className="mono" style={{ padding: '10px 16px', borderBottom: '1px solid var(--line)', fontSize: 12, color: 'var(--ink-2)' }}>{card.header}</div>
           <dl style={{ margin: 0, padding: 16, display: 'grid', gap: 16 }}>
             <div>
@@ -110,9 +110,10 @@ export function Contact() {
               <dd className="mono" style={{ margin: 0, fontSize: 13, color: 'var(--ink-1)' }}>{card.hoursValue}</dd>
             </div>
           </dl>
-        </div>
+        </Reveal>
 
-        <form ref={formRef} onSubmit={onSubmit} noValidate style={{ ...area('form'), border: '1px solid var(--line-hi)', background: 'var(--bg-1)' }}>
+        <Reveal delay={120} style={area('form')}>
+        <form ref={formRef} onSubmit={onSubmit} noValidate style={{ border: '1px solid var(--line-hi)', background: 'var(--bg-1)' }}>
           <div className="mono" style={{ padding: '10px 20px', borderBottom: '1px solid var(--line)', fontSize: 12, color: 'var(--ink-2)' }}>
             {F.header}
           </div>
@@ -156,8 +157,9 @@ export function Contact() {
             </div>
           </div>
         </form>
+        </Reveal>
 
-        <div style={{ ...area('map'), border: '1px solid var(--line)', padding: 16, background: 'var(--bg-1)' }}>
+        <Reveal delay={200} style={{ ...area('map'), border: '1px solid var(--line)', padding: 16, background: 'var(--bg-1)' }}>
           <div className="mono" style={{ fontSize: 12, color: 'var(--ink-2)', marginBottom: 8 }}>{card.geo}</div>
           <svg viewBox="0 0 240 100" width="100%" height="90" role="img" aria-label={card.mapAlt} style={{ display: 'block' }}>
             <defs>
@@ -173,7 +175,7 @@ export function Contact() {
             <text x="38" y="84" fontFamily="JetBrains Mono" fontSize="9" fill="var(--ink-1)">CALI</text>
             <line x1="56" y1="68" x2="165" y2="52" stroke="var(--accent-line)" strokeDasharray="2 2" strokeWidth="0.6"/>
           </svg>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

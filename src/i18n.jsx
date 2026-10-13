@@ -128,6 +128,7 @@ const dict = {
         label: 'Cómo trabajo',
         title: 'Del diagnóstico en campo a la entrega',
         note: 'Participo desde el área técnica. Las decisiones de contratación y adjudicación corresponden a cada entidad.',
+        stage: 'Paso {n} de {total}',
         steps: [
           { t: 'Diagnóstico en campo', d: 'Visita al sistema y levantamiento de información para entender el problema real.' },
           { t: 'Proyecciones técnicas', d: 'Población, demanda y caudales de diseño que sustentan la solución.' },
@@ -328,6 +329,24 @@ const dict = {
       ],
       featurePrefix: 'IDEA',
     },
+    tagline: {
+      label: 'Lo que busco',
+      text: 'Un diseño que se puede construir y un presupuesto que se puede revisar línea a línea: así se convierte una necesidad de agua en un proyecto ejecutable.',
+    },
+    faq: {
+      kicker: 'Preguntas frecuentes', title: 'faq',
+      h2a: 'Antes de', h2b: 'escribirme',
+      items: [
+        { q: '¿Qué tipo de proyectos atiendes?', a: 'Agua potable, aguas residuales, procesos industriales como lixiviados, modelación hidráulica de redes y monitoreo y automatización con SCADA e IoT.' },
+        { q: '¿En qué consiste la estructuración y los presupuestos?', a: 'Parto del diagnóstico en campo y de las proyecciones técnicas para definir la solución y un presupuesto detallado por capítulos, que se puede revisar línea a línea y sustentar técnicamente.' },
+        { q: '¿Tomas decisiones de contratación o adjudicación?', a: 'No. Mi participación es técnica: diseño, presupuesto, sustentación, apoyo en la evaluación de propuestas y acompañamiento de la ejecución. Las decisiones corresponden a cada entidad.' },
+        { q: '¿Cómo empezamos?', a: 'Cuéntame la necesidad, el lugar y los plazos con el formulario de contacto. Te prepara un email que envías tú desde tu correo; también puedes escribirme por teléfono o WhatsApp.' },
+        { q: '¿Puedo ver ejemplos de tu trabajo?', a: 'Sí, en Proyectos. Cada caso resume el reto, mi responsabilidad, la solución, el resultado y la evidencia, e indica las cifras que siguen en verificación.' },
+        { q: '¿El panel de gemelos digitales usa datos reales?', a: 'No. Es una demo con datos simulados en tu navegador, pensada para ilustrar cómo se vería un gemelo. Si te interesa una demostración, escríbeme desde el formulario.' },
+        { q: '¿Trabajas en remoto y en qué idiomas?', a: 'Sí, estoy en Sant Feliu de Llobregat (Barcelona), con experiencia en Colombia y España y disponible en remoto. Trabajo en español, francés e inglés.' },
+      ],
+      cta: { title: '¿Tienes una necesidad de agua o saneamiento? Cuéntamela.' },
+    },
     contact: {
       kicker: 'Contacto', title: 'contacto',
       h2a: 'Hablemos de', h2b: 'tu proyecto',
@@ -452,6 +471,7 @@ const dict = {
         label: 'How I work',
         title: 'From field diagnosis to handover',
         note: 'I take part from the technical side. Procurement and award decisions belong to each organisation.',
+        stage: 'Step {n} of {total}',
         steps: [
           { t: 'Field diagnosis', d: 'Site visit and data gathering to understand the real problem.' },
           { t: 'Technical projections', d: 'Population, demand and design flows that support the solution.' },
@@ -652,6 +672,24 @@ const dict = {
       ],
       featurePrefix: 'IDEA',
     },
+    tagline: {
+      label: 'What I aim for',
+      text: 'A design that can be built and a budget that can be reviewed line by line: that is how a water need becomes an executable project.',
+    },
+    faq: {
+      kicker: 'Frequently asked questions', title: 'faq',
+      h2a: 'Before you', h2b: 'write to me',
+      items: [
+        { q: 'What kind of projects do you take on?', a: 'Drinking water, wastewater, industrial processes such as leachate, hydraulic modelling of networks, and monitoring and automation with SCADA and IoT.' },
+        { q: 'What do project structuring and budgets involve?', a: 'I start from the field diagnosis and the technical projections to define the solution and a detailed budget by chapter, which can be reviewed line by line and defended technically.' },
+        { q: 'Do you make procurement or award decisions?', a: 'No. My participation is technical: design, budget, technical defence, support in evaluating proposals and support during execution. Decisions belong to each organisation.' },
+        { q: 'How do we start?', a: 'Tell me the need, the location and the expected timeline through the contact form. It prepares an email that you send yourself from your own mail; you can also reach me by phone or WhatsApp.' },
+        { q: 'Can I see examples of your work?', a: 'Yes, in Projects. Each case summarises the challenge, my responsibility, the solution, the result and the evidence, and flags the figures that are still being verified.' },
+        { q: 'Does the digital twin panel use real data?', a: 'No. It is a demo with data simulated in your browser, meant to illustrate what a twin would look like. If you are interested in a demonstration, write to me through the form.' },
+        { q: 'Do you work remotely, and in which languages?', a: 'Yes. I am based in Sant Feliu de Llobregat (Barcelona), with experience in Colombia and Spain, and available remotely. I work in Spanish, French and English.' },
+      ],
+      cta: { title: 'Have a water or sanitation need? Tell me about it.' },
+    },
     contact: {
       kicker: 'Contact', title: 'contact',
       h2a: 'Let’s talk about', h2b: 'your project',
@@ -776,6 +814,7 @@ const dict = {
         label: 'Ma méthode',
         title: 'Du diagnostic de terrain à la livraison',
         note: 'J’interviens côté technique. Les décisions de passation et d’attribution des marchés reviennent à chaque organisme.',
+        stage: 'Étape {n} sur {total}',
         steps: [
           { t: 'Diagnostic de terrain', d: 'Visite du système et collecte d’informations pour comprendre le vrai problème.' },
           { t: 'Projections techniques', d: 'Population, demande et débits de conception qui étayent la solution.' },
@@ -975,6 +1014,24 @@ const dict = {
         { k: '03', t: 'Un langage pour décider', d: 'Il présente les données clairement à ceux qui ne sont pas techniciens et doivent trancher.' },
       ],
       featurePrefix: 'IDÉE',
+    },
+    tagline: {
+      label: 'Ce que je recherche',
+      text: 'Une conception constructible et un budget vérifiable ligne par ligne : c’est ainsi qu’un besoin en eau devient un projet exécutable.',
+    },
+    faq: {
+      kicker: 'Questions fréquentes', title: 'faq',
+      h2a: 'Avant de', h2b: 'm’écrire',
+      items: [
+        { q: 'Quels types de projets prenez-vous en charge ?', a: 'Eau potable, eaux usées, procédés industriels comme les lixiviats, modélisation hydraulique de réseaux, et suivi et automatisation avec SCADA et IoT.' },
+        { q: 'En quoi consistent la structuration et les budgets ?', a: 'Je pars du diagnostic de terrain et des projections techniques pour définir la solution et un budget détaillé par chapitre, vérifiable ligne par ligne et défendable techniquement.' },
+        { q: 'Prenez-vous des décisions de passation ou d’attribution ?', a: 'Non. Mon intervention est technique : conception, budget, défense technique, appui à l’évaluation des offres et accompagnement de l’exécution. Les décisions reviennent à chaque organisme.' },
+        { q: 'Comment commencer ?', a: 'Décrivez-moi le besoin, le lieu et le calendrier prévu avec le formulaire de contact. Il prépare un email que vous envoyez vous-même depuis votre messagerie ; vous pouvez aussi me joindre par téléphone ou WhatsApp.' },
+        { q: 'Puis-je voir des exemples de votre travail ?', a: 'Oui, dans Projets. Chaque cas résume le défi, ma responsabilité, la solution, le résultat et les preuves, et signale les chiffres encore en cours de vérification.' },
+        { q: 'Le panneau de jumeau numérique utilise-t-il des données réelles ?', a: 'Non. C’est une démo avec des données simulées dans votre navigateur, destinée à illustrer ce que serait un jumeau. Si une démonstration vous intéresse, écrivez-moi via le formulaire.' },
+        { q: 'Travaillez-vous à distance, et dans quelles langues ?', a: 'Oui. Je suis à Sant Feliu de Llobregat (Barcelone), avec une expérience en Colombie et en Espagne, et disponible à distance. Je travaille en espagnol, français et anglais.' },
+      ],
+      cta: { title: 'Un besoin en eau ou en assainissement ? Parlez-m’en.' },
     },
     contact: {
       kicker: 'Contact', title: 'contact',

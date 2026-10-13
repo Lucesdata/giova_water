@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SectionIndex, Tag } from './primitives.jsx';
+import { SectionIndex, Tag, Reveal } from './primitives.jsx';
 import { useT } from '../i18n.jsx';
 import { projectsData } from '../data/projects.js';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
@@ -9,13 +9,13 @@ export function tagLabel(t, tag) {
   return typeof tag === 'string' ? tag : t(`projects.tagLabels.${tag.k}`);
 }
 
-function ProjectCard({ p, onOpen }) {
+function ProjectCard({ p, onOpen, delay = 0 }) {
   const t = useT();
   const i18n = t(`projects.data.${p.id}`) || {};
   const metrics = Array.isArray(i18n.metrics) ? i18n.metrics.slice(0, 3) : [];
   const title = i18n.title || p.id;
   return (
-    <article className="project-card">
+    <Reveal as="article" className="project-card" delay={delay}>
       <div style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8,
         padding: '10px 16px', borderBottom: '1px solid var(--line)',
@@ -60,7 +60,7 @@ function ProjectCard({ p, onOpen }) {
           {t('projects.open')} <span aria-hidden="true">→</span>
         </button>
       </div>
-    </article>
+    </Reveal>
   );
 }
 
@@ -77,14 +77,14 @@ export default function Projects({ onOpen }) {
 
   return (
     <section id="proyectos" className="section" aria-labelledby="projects-title">
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '180px 1fr', gap: 32, marginBottom: 32 }}>
+      <Reveal style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '180px 1fr', gap: 32, marginBottom: 32 }}>
         <SectionIndex n="02" kicker={t('projects.kicker')} title={t('projects.title')} />
         <div style={{ display: 'flex', alignItems: 'flex-end' }}>
           <h2 id="projects-title" className="h2">
             {t('projects.h2a')} <span style={{ fontFamily: 'var(--f-serif)', fontStyle: 'italic', color: 'var(--ink-1)' }}>{t('projects.h2b')}</span>
           </h2>
         </div>
-      </div>
+      </Reveal>
       <p style={{ margin: '0 0 24px', color: 'var(--ink-1)', fontSize: 15, lineHeight: 1.6, maxWidth: 680, textWrap: 'pretty' }}>{t('projects.intro')}</p>
 
       <div style={{
@@ -106,7 +106,7 @@ export default function Projects({ onOpen }) {
       </div>
 
       <div className="projects-grid">
-        {visible.map(p => <ProjectCard key={p.id} p={p} onOpen={onOpen} />)}
+        {visible.map((p, i) => <ProjectCard key={p.id} p={p} onOpen={onOpen} delay={(i % 3) * 90} />)}
       </div>
 
       <div style={{ marginTop: 32, display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid var(--line)', paddingTop: 16 }}>

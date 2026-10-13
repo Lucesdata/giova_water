@@ -8,6 +8,8 @@ import Projects from './Projects.jsx';
 import ProjectModal from './ProjectModal.jsx';
 import DigitalTwins from './DigitalTwins.jsx';
 import { Contact, Footer } from './Contact.jsx';
+import Tagline from './Tagline.jsx';
+import Faq from './Faq.jsx';
 import { ScrollBackground } from './ScrollBackground.jsx';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
 
@@ -162,9 +164,11 @@ export default function App() {
         <section id="inicio" aria-label={t('nav.items.inicio')}>
           <Hero />
         </section>
+        <Tagline />
         <About onOpenProject={setOpenProject} />
         <Projects onOpen={setOpenProject} />
         <DigitalTwins />
+        <Faq />
         <Contact />
         <Footer />
       </main>

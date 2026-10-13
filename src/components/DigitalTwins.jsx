@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useTick, useInView, useOnScreen, usePrefersReducedMotion, jitter, SectionIndex, Tag, Sparkline } from './primitives.jsx';
+import { useTick, useInView, useOnScreen, usePrefersReducedMotion, jitter, SectionIndex, Tag, Sparkline, Reveal } from './primitives.jsx';
 import { useT } from '../i18n.jsx';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
 
@@ -225,7 +225,7 @@ export default function DigitalTwins() {
 
   return (
     <section id="gemelos" className="section" ref={(el) => { sectionRef.current = el; seenRef.current = el; }} aria-labelledby="twins-title">
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '180px 1fr', gap: 32, marginBottom: 32 }}>
+      <Reveal style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '180px 1fr', gap: 32, marginBottom: 32 }}>
         <SectionIndex n="03" kicker={t('twins.kicker')} title={t('twins.title')} />
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
           <h2 id="twins-title" className="h2">
@@ -233,13 +233,13 @@ export default function DigitalTwins() {
           </h2>
           <span className="chip accent">{t('twins.badge')}</span>
         </div>
-      </div>
+      </Reveal>
 
-      <p style={{ maxWidth: 720, color: 'var(--ink-1)', fontSize: 16, lineHeight: 1.65, margin: '0 0 40px', textWrap: 'pretty' }}>
+      <Reveal as="p" delay={90} style={{ maxWidth: 720, color: 'var(--ink-1)', fontSize: 16, lineHeight: 1.65, margin: '0 0 40px', textWrap: 'pretty' }}>
         {t('twins.intro')}
-      </p>
+      </Reveal>
 
-      <div style={{ border: '1px solid var(--line-hi)', background: 'var(--bg-1)' }}>
+      <Reveal delay={120} style={{ border: '1px solid var(--line-hi)', background: 'var(--bg-1)' }}>
         <div style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap',
           padding: '12px 18px', borderBottom: '1px solid var(--line-hi)',
@@ -305,17 +305,17 @@ export default function DigitalTwins() {
         }}>
           <span style={{ color: 'var(--accent)' }}>{D.log.replace('{tick}', `#${tick}`)}</span>
         </div>
-      </div>
+      </Reveal>
 
       <div style={{ marginTop: 48 }}>
         <h3 className="label-accent" style={{ margin: '0 0 16px', fontWeight: 400 }}>{t('twins.utilityLabel')}</h3>
         <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', border: '1px solid var(--line)' }}>
           {(Array.isArray(features) ? features : []).map((c, i) => (
-            <li key={i} style={{ padding: 24, borderLeft: i > 0 ? '1px solid var(--line)' : 'none', borderTop: '1px solid transparent' }}>
+            <Reveal as="li" key={i} delay={i * 110} style={{ padding: 24, borderLeft: i > 0 ? '1px solid var(--line)' : 'none', borderTop: '1px solid transparent' }}>
               <div className="mono" style={{ fontSize: 12, color: 'var(--accent)', letterSpacing: '0.1em', marginBottom: 14 }}>{t('twins.featurePrefix')} · {c.k}</div>
               <h4 style={{ margin: '0 0 8px', fontSize: 16, fontWeight: 500 }}>{c.t}</h4>
               <p style={{ margin: 0, color: 'var(--ink-1)', fontSize: 14, lineHeight: 1.6 }}>{c.d}</p>
-            </li>
+            </Reveal>
           ))}
         </ul>
       </div>
