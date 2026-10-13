@@ -86,6 +86,30 @@ export function useInView(opts = { threshold: 0.2 }) {
   return [ref, inView];
 }
 
+/* Gentle "heavy" fade-up when the element enters the viewport. Uses one
+   IntersectionObserver per element (no scroll listeners) and shows the content
+   straight away when the visitor prefers reduced motion. */
+export function Reveal({ as: Tag = 'div', delay = 0, className = '', style, children, ...rest }) {
+  const ref = useRef(null);
+  const reduced = usePrefersReducedMotion();
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (reduced || !el || typeof IntersectionObserver === 'undefined') { setShown(true); return undefined; }
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setShown(true); io.disconnect(); }
+    }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [reduced]);
+  return (
+    <Tag ref={ref} className={`reveal${shown ? ' is-in' : ''} ${className}`.trim()}
+         style={{ '--d': `${delay}ms`, ...style }} {...rest}>
+      {children}
+    </Tag>
+  );
+}
+
 /* Scroll progress (0-1) */
 export function useScrollProgress() {
   const [p, setP] = useState(0);

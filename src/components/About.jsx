@@ -1,5 +1,6 @@
 import React from 'react';
-import { useInView, SectionIndex, Tag, Copyable, usePrefersReducedMotion } from './primitives.jsx';
+import { SectionIndex, Tag, Copyable, Reveal } from './primitives.jsx';
+import CycleFlow from './CycleFlow.jsx';
 import { useT } from '../i18n.jsx';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
 import { projectById } from '../data/projects.js';
@@ -36,11 +37,11 @@ const TIMELINE_TAGS = [
   ['UPEC', 'M.Eng.', 'CPQCOL'],
 ];
 
-function Competencia({ skill, projects, onOpenProject, label }) {
+function Competencia({ skill, projects, onOpenProject, label, delay = 0 }) {
   const t = useT();
   const I = t(`about.skills.items.${skill}`);
   return (
-    <li style={{ border: '1px solid var(--line)', background: 'var(--bg-1)', padding: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <Reveal as="li" delay={delay} style={{ border: '1px solid var(--line)', background: 'var(--bg-1)', padding: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
       <h4 style={{ margin: 0, fontFamily: 'var(--f-mono)', fontSize: 15, fontWeight: 500, color: 'var(--ink)' }}>{I.name}</h4>
       <p style={{ margin: 0, color: 'var(--ink-1)', fontSize: 14, lineHeight: 1.6, flex: 1 }}>{I.uses}</p>
       <div>
@@ -58,23 +59,17 @@ function Competencia({ skill, projects, onOpenProject, label }) {
           })}
         </div>
       </div>
-    </li>
+    </Reveal>
   );
 }
 
 function TimelineRow({ year, role, org, body, location, tags }) {
   const { isMobile } = useBreakpoint();
-  const reduced = usePrefersReducedMotion();
-  const [ref, inView] = useInView({ threshold: 0.2 });
-  const shown = inView || reduced;
   return (
-    <div ref={ref} style={{
+    <Reveal style={{
       display: 'grid', gridTemplateColumns: isMobile ? '88px 1fr' : '140px 1fr',
       gap: isMobile ? 16 : 32, padding: '28px 0',
       borderTop: '1px solid var(--line)',
-      opacity: shown ? 1 : 0,
-      transform: shown ? 'translateY(0)' : 'translateY(12px)',
-      transition: 'opacity 700ms var(--ease), transform 700ms var(--ease)',
     }}>
       <div>
         <div style={{ fontFamily: 'var(--f-mono)', fontSize: 13, color: 'var(--accent)', letterSpacing: '0.04em' }}>{year}</div>
@@ -90,7 +85,7 @@ function TimelineRow({ year, role, org, body, location, tags }) {
           {tags.map(tag => <Tag key={tag}>{tag}</Tag>)}
         </div>
       </div>
-    </div>
+    </Reveal>
   );
 }
 
@@ -105,14 +100,14 @@ export default function About({ onOpenProject }) {
 
   return (
     <section id="sobre" className="section" aria-labelledby="about-title">
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '180px 1fr', gap: 32, marginBottom: 48 }}>
+      <Reveal style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '180px 1fr', gap: 32, marginBottom: 48 }}>
         <SectionIndex n="01" kicker={t('about.kicker')} title={t('about.title')} />
         <div style={{ display: 'flex', alignItems: 'flex-end' }}>
           <h2 id="about-title" className="h2">
             {t('about.h2a')} <span style={{ fontFamily: 'var(--f-serif)', fontStyle: 'italic', color: 'var(--ink-1)' }}>{t('about.h2b')}</span> {t('about.h2c')}
           </h2>
         </div>
-      </div>
+      </Reveal>
 
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '340px minmax(0, 1fr)', gap: isMobile ? 32 : 48 }}>
         <div>
@@ -176,26 +171,18 @@ export default function About({ onOpenProject }) {
             {interpolate(t('about.bio3'), { iotio: bold(t('about.bio3Iotio')) })}
           </p>
 
-          <h3 className="label-accent" style={{ margin: '0 0 8px', fontWeight: 400 }}>{cycle.label}</h3>
-          <p style={{ margin: '0 0 20px', fontFamily: 'var(--f-mono)', fontSize: 18, color: 'var(--ink)', maxWidth: 560 }}>{cycle.title}</p>
-          <ol style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))' }}>
-            {(Array.isArray(cycle.steps) ? cycle.steps : []).map((s, i) => (
-              <li key={i} style={{ border: '1px solid var(--line)', background: 'var(--bg-1)', padding: 16 }}>
-                <div className="mono" style={{ fontSize: 12, color: 'var(--accent)', marginBottom: 8 }}>{String(i + 1).padStart(2, '0')}</div>
-                <div style={{ fontFamily: 'var(--f-mono)', fontSize: 14, color: 'var(--ink)', marginBottom: 6 }}>{s.t}</div>
-                <p style={{ margin: 0, color: 'var(--ink-1)', fontSize: 13, lineHeight: 1.55 }}>{s.d}</p>
-              </li>
-            ))}
-          </ol>
-          <p style={{ margin: '16px 0 0', color: 'var(--ink-2)', fontSize: 13, lineHeight: 1.55, maxWidth: 620 }}>{cycle.note}</p>
         </div>
+      </div>
+
+      <div style={{ marginTop: 96 }}>
+        <CycleFlow cycle={cycle} />
       </div>
 
       <div style={{ marginTop: 72 }}>
         <h3 className="label-accent" style={{ margin: '0 0 20px', fontWeight: 400 }}>{t('about.skills.label')}</h3>
         <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))' }}>
-          {COMPETENCIAS.map(c => (
-            <Competencia key={c.key} skill={c.key} projects={c.projects} onOpenProject={onOpenProject} label={t('about.skills.appliedIn')} />
+          {COMPETENCIAS.map((c, i) => (
+            <Competencia key={c.key} skill={c.key} projects={c.projects} onOpenProject={onOpenProject} label={t('about.skills.appliedIn')} delay={(i % 3) * 90} />
           ))}
         </ul>
       </div>
@@ -206,11 +193,11 @@ export default function About({ onOpenProject }) {
         <p style={{ margin: '0 0 20px', color: 'var(--ink-1)', fontSize: 14, lineHeight: 1.6, maxWidth: 720 }}>{budgets.intro}</p>
         <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))' }}>
           {(Array.isArray(budgets.items) ? budgets.items : []).map((b, i) => (
-            <li key={i} style={{ border: '1px solid var(--line-hi)', background: 'var(--bg-1)', padding: 18, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <Reveal as="li" key={i} delay={(i % 3) * 90} style={{ border: '1px solid var(--line-hi)', background: 'var(--bg-1)', padding: 18, display: 'flex', flexDirection: 'column', gap: 8 }}>
               <span className="label-accent">{b.tag}</span>
               <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'clamp(17px, 1.6vw, 20px)', color: 'var(--ink)', letterSpacing: '-0.01em', overflowWrap: 'anywhere' }}>{b.v}</span>
               <span style={{ color: 'var(--ink-1)', fontSize: 13, lineHeight: 1.55 }}>{b.d}</span>
-            </li>
+            </Reveal>
           ))}
         </ul>
         <p style={{ margin: '16px 0 0', color: 'var(--ink-2)', fontSize: 13, lineHeight: 1.55, maxWidth: 720 }}>{budgets.note}</p>

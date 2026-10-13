@@ -26,10 +26,10 @@ function watch(page) {
 test.beforeEach(async ({ page }) => { await seedLang(page, 'es'); });
 
 test.describe('estructura', () => {
-  test('home renders 5 sections, a skip link and one h1', async ({ page }) => {
+  test('home renders its 7 sections, a skip link and one h1', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('nav').first()).toBeVisible();
-    await expect(page.locator('main section')).toHaveCount(5);
+    await expect(page.locator('main section')).toHaveCount(7);
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.locator('h1')).toContainText('Ingeniería del agua, de la necesidad a la operación.');
     await expect(page.locator('a.skip-link')).toHaveCount(1);
@@ -51,6 +51,59 @@ test.describe('estructura', () => {
     await page.waitForLoadState('networkidle');
     await page.locator('#contacto').scrollIntoViewIfNeeded();
     expect(problems).toEqual([]);
+  });
+});
+
+test.describe('scroll', () => {
+  test('sections reveal as they enter the viewport', async ({ page }) => {
+    await page.goto('/');
+    const card = page.locator('#proyectos article').nth(3);
+    await expect(card).not.toHaveClass(/is-in/);
+    await card.scrollIntoViewIfNeeded();
+    await expect(card).toHaveClass(/is-in/);
+    await expect.poll(() => card.evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
+  });
+
+  test('the tagline wakes word by word and dims again when scrolling back up', async ({ page }) => {
+    await page.goto('/');
+    const words = page.locator('#eslogan .tagline-word');
+    const total = await words.count();
+    expect(total).toBeGreaterThan(12);
+    await page.locator('#eslogan').scrollIntoViewIfNeeded();
+    // Put the last word above the trigger line.
+    await words.last().evaluate((el) => el.scrollIntoView({ block: 'start' }));
+    await expect.poll(() => page.locator('#eslogan .tagline-word.on').count()).toBe(total);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect.poll(() => page.locator('#eslogan .tagline-word.on').count()).toBeLessThan(total);
+  });
+
+  test('the work cycle advances with the scroll on desktop', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+    const stage = page.locator('.cycle-stage');
+    await expect(stage).toBeAttached();
+    const current = () => page.locator('.cycle-item[aria-current="step"]').evaluate((el) => el.querySelector('.cycle-item-title').textContent);
+    await stage.scrollIntoViewIfNeeded();
+    const first = await current();
+    await page.evaluate(() => window.scrollBy(0, window.innerHeight * 2.4));
+    await expect.poll(current).not.toBe(first);
+  });
+
+  test('with prefers-reduced-motion everything is visible at once and the cycle is a plain list', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/');
+    await expect(page.locator('.reveal:not(.is-in)')).toHaveCount(0);
+    await expect(page.locator('.cycle-stage')).toHaveCount(0);
+    await expect(page.locator('#eslogan .tagline-word:not(.on)')).toHaveCount(0);
+  });
+
+  test('FAQ answers open and close', async ({ page }) => {
+    await page.goto('/');
+    const first = page.locator('#faq details').first();
+    await first.locator('summary').click();
+    await expect(first).toHaveAttribute('open', '');
+    await first.locator('summary').click();
+    await expect(first).not.toHaveAttribute('open', '');
   });
 });
 

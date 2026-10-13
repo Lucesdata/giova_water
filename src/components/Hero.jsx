@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useOnScreen, usePrefersReducedMotion } from './primitives.jsx';
+import { useOnScreen, usePrefersReducedMotion, Reveal } from './primitives.jsx';
 import { useT } from '../i18n.jsx';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
 
@@ -159,12 +159,12 @@ export default function Hero() {
       padding: isMobile ? '24px 0 48px' : '48px 0',
     }}>
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
+        <Reveal style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
           <span className="label-accent">{t('hero.kicker')}</span>
           <span aria-hidden="true" style={{ flex: 1, height: 1, background: 'var(--accent-line)', minWidth: 24 }}/>
           <span className="label">{t('hero.role')}</span>
-        </div>
-        <h1 style={{
+        </Reveal>
+        <Reveal as="h1" delay={90} style={{
           fontFamily: 'var(--f-mono)',
           fontSize: 'clamp(30px, 3.7vw, 54px)',
           lineHeight: 1.08,
@@ -174,20 +174,20 @@ export default function Hero() {
           textWrap: 'balance',
         }}>
           {t('hero.h1')}
-        </h1>
-        <p style={{ maxWidth: 560, color: 'var(--ink-1)', fontSize: 16, lineHeight: 1.65, margin: '0 0 32px', textWrap: 'pretty' }}>
+        </Reveal>
+        <Reveal as="p" delay={180} style={{ maxWidth: 560, color: 'var(--ink-1)', fontSize: 16, lineHeight: 1.65, margin: '0 0 32px', textWrap: 'pretty' }}>
           {t('hero.intro')}
-        </p>
-        <div style={{ display: 'flex', gap: 12, marginBottom: 32, flexWrap: 'wrap' }}>
+        </Reveal>
+        <Reveal delay={270} style={{ display: 'flex', gap: 12, marginBottom: 32, flexWrap: 'wrap' }}>
           <a href="#proyectos" className="btn primary">{t('hero.ctaProjects')}</a>
           <a href="#contacto" className="btn">{t('hero.ctaContact')}</a>
-        </div>
+        </Reveal>
 
-        <ul aria-label={t('hero.focusLabel')} style={{ listStyle: 'none', padding: 0, margin: '0 0 32px', display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        <Reveal as="ul" delay={360} aria-label={t('hero.focusLabel')} style={{ listStyle: 'none', padding: 0, margin: '0 0 32px', display: 'flex', flexWrap: 'wrap', gap: 8 }}>
           {(Array.isArray(focus) ? focus : []).map(f => <li key={f}><span className="chip accent">{f}</span></li>)}
-        </ul>
+        </Reveal>
 
-        <dl style={{
+        <Reveal as="dl" delay={450} style={{
           display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: isMobile ? 16 : 0,
           borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)',
           padding: '16px 0', margin: 0,
@@ -198,10 +198,10 @@ export default function Hero() {
               <dd className="label" style={{ margin: '4px 0 0' }}>{s.l}</dd>
             </div>
           ))}
-        </dl>
+        </Reveal>
       </div>
 
-      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 16, minWidth: 0 }}>
+      <Reveal delay={200} style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 16, minWidth: 0 }}>
         <figure ref={figRef} style={{ margin: 0 }}>
           <figcaption style={{
             display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 12,
@@ -231,7 +231,7 @@ export default function Hero() {
             {t('hero.fieldCaption')}
           </div>
         </div>
-      </div>
+      </Reveal>
     </div>
   );
 }
