@@ -2,10 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useOnScreen, usePrefersReducedMotion } from './primitives.jsx';
 import { useT } from '../i18n.jsx';
 import Cycle, { Scope } from './Cycle.jsx';
+import ScadaOverlay from './ScadaOverlay.jsx';
+import { cueAt, seekTime } from '../lib/scadaCues.js';
 
 /* Real footage of a plant's supervision screen, silent and short. It plays only
    while it is on screen, never with reduced motion unless the person starts it,
-   and always has a pause button (WCAG 2.2.2). The poster is the still frame. */
+   and always has a pause button (WCAG 2.2.2). The poster is the still frame.
+   The callouts (ScadaOverlay) read the clip's own currentTime, so video,
+   callouts and the variable buttons below always agree. */
 function ScadaVideo({ labels }) {
   const ref = useRef(null);
   const boxRef = useRef(null);
@@ -13,8 +17,11 @@ function ScadaVideo({ labels }) {
   const onScreen = useOnScreen(boxRef);
   const [choice, setChoice] = useState(null); // null = automatic, 'play' | 'pause' = the person decided
   const [playing, setPlaying] = useState(false);
+  const [time, setTime] = useState(0);
+  const [jumped, setJumped] = useState(null);  // variable the person picked; announced to screen readers
   const wants = choice ? choice === 'play' : !reduced;
   const run = onScreen && wants;
+  const cue = cueAt(time);
 
   useEffect(() => {
     const el = ref.current;
@@ -24,20 +31,63 @@ function ScadaVideo({ labels }) {
     } catch { /* media playback is not available (tests, old browsers): the poster stays */ }
   }, [run]);
 
+  // The clock is the video's currentTime: read on timeupdate/seeked and, while it
+  // plays on screen, every frame. Off screen or paused there is no loop.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return undefined;
+    const read = () => setTime(el.currentTime || 0);
+    el.addEventListener('timeupdate', read);
+    el.addEventListener('seeked', read);
+    let raf;
+    const loop = () => { read(); raf = requestAnimationFrame(loop); };
+    if (run && playing) raf = requestAnimationFrame(loop);
+    return () => {
+      el.removeEventListener('timeupdate', read);
+      el.removeEventListener('seeked', read);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [run, playing]);
+
+  // The automatic cycle moving on ends the announcement of a picked variable.
+  useEffect(() => { if (jumped !== null && cue.index !== jumped) setJumped(null); }, [cue.index, jumped]);
+
+  const jump = (index) => {
+    const el = ref.current;
+    const to = seekTime(index);
+    setJumped(index);
+    setTime(to);
+    if (el) { try { el.currentTime = to; } catch { /* metadata not loaded yet: the callout still follows */ } }
+  };
+
+  const names = Array.isArray(labels.vars) ? labels.vars : [];
   return (
-    <div ref={boxRef} className="hero-video">
-      <video ref={ref} muted loop playsInline preload="metadata" poster="/assets/video/scada-ptap-poster.jpg"
-             width="640" height="360" aria-label={labels.alt}
-             onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}>
-        <source src="/assets/video/scada-ptap.webm" type="video/webm" />
-        <source src="/assets/video/scada-ptap.mp4" type="video/mp4" />
-      </video>
-      <span className="chip hero-video-badge">{labels.badge}</span>
-      <button type="button" className="hero-video-toggle" aria-pressed={!playing}
-              onClick={() => setChoice(playing ? 'pause' : 'play')}>
-        <span aria-hidden="true">{playing ? '❚❚' : '▶'}</span> {playing ? labels.pause : labels.play}
-      </button>
-    </div>
+    <>
+      <div ref={boxRef} className="hero-video">
+        <video ref={ref} muted loop playsInline preload="metadata" poster="/assets/video/scada-ptap-poster.jpg"
+               width="640" height="360" aria-label={labels.alt}
+               onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}>
+          <source src="/assets/video/scada-ptap.webm" type="video/webm" />
+          <source src="/assets/video/scada-ptap.mp4" type="video/mp4" />
+        </video>
+        <ScadaOverlay t={time} playing={playing} labels={labels} announce={jumped !== null} />
+        <span className="chip hero-video-badge">{labels.badge}</span>
+        <button type="button" className="hero-video-toggle" aria-pressed={!playing}
+                onClick={() => setChoice(playing ? 'pause' : 'play')}>
+          <span aria-hidden="true">{playing ? '❚❚' : '▶'}</span> {playing ? labels.pause : labels.play}
+        </button>
+      </div>
+      <div className="hero-vars">
+        <span className="label">{labels.varsLabel}</span>
+        <ul>
+          {names.map((x, i) => (
+            <li key={x}>
+              <button type="button" aria-pressed={cue.index === i} onClick={() => jump(i)}>{x}</button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   );
 }
 
@@ -108,12 +158,6 @@ export default function Hero() {
             <span style={{ color: 'var(--accent)' }}>{video.note}</span>
           </figcaption>
           <ScadaVideo labels={video} />
-          <div className="hero-vars">
-            <span className="label">{video.varsLabel}</span>
-            <ul>
-              {(Array.isArray(video.vars) ? video.vars : []).map((x) => <li key={x}>{x}</li>)}
-            </ul>
-          </div>
         </figure>
       </div>
 

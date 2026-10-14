@@ -605,7 +605,53 @@ a.text-link { display: inline-flex; align-items: center; min-height: 44px; }
 .hero-video-toggle:hover, .hero-video-toggle:focus-visible { border-color: var(--accent); color: var(--accent); }
 .hero-vars { margin-top: 12px; display: grid; gap: 8px; }
 .hero-vars ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
-.hero-vars li { font-family: var(--f-mono); font-size: 13px; color: var(--ink-1); padding: 4px 10px; border: 1px solid var(--line-2); background: var(--bg-1); }
+.hero-vars button { font-family: var(--f-mono); font-size: 13px; color: var(--ink-1); padding: 4px 12px; min-height: 44px; border: 1px solid var(--line-2); background: var(--bg-1); cursor: pointer; }
+.hero-vars button:hover, .hero-vars button:focus-visible { border-color: var(--accent); color: var(--accent); }
+.hero-vars button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+/* Callouts over the SCADA clip: instrument style, no readings */
+.hero-video { container-type: inline-size; }
+.hero-video-toggle { z-index: 4; }
+.hero-video-badge { z-index: 3; }
+.scada-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+.scada-overlay a, .scada-overlay button { pointer-events: auto; }
+.scada-veil { position: absolute; inset: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--bg) 55%, transparent) 0%, transparent 28%, transparent 40%, color-mix(in srgb, var(--bg) 60%, transparent) 100%); }
+.scada-progress { position: absolute; top: 0; left: 0; right: 0; display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; height: 2px; }
+.scada-progress i { display: block; background: var(--line-2); overflow: hidden; }
+.scada-progress b { display: block; height: 100%; background: var(--accent); transform-origin: left; }
+.scada-rec { position: absolute; top: 10px; left: 8px; z-index: 3; }
+.scada-note { position: absolute; right: 8px; bottom: 8px; z-index: 3; font-size: 11px; }
+.scada-anchor { position: absolute; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; background: var(--accent); }
+.scada-anchor i { position: absolute; inset: -6px; border-radius: 50%; border: 1px solid var(--accent); opacity: 0.5; }
+.scada-guide { position: absolute; inset: 0; width: 100%; height: 100%; }
+.scada-guide polyline { stroke: var(--accent); stroke-width: 1; }
+.scada-callout { position: absolute; left: 4%; top: 48%; width: 42cqw; min-width: 180px; display: grid; gap: 3px; padding: 8px 12px; background: color-mix(in srgb, var(--bg) 88%, transparent); border: 1px solid var(--accent-line); border-top: 2px solid var(--accent); }
+.scada-callout-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.scada-tag { font-family: var(--f-mono); font-size: clamp(10px, 1.8cqw, 12px); padding: 1px 6px; background: var(--accent); color: var(--bg); }
+.scada-count { font-family: var(--f-mono); font-size: clamp(10px, 1.8cqw, 12px); color: var(--ink-2); }
+.scada-name { font-family: var(--f-mono); font-weight: 600; font-size: clamp(13px, 2.6cqw, 17px); color: var(--ink); line-height: 1.2; }
+.scada-desc { font-size: clamp(11px, 2cqw, 13px); line-height: 1.4; color: var(--ink-1); }
+.scada-foot { display: flex; justify-content: space-between; gap: 8px; font-family: var(--f-mono); font-size: clamp(10px, 1.8cqw, 12px); color: var(--accent); }
+.scada-end { position: absolute; inset: 0; z-index: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 6px; padding: 14px 16px 60px; background: color-mix(in srgb, var(--bg) 82%, transparent); }
+.scada-end p { margin: 0; }
+.scada-end-kicker { font-family: var(--f-mono); font-size: clamp(10px, 1.8cqw, 12px); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.scada-end-title { font-family: var(--f-mono); font-weight: 600; font-size: clamp(16px, 3.6cqw, 24px); color: var(--ink); line-height: 1.15; }
+.scada-end-sub { font-size: clamp(11px, 2cqw, 14px); color: var(--ink-1); }
+.scada-end-vars { list-style: none; margin: 4px 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; }
+.scada-end-vars li { font-family: var(--f-mono); font-size: clamp(10px, 1.8cqw, 12px); padding: 2px 8px; border: 1px solid var(--accent-line); color: var(--ink-1); }
+[data-palette="paper"] .scada-callout { background: var(--bg-1); }
+[data-palette="paper"] .scada-end { background: var(--bg-1); }
+@container (max-width: 479px) {
+  .scada-guide { display: none; }
+  .scada-callout { left: 3%; right: 3%; top: auto; bottom: 60px; width: auto; min-width: 0; padding: 8px 10px; }
+  .scada-desc, .scada-foot { display: none; }
+  .scada-end-sub, .scada-end-vars { display: none; }
+  .scada-note { display: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .scada-anchor i { animation: scada-ring 1.6s ease-out infinite; }
+  @keyframes scada-ring { from { transform: scale(0.6); opacity: 0.7; } to { transform: scale(1.6); opacity: 0; } }
+}
 
 /* Cycle: need -> operation, one node per stage, the line is the flow of the schematic */
 .cycle { padding: 56px 0 24px; }

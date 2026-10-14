@@ -44,7 +44,7 @@ describe('Hero — video real de la pantalla SCADA', () => {
     expect(v.getAttribute('aria-label')).toBe('Texto alternativo del video');
     expect([...v.querySelectorAll('source')].map((s) => s.getAttribute('type'))).toEqual(['video/webm', 'video/mp4']);
     expect(getByText('hero.video.fig'.replace('hero.video.fig', 'Pantalla'))).toBeTruthy();
-    expect(container.querySelector('#inicio svg, .hero-below svg')).toBeNull();
+    expect(container.querySelectorAll('.hero-below svg text')).toHaveLength(0);
   });
 
   it('always offers a pause/play control and lists the supervised variables', () => {
