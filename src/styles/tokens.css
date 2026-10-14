@@ -522,10 +522,6 @@ a.text-link { display: inline-flex; align-items: center; min-height: 44px; }
 }
 
 /* Method stages */
-.method-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
-.method-stage { border: 1px solid var(--line); background: var(--bg-1); padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-.method-stage summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--accent); font-family: var(--f-mono); font-size: 13px; }
-.method-stage ul { margin: 4px 0 0; padding-left: 18px; color: var(--ink-1); }
 
 /* Demo controls */
 .seg { display: inline-flex; flex-wrap: wrap; gap: 8px; }
@@ -539,21 +535,32 @@ a.text-link { display: inline-flex; align-items: center; min-height: 44px; }
 
 /* Profile layout: summary first on phones, card beside it on desktop */
 .profile-grid { display: grid; gap: 32px; grid-template-columns: minmax(0, 1fr); align-items: start; }
-.profile-card { order: 2; }
 .profile-text { order: 1; }
+.profile-card { order: 2; }
+.profile-timeline { order: 3; min-width: 0; }
 @media (min-width: 900px) {
-  .profile-grid { grid-template-columns: 300px minmax(0, 1fr); gap: 48px; }
-  .profile-card { order: 1; }
-  .profile-text { order: 2; }
+  .profile-grid { grid-template-columns: 300px minmax(0, 1fr); grid-template-areas: "card text" "card timeline"; gap: 40px 48px; }
+  .profile-card { grid-area: card; order: 0; }
+  .profile-text { grid-area: text; order: 0; }
+  .profile-timeline { grid-area: timeline; order: 0; }
 }
 .portrait { position: relative; overflow: hidden; background: var(--bg-2); border-bottom: 1px solid var(--line); aspect-ratio: 4 / 3; max-height: 320px; }
+.portrait-note { position: absolute; left: 8px; bottom: 8px; font-size: 11px; }
 .portrait img { width: 100%; height: 100%; object-fit: cover; object-position: center 24%; display: block; }
 @media (min-width: 900px) { .portrait { aspect-ratio: 1 / 1; max-height: 300px; } }
 
 /* Chronology */
-.timeline-row { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 32px; padding: 20px 0; border-top: 1px solid var(--line); }
+.timeline-row { border-top: 1px solid var(--line); }
 .timeline-row:last-child { border-bottom: 1px solid var(--line); }
-@media (max-width: 640px) { .timeline-row { grid-template-columns: minmax(0, 1fr); gap: 6px; } }
+.timeline-row summary { display: grid; grid-template-columns: 150px minmax(0, 1fr) 20px; gap: 24px; align-items: start; padding: 16px 0; min-height: 44px; cursor: pointer; list-style: none; }
+.timeline-row summary::-webkit-details-marker { display: none; }
+.timeline-row summary::after { content: '+'; font-family: var(--f-mono); font-size: 18px; color: var(--ink-2); text-align: right; }
+.timeline-row details[open] summary::after { content: '−'; color: var(--accent); }
+.timeline-row summary:hover::after, .timeline-row summary:focus-visible::after { color: var(--accent); }
+.timeline-row summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.timeline-when { display: grid; gap: 2px; }
+.timeline-body { margin: 0 0 18px 174px; font-size: 16px; max-width: 640px; }
+@media (max-width: 640px) { .timeline-row summary { grid-template-columns: minmax(0, 1fr) 20px; gap: 4px 12px; } .timeline-when { grid-column: 1 / -1; grid-template-columns: auto auto; justify-content: start; gap: 12px; } .timeline-body { margin-left: 0; } }
 
 /* Hero: photo behind the headline (desktop), as a band above it (phones) */
 .hero { position: relative; isolation: isolate; overflow: hidden; border: 1px solid var(--line); background: var(--bg-1); }
