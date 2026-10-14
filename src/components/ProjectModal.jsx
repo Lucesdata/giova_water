@@ -202,7 +202,7 @@ export default function ProjectModal({ project, onClose }) {
               <>
                 <img src={project.cover} alt={photoTexts[0]?.alt || i18n.title} width={922} height={518}
                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                <span className="chip" style={{ position: 'absolute', left: 12, bottom: 12 }}>{M.photoBadge}</span>
+                <span className="chip" style={{ position: 'absolute', left: 12, bottom: 12 }}>{project.coverKind === 'capture' ? M.captureBadge : M.photoBadge}</span>
               </>
             ) : (
               <>

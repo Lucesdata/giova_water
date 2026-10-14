@@ -227,12 +227,19 @@ describe('perfil: credenciales, trayectoria y competencias', () => {
 
 describe('proyectos con fotografías propias', () => {
   const withPhotos = projectsData.filter((p) => p.photos && p.photos.length);
-  it('hay al menos P-005 y P-007 con fotografías', () => {
-    expect(withPhotos.map((p) => p.id)).toEqual(expect.arrayContaining(['P-005', 'P-007']));
+  it('los proyectos con fotografías son los esperados; IOTIO (P-004) sigue con su esquema', () => {
+    expect(withPhotos.map((p) => p.id).sort()).toEqual(['P-001', 'P-002', 'P-003', 'P-005', 'P-006', 'P-007']);
+    expect(projectsData.find((p) => p.id === 'P-004').photos).toBeUndefined();
+  });
+  it('P-006 solo lleva galería (sin portada) y su foto es un recorte de una sola persona', () => {
+    const p6 = projectsData.find((p) => p.id === 'P-006');
+    expect(p6.cover).toBeUndefined();
+    expect(p6.photos).toHaveLength(1);
+    expect(p6.photos[0].w).toBeLessThan(p6.photos[0].h);   // recorte vertical, sin el grupo
   });
   it('cada portada y cada fotografía existen en disco y pesan menos de 300 KB', () => {
     for (const p of withPhotos) {
-      for (const src of [p.cover, ...p.photos.map((ph) => ph.src)]) {
+      for (const src of [p.cover, ...p.photos.map((ph) => ph.src)].filter(Boolean)) {
         const f = path.join(ROOT, 'public', src);
         expect(fs.existsSync(f), `${p.id} ${src}`).toBe(true);
         expect(fs.statSync(f).size, `${p.id} ${src}`).toBeLessThan(300 * 1024);
@@ -250,5 +257,17 @@ describe('proyectos con fotografías propias', () => {
     const c = dictionary[lang].projects.data['P-005'].photos[0].caption;
     expect(c).toMatch(/Buenaventura/);
     expect(c).toMatch(/2021/);
+  });
+});
+
+describe('insignia de portada: fotografía o captura', () => {
+  it.each(LANGS)('%s: hay textos para las dos insignias', (lang) => {
+    const m = dictionary[lang].projects.modal;
+    expect(m.photoBadge).toMatch(/\S/);
+    expect(m.captureBadge).toMatch(/\S/);
+    expect(m.captureBadge).not.toBe(m.photoBadge);
+  });
+  it('solo el gemelo digital usa la insignia de captura', () => {
+    expect(projectsData.filter((p) => p.coverKind === 'capture').map((p) => p.id)).toEqual(['P-003']);
   });
 });

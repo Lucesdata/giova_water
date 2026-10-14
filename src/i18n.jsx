@@ -225,7 +225,7 @@ const dict = {
         result: 'Resultado', evidence: 'Evidencia', share: 'Compartir proyecto',
         noFiles: 'Todavía no hay documentos ni capturas publicados para este proyecto; las cifras son información aportada por el autor y siguen sin cotejarse con documentos originales.',
         contact: 'Contacto', copyLink: 'Copiar enlace',
-        photos: 'Fotografías del proyecto', photoBadge: 'Fotografía real', phasesStatus: 'Estado',
+        photos: 'Fotografías del proyecto', photoBadge: 'Fotografía real', captureBadge: 'Captura de la plataforma', phasesStatus: 'Estado',
       },
       data: {
         'P-001': {
@@ -239,7 +239,8 @@ const dict = {
           responsibility: 'Diseño de procesos detallado, P&IDs, balances de masa y energía, y dirección de la obra civil y electromecánica.',
           solution: 'Planta de tratamiento de aguas residuales domésticas con su red de alcantarillado asociada, modelada en EPA-SWMM.',
           resultFull: 'Se eliminaron los 16 vertidos ilegales identificados y el PSMV 2025 fue aprobado por la CVC en la primera presentación.',
-          evidence: ['Información aportada por el autor; documentos de respaldo por incorporar.', 'Capacidad de diseño e inversión de la planta: en verificación, por eso no se muestran cifras.'],
+          photos: [{ alt: 'Persona con chaleco de la Alcaldía hablando junto a unos gabinetes de instrumentos y un tanque azul, con cerros al fondo.', caption: 'PTAR de Montebello, Cali.' }],
+          evidence: ['Fotografía propia de la planta.', 'Información aportada por el autor; documentos de respaldo por incorporar.', 'Capacidad de diseño e inversión de la planta: en verificación, por eso no se muestran cifras.'],
         },
         'P-002': {
           cat: 'AGUA POTABLE', loc: 'Cali, CO',
@@ -252,7 +253,8 @@ const dict = {
           responsibility: 'Supervisión técnica de 37 PTAPs rurales, modelación de 5 sistemas en EPANET y de 5 PSMV maestros en EPA-SWMM.',
           solution: 'Dashboards en Python y Power BI que sustituyeron las revisiones manuales, y modelos hidráulicos para planificar la red.',
           resultFull: '60 % menos de tiempo de reporte regulatorio (266 horas al año) y 97–100 % de cumplimiento hidráulico en los PSMV, sobre 21 600 m de red.',
-          evidence: ['Información aportada por el autor; documentos de respaldo por incorporar.', 'Población atendida: en verificación, por eso no se muestra.'],
+          photos: [{ alt: 'Técnico con gorra y chaleco azul de Servicios Públicos revisando la tapa de un tanque.', caption: 'Revisión de un tanque en una planta rural.' }],
+          evidence: ['Detalle de una fotografía de una pieza de comunicación de la Alcaldía, recortado para mostrar solo la imagen, sin textos ni logotipos.', 'Información aportada por el autor; documentos de respaldo por incorporar.', 'Población atendida: en verificación, por eso no se muestra.'],
         },
         'P-003': {
           cat: 'GEMELO DIGITAL', loc: 'Cali, CO',
@@ -265,7 +267,8 @@ const dict = {
           responsibility: 'Diseño y desarrollo completos, sobre mi plataforma IOTIO.',
           solution: 'Motor hidráulico interactivo, visualización 3D con Three.js, perfil de línea de gradiente hidráulico y tablero de sensores SCADA.',
           resultFull: 'Una herramienta que muestra el comportamiento de la planta y sus alarmas a perfiles técnicos y no técnicos.',
-          evidence: ['Información aportada por el autor; sin capturas ni documentos incorporados todavía.', 'El panel de la sección Gemelos digitales de esta página es una demo con datos simulados, no esta plataforma.'],
+          photos: [{ alt: 'Escena 3D de una PTAP con tanques de colores y una leyenda de tipos de sensores.', caption: 'Gemelo digital 3D de una PTAP rural: captura de la plataforma (datos simulados).' }, { alt: 'Casa de operación y tanques de sedimentación de una PTAP rural, entre árboles.', caption: 'Fotografía de una PTAP rural.' }],
+          evidence: ['Capturas de la plataforma (datos simulados) y fotografía de una PTAP rural. Información aportada por el autor.', 'La captura muestra una planta con 23 sensores IoT; las cifras del proyecto están por cotejar.', 'El panel de la sección Gemelos digitales de esta página es una demo con datos simulados, no esta plataforma.'],
         },
         'P-004': {
           cat: 'PLATAFORMA IOT', loc: 'Remoto',
@@ -305,7 +308,8 @@ const dict = {
           responsibility: 'Catastro de pozos, construcción de los modelos y rediseño de las redes de Campoalegre, La Buitrera, Golondrinas y La Castilla.',
           solution: 'Modelos en EPA-SWMM construidos desde cero a partir del catastro, con criterios de Manning y la Res. 330/2017.',
           resultFull: '97–100 % de cumplimiento de capacidad hidráulica y 5 PSMV entregados en plazo dentro de un contrato de COP 528 millones.',
-          evidence: ['Información aportada por el autor; documentos de respaldo por incorporar.'],
+          photos: [{ alt: 'Persona con gorra y chaleco azul hablando en un salón.', caption: 'Jornada con la comunidad.' }],
+          evidence: ['Detalle de una fotografía de una jornada con la comunidad, recortado para no mostrar a menores.', 'Información aportada por el autor; documentos de respaldo por incorporar.'],
         },
         'P-007': {
           cat: 'AUTOMATIZACIÓN', loc: 'Cali, CO',
@@ -635,7 +639,7 @@ const dict = {
         result: 'Result', evidence: 'Evidence', share: 'Share project',
         noFiles: 'No documents or screenshots are published for this project yet; the figures are information provided by the author and have not been checked against original documents.',
         contact: 'Contact', copyLink: 'Copy link',
-        photos: 'Project photographs', photoBadge: 'Real photograph', phasesStatus: 'Status',
+        photos: 'Project photographs', photoBadge: 'Real photograph', captureBadge: 'Platform capture', phasesStatus: 'Status',
       },
       data: {
         'P-001': {
@@ -649,7 +653,8 @@ const dict = {
           responsibility: 'Detailed process design, P&IDs, mass and energy balances, and supervision of the civil and electromechanical works.',
           solution: 'A domestic wastewater treatment plant with its associated sewer network, modelled in EPA-SWMM.',
           resultFull: 'All 16 identified illegal discharges were eliminated and the 2025 PSMV was approved by CVC on first submission.',
-          evidence: ['Information provided by the author; supporting documents to be added.', 'Design capacity and investment of the plant are under verification, so no figures are shown.'],
+          photos: [{ alt: 'Person in a municipal vest speaking next to instrument cabinets and a blue tank, with hills in the background.', caption: 'Montebello wastewater plant, Cali.' }],
+          evidence: ['Own photograph of the plant.', 'Information provided by the author; supporting documents to be added.', 'Design capacity and investment of the plant are under verification, so no figures are shown.'],
         },
         'P-002': {
           cat: 'DRINKING WATER', loc: 'Cali, CO',
@@ -662,7 +667,8 @@ const dict = {
           responsibility: 'Technical supervision of 37 rural WTPs, modelling of 5 systems in EPANET and of 5 master PSMVs in EPA-SWMM.',
           solution: 'Python and Power BI dashboards that replaced manual reviews, and hydraulic models to plan the networks.',
           resultFull: '60% less regulatory reporting time (266 hours a year) and 97–100% hydraulic compliance in the PSMVs, over 21,600 m of network.',
-          evidence: ['Information provided by the author; supporting documents to be added.', 'Population served is under verification, so it is not shown.'],
+          photos: [{ alt: 'Technician in a blue cap and Public Services vest checking the lid of a tank.', caption: 'Checking a tank at a rural plant.' }],
+          evidence: ['Detail of a photograph from a municipal communication piece, cropped to show only the image, without text or logos.', 'Information provided by the author; supporting documents to be added.', 'Population served is under verification, so it is not shown.'],
         },
         'P-003': {
           cat: 'DIGITAL TWIN', loc: 'Cali, CO',
@@ -675,7 +681,8 @@ const dict = {
           responsibility: 'Full design and development, built on my IOTIO platform.',
           solution: 'Interactive hydraulic engine, 3D visualisation with Three.js, hydraulic grade line profile and SCADA sensor dashboard.',
           resultFull: 'A tool that shows plant behaviour and alarms to both technical and non-technical audiences.',
-          evidence: ['Information provided by the author; no screenshots or documents added yet.', 'The panel in this page’s Digital twins section is a demo with simulated data, not this platform.'],
+          photos: [{ alt: '3D scene of a water treatment plant with colour-coded tanks and a legend of sensor types.', caption: '3D digital twin of a rural plant: platform capture (simulated data).' }, { alt: 'Operations building and sedimentation tanks of a rural plant, among trees.', caption: 'Photograph of a rural plant.' }],
+          evidence: ['Platform captures (simulated data) and a photograph of a rural plant. Information provided by the author.', 'The capture shows a plant with 23 IoT sensors; the project figures are still to be checked.', 'The panel in this page’s Digital twins section is a demo with simulated data, not this platform.'],
         },
         'P-004': {
           cat: 'IOT PLATFORM', loc: 'Remote',
@@ -715,7 +722,8 @@ const dict = {
           responsibility: 'Manhole survey, model building and redesign of the Campoalegre, La Buitrera, Golondrinas and La Castilla networks.',
           solution: 'EPA-SWMM models built from scratch from the survey, using Manning criteria and Resolution 330/2017.',
           resultFull: '97–100% hydraulic capacity compliance and 5 PSMVs delivered on time under a COP 528 million contract.',
-          evidence: ['Information provided by the author; supporting documents to be added.'],
+          photos: [{ alt: 'Person in a cap and blue vest speaking in a classroom.', caption: 'Session with the community.' }],
+          evidence: ['Detail of a photograph from a community session, cropped so that no minors appear.', 'Information provided by the author; supporting documents to be added.'],
         },
         'P-007': {
           cat: 'AUTOMATION', loc: 'Cali, CO',
@@ -1045,7 +1053,7 @@ const dict = {
         result: 'Résultat', evidence: 'Preuves', share: 'Partager le projet',
         noFiles: 'Aucun document ni capture n’est encore publié pour ce projet ; les chiffres sont des informations fournies par l’auteur et n’ont pas été vérifiés avec les documents originaux.',
         contact: 'Contact', copyLink: 'Copier le lien',
-        photos: 'Photographies du projet', photoBadge: 'Photographie réelle', phasesStatus: 'Statut',
+        photos: 'Photographies du projet', photoBadge: 'Photographie réelle', captureBadge: 'Capture de la plateforme', phasesStatus: 'Statut',
       },
       data: {
         'P-001': {
@@ -1059,7 +1067,8 @@ const dict = {
           responsibility: 'Conception détaillée des procédés, P&ID, bilans de matière et d’énergie, et direction des travaux de génie civil et électromécanique.',
           solution: 'Une station d’épuration d’eaux usées domestiques avec son réseau d’assainissement, modélisée dans EPA-SWMM.',
           resultFull: 'Les 16 rejets illégaux identifiés ont été supprimés et le PSMV 2025 a été approuvé par la CVC dès la première présentation.',
-          evidence: ['Information fournie par l’auteur ; documents justificatifs à ajouter.', 'La capacité de conception et l’investissement de la station sont en cours de vérification : aucun chiffre n’est affiché.'],
+          photos: [{ alt: 'Personne en gilet municipal parlant près d’armoires d’instrumentation et d’un réservoir bleu, avec des collines au fond.', caption: 'STEP de Montebello, Cali.' }],
+          evidence: ['Photographie personnelle de l’usine.', 'Information fournie par l’auteur ; documents justificatifs à ajouter.', 'La capacité de conception et l’investissement de la station sont en cours de vérification : aucun chiffre n’est affiché.'],
         },
         'P-002': {
           cat: 'EAU POTABLE', loc: 'Cali, CO',
@@ -1072,7 +1081,8 @@ const dict = {
           responsibility: 'Supervision technique de 37 UDEP rurales, modélisation de 5 systèmes dans EPANET et de 5 PSMV maîtres dans EPA-SWMM.',
           solution: 'Des tableaux de bord Python et Power BI qui ont remplacé les vérifications manuelles, et des modèles hydrauliques pour planifier les réseaux.',
           resultFull: '60 % de temps de reporting réglementaire en moins (266 heures par an) et 97–100 % de conformité hydraulique dans les PSMV, sur 21 600 m de réseau.',
-          evidence: ['Information fournie par l’auteur ; documents justificatifs à ajouter.', 'La population desservie est en cours de vérification : elle n’est pas affichée.'],
+          photos: [{ alt: 'Technicien en casquette et gilet bleu des Services publics vérifiant le couvercle d’un réservoir.', caption: 'Contrôle d’un réservoir dans une usine rurale.' }],
+          evidence: ['Détail d’une photographie d’un support de communication municipal, recadré pour ne montrer que l’image, sans texte ni logos.', 'Information fournie par l’auteur ; documents justificatifs à ajouter.', 'La population desservie est en cours de vérification : elle n’est pas affichée.'],
         },
         'P-003': {
           cat: 'JUMEAU NUMÉRIQUE', loc: 'Cali, CO',
@@ -1085,7 +1095,8 @@ const dict = {
           responsibility: 'Conception et développement complets, sur ma plateforme IOTIO.',
           solution: 'Moteur hydraulique interactif, visualisation 3D avec Three.js, profil de ligne piézométrique et tableau de capteurs SCADA.',
           resultFull: 'Un outil qui montre le comportement de la station et ses alarmes à des profils techniques et non techniques.',
-          evidence: ['Information fournie par l’auteur ; pas encore de captures ni de documents.', 'Le panneau de la section Jumeaux numériques de cette page est une démo avec des données simulées, pas cette plateforme.'],
+          photos: [{ alt: 'Scène 3D d’une station avec des bassins de couleur et une légende des types de capteurs.', caption: 'Jumeau numérique 3D d’une usine rurale : capture de la plateforme (données simulées).' }, { alt: 'Bâtiment d’exploitation et bassins de décantation d’une usine rurale, entre les arbres.', caption: 'Photographie d’une usine rurale.' }],
+          evidence: ['Captures de la plateforme (données simulées) et photographie d’une usine rurale. Informations fournies par l’auteur.', 'La capture montre une usine avec 23 capteurs IoT ; les chiffres du projet restent à vérifier.', 'Le panneau de la section Jumeaux numériques de cette page est une démo avec des données simulées, pas cette plateforme.'],
         },
         'P-004': {
           cat: 'PLATEFORME IOT', loc: 'À distance',
@@ -1125,7 +1136,8 @@ const dict = {
           responsibility: 'Recensement des regards, construction des modèles et reconception des réseaux de Campoalegre, La Buitrera, Golondrinas et La Castilla.',
           solution: 'Modèles EPA-SWMM construits à partir de zéro depuis le recensement, avec les critères de Manning et la résolution 330/2017.',
           resultFull: '97–100 % de conformité de capacité hydraulique et 5 PSMV livrés dans les délais dans un contrat de 528 millions de COP.',
-          evidence: ['Information fournie par l’auteur ; documents justificatifs à ajouter.'],
+          photos: [{ alt: 'Personne en casquette et gilet bleu parlant dans une salle de classe.', caption: 'Rencontre avec la communauté.' }],
+          evidence: ['Détail d’une photographie d’une rencontre avec la communauté, recadré pour ne montrer aucun mineur.', 'Information fournie par l’auteur ; documents justificatifs à ajouter.'],
         },
         'P-007': {
           cat: 'AUTOMATISATION', loc: 'Cali, CO',
