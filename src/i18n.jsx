@@ -91,6 +91,7 @@ const dict = {
       intro: 'Convierto una necesidad en una solución técnica, un presupuesto que se puede revisar y un proyecto ejecutable. Me diferencia unir el diseño de procesos con la modelación hidráulica y la operación digital (SCADA e IoT).',
       ctaProjects: 'Ver proyectos',
       ctaContact: 'Consultar un proyecto',
+      leachate: { badge: 'Lixiviados', text: '3 plantas diseñadas y operando 7 años sin rechazos de permiso' },
       stats: [
         { v: '11', l: 'años de experiencia profesional' },
         { v: 'CO · ES', l: 'trabajo en Colombia y España' },
@@ -502,6 +503,7 @@ const dict = {
       intro: 'I turn a need into a technical solution, a budget that can be reviewed and an executable project. What sets me apart is joining process design with hydraulic modelling and digital operation (SCADA and IoT).',
       ctaProjects: 'View projects',
       ctaContact: 'Discuss a project',
+      leachate: { badge: 'Leachate', text: '3 plants designed and running 7 years with no permit rejections' },
       stats: [
         { v: '11', l: 'years of professional experience' },
         { v: 'CO · ES', l: 'work in Colombia and Spain' },
@@ -913,6 +915,7 @@ const dict = {
       intro: 'Je transforme un besoin en solution technique, en budget vérifiable et en projet exécutable. Ma différence : relier la conception des procédés, la modélisation hydraulique et l’exploitation numérique (SCADA et IoT).',
       ctaProjects: 'Voir les projets',
       ctaContact: 'Parler d’un projet',
+      leachate: { badge: 'Lixiviats', text: '3 usines conçues et en service depuis 7 ans sans refus de permis' },
       stats: [
         { v: '11', l: 'ans d’expérience professionnelle' },
         { v: 'CO · ES', l: 'travail en Colombie et en Espagne' },

@@ -133,6 +133,11 @@ export default function Hero() {
             <a href="#proyectos" className="btn primary">{t('hero.ctaProjects')} <span aria-hidden="true">→</span></a>
             <a href="#contacto" className="btn hero-secondary">{t('hero.ctaContact')} <span aria-hidden="true">→</span></a>
           </div>
+          <a href="#proyecto/plantas-lixiviados-bma" className="hero-callout">
+            <span className="chip accent">{t('hero.leachate.badge')}</span>
+            <span>{t('hero.leachate.text')}</span>
+            <span aria-hidden="true">→</span>
+          </a>
         </div>
       </div>
 
