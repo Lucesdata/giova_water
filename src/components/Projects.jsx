@@ -27,7 +27,7 @@ function ProjectCard({ p, onOpen }) {
           <>
             <img src={p.cover} alt={i18n.photos?.[0]?.alt || title} width={922} height={518} loading="lazy"
                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-            <span className="chip" style={{ position: 'absolute', left: 8, bottom: 8 }}>{t('projects.modal.photoBadge')}</span>
+            <span className="chip" style={{ position: 'absolute', left: 8, bottom: 8 }}>{t(p.coverKind === 'capture' ? 'projects.modal.captureBadge' : 'projects.modal.photoBadge')}</span>
           </>
         ) : (
           <>

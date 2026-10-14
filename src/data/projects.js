@@ -28,15 +28,29 @@ export const projectsData = [
       { src: '/assets/uaesp/app-movil-monitoreo.jpg', w: 600, h: 1067 },
     ] },
   { id: 'P-001', slug: 'montebello-ptar-alcantarillado', featured: true, year: '2022–25', scheme: 'ptar',
-    tags: ['EPA-SWMM', 'P&IDs', 'CVC', 'Res.330/2017'], filters: ['agua'], files: [] },
+    tags: ['EPA-SWMM', 'P&IDs', 'CVC', 'Res.330/2017'], filters: ['agua'], files: [],
+    cover: '/assets/proyectos/montebello-ptar-portada.jpg',
+    photos: [{ src: '/assets/proyectos/montebello-ptar.jpg', w: 800, h: 637 }] },
   { id: 'P-002', slug: 'ptaps-rurales-uaesp', featured: false, year: '2018–24', scheme: 'rural',
-    tags: ['EPANET', 'Python', 'Power BI', 'SCADA'], filters: ['agua'], files: [] },
+    tags: ['EPANET', 'Python', 'Power BI', 'SCADA'], filters: ['agua'], files: [],
+    // Detail of a communication piece, cropped to the photograph (no text, no logos).
+    cover: '/assets/proyectos/plantas-rurales-portada.jpg',
+    photos: [{ src: '/assets/proyectos/plantas-rurales.jpg', w: 326, h: 632 }] },
   { id: 'P-003', slug: 'gemelo-digital-la-voragine', featured: true, year: '2024', scheme: 'twin',
-    tags: ['Three.js', 'Chart.js', 'Motor HID'], filters: ['digital'], files: [] },
+    tags: ['Three.js', 'Chart.js', 'Motor HID'], filters: ['digital'], files: [],
+    // Platform capture cropped to the 3D scene and legend (no readings, no contract line).
+    coverKind: 'capture',
+    cover: '/assets/proyectos/gemelo-3d-portada.jpg',
+    photos: [
+      { src: '/assets/proyectos/gemelo-3d.jpg', w: 1000, h: 408 },
+      { src: '/assets/proyectos/ptap-rural.jpg', w: 800, h: 1067 },
+    ] },
   { id: 'P-004', slug: 'iotio-telemetria', featured: false, year: '2023', scheme: 'iot',
     tags: ['Django', 'React', 'InfluxDB'], filters: ['digital'], files: [] },
   { id: 'P-006', slug: 'psmv-rural-inalter', featured: false, year: '2019', scheme: 'network',
-    tags: ['EPA-SWMM', 'Manning', 'MAGNA-SIRGAS', 'PSMV'], filters: ['agua'], files: [] },
+    tags: ['EPA-SWMM', 'Manning', 'MAGNA-SIRGAS', 'PSMV'], filters: ['agua'], files: [],
+    // Gallery only: the adult, cropped so that no minors appear. The card keeps the scheme.
+    photos: [{ src: '/assets/proyectos/jornada-comunidad.jpg', w: 210, h: 475 }] },
 ];
 
 export const projectById = (id) => projectsData.find((p) => p.id === id);

@@ -270,12 +270,20 @@ test.describe('proyectos', () => {
     for (const h of ['Reto', 'Responsabilidad personal', 'Solución', 'Resultado', 'Evidencia', 'Tecnologías', 'Contacto']) {
       await expect(modal.getByRole('heading', { name: new RegExp(h) })).toBeVisible();
     }
-    await expect(modal).toContainText('Todavía no hay documentos ni capturas publicados');
-    await expect(modal).toContainText('Esquema conceptual');
+    await expect(modal).toContainText('Fotografía real');
+    await expect(modal).not.toContainText('Todavía no hay documentos');
     await page.keyboard.press('Escape');
     await expect(modal).toHaveCount(0);
     await expect(opener).toBeFocused();
     await expect(page).not.toHaveURL(/#proyecto\//);
+  });
+
+  test('a project without photographs says so and keeps its conceptual scheme (IOTIO)', async ({ page }) => {
+    await page.goto('/#proyecto/iotio-telemetria');
+    const modal = page.getByRole('dialog');
+    await expect(modal).toContainText('Todavía no hay documentos ni capturas publicados');
+    await expect(modal).toContainText('Esquema conceptual');
+    await expect(modal.locator('figure')).toHaveCount(0);
   });
 
   test('the browser Back button closes the project', async ({ page }) => {
@@ -347,6 +355,40 @@ test.describe('proyectos', () => {
     await expect(phases.nth(1)).toContainText('Entregado');
     await expect(phases.nth(2)).toContainText('Planificado');
     await expect(modal).not.toContainText('Todavía no hay documentos');
+  });
+
+  test('cards with a real photograph say so; IOTIO and the sewer plan keep the conceptual scheme', async ({ page }) => {
+    await page.goto('/#proyectos');
+    await page.getByRole('button', { name: /Ver todos los proyectos/ }).click();
+    const cards = page.locator('#proyectos article');
+    for (const title of ['PTAR y alcantarillado', 'PTAPs rurales · UAESP', '3 plantas de lixiviados', 'Monitoreo y automatización de PTAP rurales']) {
+      const c = cards.filter({ hasText: title }).first();
+      await expect(c.locator('img'), title).toBeVisible();
+      await expect(c, title).toContainText('Fotografía real');
+    }
+    // The twin is a software capture, not a photograph: its badge says so.
+    const twin = cards.filter({ hasText: 'Gemelo digital' }).first();
+    await expect(twin.locator('img')).toBeVisible();
+    await expect(twin).toContainText('Captura de la plataforma');
+    await expect(twin).not.toContainText('Fotografía real');
+    for (const title of ['IOTIO', 'PSMV rural']) {
+      const c = cards.filter({ hasText: title }).first();
+      await expect(c.locator('img'), title).toHaveCount(0);
+      await expect(c, title).toContainText('Esquema conceptual');
+    }
+  });
+
+  test('the digital twin sheet shows the platform capture and the plant photo, and P-006 only its gallery', async ({ page }) => {
+    await page.goto('/#proyecto/gemelo-digital-la-voragine');
+    let modal = page.getByRole('dialog');
+    await expect(modal.locator('figure img')).toHaveCount(2);
+    await expect(modal.locator('figure figcaption').first()).toContainText('datos simulados');
+    await expect(modal).not.toContainText('Todavía no hay documentos');
+    await page.keyboard.press('Escape');
+    await page.goto('/#proyecto/psmv-rural-inalter');
+    modal = page.getByRole('dialog');
+    await expect(modal.locator('figure img')).toHaveCount(1);
+    await expect(modal).toContainText('Esquema conceptual');
   });
 
   test('the leachate plants project shows its own photograph on the card and in the sheet', async ({ page }) => {
