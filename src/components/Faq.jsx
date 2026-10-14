@@ -19,7 +19,7 @@ export default function Faq() {
         </div>
       </div>
 
-      <Reveal style={{ maxWidth: 820, marginBottom: 56 }}>
+      <Reveal style={{ maxWidth: 820, marginBottom: 0 }}>
         {(Array.isArray(items) ? items : []).map((it, i) => (
           <details key={i} className="faq-item">
             <summary>
@@ -29,16 +29,6 @@ export default function Faq() {
             <p className="prose" style={{ margin: '0 0 20px', maxWidth: 680 }}>{it.a}</p>
           </details>
         ))}
-      </Reveal>
-
-      <Reveal style={{
-        border: '1px solid var(--line-hi)', background: 'var(--bg-1)', padding: isMobile ? 24 : 40,
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 24, flexWrap: 'wrap',
-      }}>
-        <p style={{ margin: 0, fontFamily: 'var(--f-mono)', fontSize: 'clamp(20px, 2.4vw, 28px)', letterSpacing: '-0.02em', maxWidth: 560, textWrap: 'balance' }}>
-          {t('faq.cta.title')}
-        </p>
-        <a href="#contacto" className="btn primary">{t('hero.ctaContact')}</a>
       </Reveal>
     </section>
   );

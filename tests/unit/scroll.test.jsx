@@ -80,14 +80,13 @@ describe('motion rules (stylesheet)', () => {
 });
 
 describe('Faq', () => {
-  it('lists 6 to 12 questions as native disclosure elements and a final CTA identical to the hero one', () => {
+  it('lists a short set of questions as native disclosure elements, with no closing CTA repeating Contact', () => {
     motion(true);
     const { container } = wrap(<Faq />);
     const n = container.querySelectorAll('details.faq-item').length;
-    expect(n).toBeGreaterThanOrEqual(6);
-    expect(n).toBeLessThanOrEqual(12);
-    const cta = screen.getByRole('link', { name: 'Consultar un proyecto' });
-    expect(cta.getAttribute('href')).toBe('#contacto');
+    expect(n).toBeGreaterThanOrEqual(3);
+    expect(n).toBeLessThanOrEqual(4);
+    expect(screen.queryByRole('link', { name: 'Consultar un proyecto' })).toBeNull();
   });
   it('does not claim procurement powers', () => {
     motion(true);
