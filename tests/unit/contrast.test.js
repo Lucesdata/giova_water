@@ -59,3 +59,20 @@ describe('contraste de controles (WCAG 1.4.11, 3:1)', () => {
     });
   }
 });
+
+describe('callouts sobre el video SCADA (≥ 4.5:1 en las cuatro paletas)', () => {
+  const palettes = parsePalettes();
+  // The callout paints --bg at 88 % over the video; worst case is a white frame behind it.
+  const over = (bg, a, under = 255) => '#' + [1, 3, 5].map((i) => Math.round(parseInt(bg.slice(i, i + 2), 16) * a + under * (1 - a)).toString(16).padStart(2, '0')).join('');
+  for (const [name, t] of Object.entries(palettes)) {
+    const surface = name === 'paper' ? t['bg-1'] : over(t.bg, 0.88);
+    for (const fg of ['ink', 'ink-1', 'ink-2', 'accent']) {
+      it(`${name}: --${fg} sobre el fondo del callout ≥ 4.5:1`, () => {
+        expect(ratio(t[fg], surface)).toBeGreaterThanOrEqual(4.5);
+      });
+    }
+    it(`${name}: el texto de la etiqueta (--bg) sobre el relleno --accent ≥ 4.5:1`, () => {
+      expect(ratio(t.bg, t.accent)).toBeGreaterThanOrEqual(4.5);
+    });
+  }
+});

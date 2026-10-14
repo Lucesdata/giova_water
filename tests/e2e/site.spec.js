@@ -759,3 +759,98 @@ test.describe('responsive y accesibilidad', () => {
     }
   });
 });
+
+test.describe('anuncios sobre el video SCADA', () => {
+  const box = (page) => page.locator('#inicio .hero-video');
+  const rect = (loc) => loc.evaluate((el) => { const r = el.getBoundingClientRect(); return { l: r.left, t: r.top, r: r.right, b: r.bottom }; });
+  const inside = (a, o) => a.l >= o.l - 1 && a.t >= o.t - 1 && a.r <= o.r + 1 && a.b <= o.b + 1;
+  const overlaps = (a, c) => a.l < c.r && a.r > c.l && a.t < c.b && a.b > c.t;
+
+  for (const vp of [WIDTHS[1], WIDTHS[2], WIDTHS[4]]) {
+    test(`${vp.name}: cada callout cabe en el video y no tapa el botón de pausa`, async ({ page }) => {
+      await page.setViewportSize({ width: vp.width, height: vp.height });
+      await page.goto('/');
+      await box(page).scrollIntoViewIfNeeded();
+      await page.locator('.hero-video-toggle').click();   // fija el cuadro: sin carreras con el ciclo
+      for (let i = 0; i < 6; i++) {
+        await page.locator('.hero-vars button').nth(i).click();
+        const callout = page.locator('.scada-callout');
+        await expect(callout).toBeVisible();
+        const [c, v, t] = await Promise.all([rect(callout), rect(box(page)), rect(page.locator('.hero-video-toggle'))]);
+        expect(inside(c, v), `${vp.name} variable ${i + 1} dentro del video`).toBe(true);
+        expect(overlaps(c, t), `${vp.name} variable ${i + 1} sin tapar el botón`).toBe(false);
+      }
+    });
+  }
+
+  test('clic en «Turbiedad» salta a esa variable: callout, aria-pressed y anuncio al lector de pantalla', async ({ page }) => {
+    await page.goto('/');
+    await box(page).scrollIntoViewIfNeeded();
+    const btn = page.getByRole('button', { name: 'Turbiedad', exact: true });
+    await btn.click();
+    await expect(btn).toHaveAttribute('aria-pressed', 'true');
+    const callout = page.locator('.scada-callout');
+    await expect(callout.locator('.scada-name')).toHaveText('Turbiedad');
+    await expect(callout).toHaveAttribute('role', 'status');
+    await expect.poll(() => page.locator('#inicio .hero-video video').evaluate((v) => v.currentTime)).toBeGreaterThan(4.3);
+  });
+
+  test('el ciclo automático avanza solo y no se anuncia', async ({ page }) => {
+    await page.goto('/');
+    await box(page).scrollIntoViewIfNeeded();
+    await expect.poll(() => page.locator('#inicio .hero-video video').evaluate((v) => !v.paused)).toBe(true);
+    await expect(page.locator('.scada-name')).not.toHaveText('Caudal', { timeout: 6000 });
+    await expect(page.locator('.scada-callout')).not.toHaveAttribute('role', 'status');
+  });
+
+  test('la pausa detiene video y callouts (mismo reloj)', async ({ page }) => {
+    await page.goto('/');
+    await box(page).scrollIntoViewIfNeeded();
+    await expect.poll(() => page.locator('#inicio .hero-video video').evaluate((v) => !v.paused)).toBe(true);
+    await page.locator('.hero-video-toggle').click();
+    const name = await page.locator('.scada-name, .scada-end-title').first().textContent();
+    await page.waitForTimeout(2600);
+    expect(await page.locator('.scada-name, .scada-end-title').first().textContent()).toBe(name);
+  });
+
+  test('con movimiento reducido el video no arranca y el callout 01 queda estático y visible', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/');
+    await box(page).scrollIntoViewIfNeeded();
+    await page.waitForTimeout(800);
+    expect(await page.locator('#inicio .hero-video video').evaluate((v) => v.paused)).toBe(true);
+    const callout = page.locator('.scada-callout');
+    await expect(callout.locator('.scada-name')).toHaveText('Caudal');
+    expect(await callout.evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
+    const running = await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running' && a.effect?.getComputedTiming().iterations === Infinity).length);
+    expect(running).toBe(0);
+    await page.getByRole('button', { name: 'Turbiedad', exact: true }).click();   // las etiquetas siguen saltando
+    await expect(callout.locator('.scada-name')).toHaveText('Turbiedad');
+  });
+
+  test('el chip dice que son rótulos ilustrativos y que es una grabación; el cierre enlaza a la ficha UAESP', async ({ page }) => {
+    await page.goto('/');
+    await box(page).scrollIntoViewIfNeeded();
+    await expect(page.locator('.scada-note')).toHaveText('Rótulos ilustrativos');
+    await expect(page.locator('.scada-rec')).toContainText('grabación');
+    await page.locator('.hero-video-toggle').click();
+    await page.evaluate(() => { document.querySelector('#inicio .hero-video video').currentTime = 14.6; });
+    const link = page.locator('.scada-end a.btn');
+    await expect(link).toHaveAttribute('href', '#proyecto/monitoreo-automatizacion-uaesp');
+  });
+
+  for (const palette of ['instrument', 'teal', 'copper', 'paper']) {
+    test(`axe: sin violaciones con el callout visible en la paleta ${palette}`, async ({ page }) => {
+      const problems = watch(page);
+      await page.goto('/');
+      await page.evaluate((p) => document.documentElement.setAttribute('data-palette', p), palette);
+      await box(page).scrollIntoViewIfNeeded();
+      await page.locator('.hero-video-toggle').click();
+      await page.getByRole('button', { name: 'pH', exact: true }).click();
+      await page.addScriptTag({ path: 'node_modules/axe-core/axe.min.js' });
+      const result = await page.evaluate(() => window.axe.run('#inicio .hero-video, #inicio .hero-vars', { runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] }));
+      expect(result.violations.map((v) => `${v.id}: ${v.nodes.length}`), palette).toEqual([]);
+      expect(problems).toEqual([]);
+    });
+  }
+});
