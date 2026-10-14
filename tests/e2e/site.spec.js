@@ -29,7 +29,7 @@ function watch(page) {
 }
 
 const openMenu = async (page) => { await page.getByRole('button', { name: 'Abrir menú' }).click(); };
-const FEATURED = ['3 plantas de lixiviados · BMA', 'Monitoreo y automatización de PTAP rurales · UAESP, Cali', 'PTAR y alcantarillado · Montebello, Cali', 'Gemelo digital · PTAP La Vorágine'];
+const FEATURED = ['3 plantas de lixiviados · BMA', 'Monitoreo y automatización de PTAP rurales · UAESP, Cali', 'PTAR y alcantarillado · Montebello, Cali', 'Gemelo digital · PTAP La Soledad'];
 
 test.beforeEach(async ({ page }) => { await seedLang(page, 'es'); await offlineFonts(page); });
 
@@ -207,7 +207,7 @@ test.describe('movimiento', () => {
 });
 
 test.describe('proyectos', () => {
-  test('selection shows the leachate plants, UAESP monitoring, Montebello and La Vorágine first; “Ver todos” reveals the seven', async ({ page }) => {
+  test('selection shows the leachate plants, UAESP monitoring, Montebello and the digital twin first; “Ver todos” reveals the seven', async ({ page }) => {
     await page.goto('/');
     const cards = page.locator('#proyectos article');
     await expect(cards).toHaveCount(4);
@@ -296,7 +296,7 @@ test.describe('proyectos', () => {
 
   for (const [slug, title] of [
     ['montebello-ptar-alcantarillado', 'PTAR y alcantarillado · Montebello, Cali'],
-    ['gemelo-digital-la-voragine', 'Gemelo digital · PTAP La Vorágine'],
+    ['gemelo-digital-la-voragine', 'Gemelo digital · PTAP La Soledad'],
     ['monitoreo-automatizacion-uaesp', 'Monitoreo y automatización de PTAP rurales · UAESP, Cali'],
     ['psmv-rural-inalter', 'PSMV rural · INALTER'],
   ]) {
@@ -451,7 +451,7 @@ test.describe('proyectos', () => {
     expect(n).toBe(3);
   });
 
-  test('La Vorágine key facts have three cells and no empty fourth one at 390 px', async ({ page }) => {
+  test('The digital twin key facts have three cells and no empty fourth one at 390 px', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/#proyecto/gemelo-digital-la-voragine');
     const info = await page.locator('.modal-body dl.cells').evaluate((el) => ({
@@ -535,8 +535,8 @@ test.describe('perfil y trayectoria', () => {
     const chips = await page.locator('#sobre .chip-btn').allTextContents();
     expect(chips.length).toBeGreaterThan(6);
     for (const c of chips) expect(c).not.toMatch(/^P-\d{3}$/);
-    await page.locator('#sobre .chip-btn', { hasText: 'Gemelo La Vorágine' }).click();
-    await expect(page.getByRole('dialog').getByRole('heading', { level: 2 })).toContainText('La Vorágine');
+    await page.locator('#sobre .chip-btn', { hasText: 'Gemelo La Soledad' }).click();
+    await expect(page.getByRole('dialog').getByRole('heading', { level: 2 })).toContainText('La Soledad');
     await page.keyboard.press('Escape');
     const roles = await page.locator('#sobre .timeline-row h4').allTextContents();
     expect(roles.join(' ')).not.toMatch(/Project Lead|Technical Director|Specialist/);
@@ -602,6 +602,42 @@ test.describe('demo de gemelo digital', () => {
     await expect(page.getByRole('button', { name: 'Operación normal' })).toHaveAttribute('aria-pressed', 'true');
     expect(await sample()).toBeLessThanOrEqual(1);
     await expect(page.getByRole('button', { name: 'Pausar simulación' })).toBeVisible();
+  });
+
+  test('says it is simulated once, shortly, and explains each scenario in two readable cards', async ({ page }) => {
+    await page.goto('/#gemelos');
+    await expect(page.locator('#gemelos .chip', { hasText: 'Demo · datos simulados' })).toHaveCount(1);
+    const intro = await page.locator('#gemelos > p.prose').innerText();
+    expect(intro.length).toBeLessThan(330);
+    const cards = page.locator('#gemelos [role=status] p');
+    await expect(cards).toHaveCount(2);
+    await expect(cards.nth(0)).toContainText('Qué cambió');
+    await expect(cards.nth(1)).toContainText('Qué debería revisar el operador');
+    await page.getByRole('button', { name: 'Demanda alta' }).click();
+    await expect(cards.nth(0)).toContainText('Sube el caudal');
+  });
+
+  test('shows the actual twin (La Soledad capture, simulated values) next to the panel and links to its sheet', async ({ page }) => {
+    await page.goto('/#gemelos');
+    const real = page.locator('#gemelos .twin-real');
+    await expect(real).toBeVisible();
+    await real.scrollIntoViewIfNeeded();
+    await expect.poll(() => real.locator('img').evaluate((el) => el.complete && el.naturalWidth > 0)).toBe(true);
+    await expect(real).toContainText('Captura de la plataforma');
+    await expect(real).toContainText('datos simulados');
+    await expect(real).toContainText('23');
+    await expect(real).not.toContainText('Vorágine');
+    await real.getByRole('link', { name: /Ver el proyecto/ }).click();
+    await expect(page.getByRole('dialog').getByRole('heading', { level: 2 })).toHaveText('Gemelo digital · PTAP La Soledad');
+  });
+
+  test('the demo panel starts higher on a phone and nothing overflows horizontally', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/#gemelos');
+    await page.waitForTimeout(400);
+    const top = await page.locator('#gemelos .seg').first().evaluate((el) => el.getBoundingClientRect().top);
+    expect(top).toBeLessThan(844 * 1.15);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
 
   test('the section does not claim a plant connection or a 3D scene', async ({ page }) => {

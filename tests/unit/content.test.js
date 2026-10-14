@@ -117,11 +117,11 @@ describe('estructura de la página', () => {
       expect(dictionary[lang].nav.items[id], `${lang} nav.items.${id}`).toBeTruthy();
     }
   });
-  it('cada proyecto tiene una URL estable única y los destacados son monitoreo y automatización UAESP, Montebello y La Vorágine', () => {
+  it('cada proyecto tiene una URL estable única y los destacados son lixiviados BMA, monitoreo UAESP, Montebello y el gemelo digital', () => {
     const slugs = projectsData.map((p) => p.slug);
     expect(new Set(slugs).size).toBe(projectsData.length);
     for (const s of slugs) expect(s).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
-    expect(projectsData.filter((p) => p.featured).map((p) => p.id)).toEqual(['P-007', 'P-001', 'P-003']);
+    expect(projectsData.filter((p) => p.featured).map((p) => p.id)).toEqual(['P-005', 'P-007', 'P-001', 'P-003']);
     expect(projectsData).toHaveLength(7);
   });
   it.each(LANGS)('%s: horario en hora de Madrid, sin CET ni React · Vite en el pie', (lang) => {
@@ -166,8 +166,9 @@ describe('recursos multimedia', () => {
 
 describe('P-007: proyecto destacado con fotografías reales', () => {
   const p7 = projectsData.find((p) => p.id === 'P-007');
-  it('es el primero de la lista y su portada es la primera fotografía', () => {
-    expect(projectsData[0].id).toBe('P-007');
+  it('va justo después del proyecto destacado (P-005) y su portada es la primera fotografía', () => {
+    expect(projectsData[0].id).toBe('P-005');
+    expect(projectsData[1].id).toBe('P-007');
     expect(p7.cover).toBe(p7.photos[0].src);
   });
   it('cada fotografía existe en disco y pesa menos de 300 KB', () => {
@@ -269,5 +270,30 @@ describe('insignia de portada: fotografía o captura', () => {
   });
   it('solo el gemelo digital usa la insignia de captura', () => {
     expect(projectsData.filter((p) => p.coverKind === 'capture').map((p) => p.id)).toEqual(['P-003']);
+  });
+});
+
+describe('demo de gemelos: gemelo real (La Soledad)', () => {
+  it.each(LANGS)('%s: P-003 es el gemelo de La Soledad, con las cifras de la captura y sin las no respaldadas', (lang) => {
+    const d = dictionary[lang].projects.data['P-003'];
+    expect(JSON.stringify(d)).not.toMatch(/Vor.gine/);
+    expect(d.title).toMatch(/La Soledad/);
+    expect(d.short).toMatch(/La Soledad/);
+    expect(d.metrics.map((m) => m.v)).toEqual(['23', '8', 'La Soledad']);
+    expect(JSON.stringify(d)).not.toMatch(/186|2 Hz/);
+  });
+  it('la dirección estable del proyecto no cambia aunque cambie el nombre', () => {
+    expect(projectsData.find((p) => p.id === 'P-003').slug).toBe('gemelo-digital-la-voragine');
+  });
+  it.each(LANGS)('%s: el bloque del gemelo real tiene textos, dice que los valores son simulados y no sugiere conexión', (lang) => {
+    const r = dictionary[lang].twins.real;
+    for (const k of ['kicker', 'title', 'body', 'cta']) expect(r[k], `${lang}.${k}`).toMatch(/\S/);
+    expect(JSON.stringify(r)).not.toMatch(/LIVE|ONLINE|UPTIME|LATENCY|latencia|tiempo real|real time|temps réel|en vivo/i);
+    expect(r.body).toMatch(/simul/i);
+  });
+  it.each(LANGS)('%s: la introducción de la demo es corta y sigue diciendo que el panel no es un modelo 3D', (lang) => {
+    const intro = dictionary[lang].twins.intro;
+    expect(intro.length).toBeLessThan(330);
+    expect(intro).toMatch(/3D/);
   });
 });

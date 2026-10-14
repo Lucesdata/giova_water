@@ -698,3 +698,7 @@ a.text-link { display: inline-flex; align-items: center; min-height: 44px; }
 .hero-callout > span:nth-child(2) { flex: 1; min-width: 0; }
 .hero-callout > span:last-child { flex: none; }
 .hero-callout:hover, .hero-callout:focus-visible { border-color: var(--accent); }
+
+/* The actual twin, next to the simulation panel */
+.twin-real { display: grid; gap: 24px; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); align-items: center; margin-top: 24px; padding: 20px; border: 1px solid var(--line-hi); background: var(--bg-1); }
+@media (max-width: 899px) { .twin-real { grid-template-columns: minmax(0, 1fr); padding: 16px; } }
