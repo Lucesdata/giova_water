@@ -573,12 +573,28 @@ a.text-link { display: inline-flex; align-items: center; min-height: 44px; }
 .hero-side { display: grid; gap: 28px; min-width: 0; }
 .hero-side .hero-stats { grid-template-columns: repeat(3, minmax(0, auto)); justify-content: start; gap: 12px 32px; }
 .scope-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
-.scope-tile { position: relative; display: grid; gap: 4px; align-content: start; height: 100%; padding: 16px 16px 16px; background: var(--bg-1); color: var(--ink); text-decoration: none; }
-.scope-tile:hover, .scope-tile:focus-visible { background: var(--bg-2); }
-.scope-tile:hover .scope-go { color: var(--accent); transform: translateX(3px); }
-.scope-v { font-family: var(--f-mono); font-size: clamp(24px, 2.4vw, 34px); letter-spacing: -0.03em; color: var(--accent); line-height: 1.1; }
-.scope-l { font-size: 14px; line-height: 1.4; color: var(--ink-1); padding-right: 18px; }
-.scope-go { position: absolute; right: 12px; bottom: 12px; color: var(--ink-2); transition: transform 200ms, color 200ms; }
+.scope-tile { position: relative; display: flex; flex-direction: column; background: var(--bg-1); color: var(--ink); min-width: 0; transition: background 200ms; }
+.scope-tile:hover, .scope-tile[data-open="true"] { background: var(--bg-2); }
+.scope-toggle { all: unset; box-sizing: border-box; cursor: pointer; display: grid; gap: 6px; align-content: start; width: 100%; flex: 1 1 auto; padding: 14px 16px 16px; position: relative; }
+.scope-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.scope-meta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px; font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; }
+.scope-role { color: var(--accent); }
+.scope-year { color: var(--ink-2); white-space: nowrap; }
+.scope-v { font-family: var(--f-mono); font-size: clamp(26px, 2.6vw, 36px); letter-spacing: -0.03em; color: var(--ink); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.scope-l { font-size: 14px; line-height: 1.4; color: var(--ink-1); padding-right: 22px; }
+.scope-go { position: absolute; right: 14px; bottom: 12px; font-family: var(--f-mono); font-size: 18px; line-height: 1; color: var(--ink-2); transition: color 200ms, transform 200ms; }
+.scope-tile:hover .scope-go, .scope-toggle:focus-visible .scope-go { color: var(--accent); transform: scale(1.15); }
+.scope-dots { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; padding-right: 26px; }
+.scope-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0.85; animation: scope-pop 200ms var(--ease) both; }
+.scope-line { display: block; height: 6px; margin-top: 6px; margin-right: 26px; background: repeating-linear-gradient(90deg, var(--line-hi) 0 6px, transparent 6px 9px); }
+.scope-line i { display: block; height: 100%; background: repeating-linear-gradient(90deg, var(--accent) 0 6px, transparent 6px 9px); transform-origin: left; animation: scope-draw 240ms var(--ease) both; }
+.scope-panel { padding: 0 16px 16px; display: grid; gap: 10px; }
+.scope-panel[hidden] { display: none; }
+.scope-panel p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--ink-1); }
+.scope-link { justify-self: start; font-family: var(--f-mono); font-size: 13px; color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-line); padding: 4px 0; }
+.scope-link:hover, .scope-link:focus-visible { border-bottom-color: var(--accent); }
+@keyframes scope-pop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 0.85; } }
+@keyframes scope-draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .scope-note { margin: 10px 0 0; font-size: 13px; color: var(--ink-2); }
 
 /* Cycle: need -> operation, one node per stage, the line is the flow of the schematic */
@@ -603,7 +619,7 @@ a.text-link { display: inline-flex; align-items: center; min-height: 44px; }
   .cycle-node { position: absolute; left: 0; top: 0; }
   .cycle-name { margin-top: 6px; }
 }
-@media (prefers-reduced-motion: reduce) { .scope-go { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .scope-go, .scope-tile { transition: none; } .scope-dots i, .scope-line i { animation: none; } }
 @media (max-width: 899px) {
   .hero { display: flex; flex-direction: column; border-left: none; border-right: none; }
   .hero-photo { position: relative; inset: auto; z-index: auto; height: 150px; }
