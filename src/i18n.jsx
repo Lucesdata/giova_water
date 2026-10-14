@@ -291,7 +291,8 @@ const dict = {
           responsibility: 'Diseño de procesos completo, automatización y puesta en marcha de las tres plantas.',
           solution: 'Tratamiento fisicoquímico y biológico con SCADA, en plantas de 1, 3 y 1 L/s (432 m³/día en total).',
           resultFull: 'Cumplimiento ambiental durante 7 años de operación y ampliación de la planta de Córdoba de 1 a 3 L/s (2022–2024).',
-          evidence: ['Información aportada por el autor; documentos de respaldo por incorporar.'],
+          photos: [{ alt: 'Giovanni Guevara junto a los tanques y filtros amarillos de una planta de lixiviados de BMA, en Buenaventura.', caption: 'Planta de lixiviados de BMA, Buenaventura (2021).' }],
+          evidence: ['Fotografía propia de la planta, tomada en 2021.', 'Información aportada por el autor; documentos de respaldo por incorporar.'],
         },
         'P-006': {
           cat: 'MODELACIÓN', loc: 'Cali, CO',
@@ -700,7 +701,8 @@ const dict = {
           responsibility: 'Full process design, automation and commissioning of the three plants.',
           solution: 'Physicochemical and biological treatment with SCADA, in plants of 1, 3 and 1 L/s (432 m³/day in total).',
           resultFull: 'Environmental compliance over 7 years of operation and expansion of the Córdoba plant from 1 to 3 L/s (2022–2024).',
-          evidence: ['Information provided by the author; supporting documents to be added.'],
+          photos: [{ alt: 'Giovanni Guevara next to the yellow tanks and filters of a BMA leachate plant in Buenaventura.', caption: 'BMA leachate plant, Buenaventura (2021).' }],
+          evidence: ['Own photograph of the plant, taken in 2021.', 'Information provided by the author; supporting documents still to be added.'],
         },
         'P-006': {
           cat: 'MODELLING', loc: 'Cali, CO',
@@ -1109,7 +1111,8 @@ const dict = {
           responsibility: 'Conception complète des procédés, automatisation et mise en service des trois stations.',
           solution: 'Traitement physico-chimique et biologique avec SCADA, dans des stations de 1, 3 et 1 L/s (432 m³/jour au total).',
           resultFull: 'Conformité environnementale sur 7 ans d’exploitation et extension de la station de Córdoba de 1 à 3 L/s (2022–2024).',
-          evidence: ['Information fournie par l’auteur ; documents justificatifs à ajouter.'],
+          photos: [{ alt: 'Giovanni Guevara à côté des réservoirs et filtres jaunes d’une usine de lixiviats de BMA, à Buenaventura.', caption: 'Usine de lixiviats de BMA, Buenaventura (2021).' }],
+          evidence: ['Photographie personnelle de l’usine, prise en 2021.', 'Informations fournies par l’auteur ; pièces justificatives à ajouter.'],
         },
         'P-006': {
           cat: 'MODÉLISATION', loc: 'Cali, CO',

@@ -349,6 +349,23 @@ test.describe('proyectos', () => {
     await expect(modal).not.toContainText('Todavía no hay documentos');
   });
 
+  test('the leachate plants project shows its own photograph on the card and in the sheet', async ({ page }) => {
+    await page.goto('/#proyectos');
+    await page.getByRole('button', { name: /Ver todos los proyectos/ }).click();
+    const card = page.locator('#proyectos article', { hasText: '3 plantas de lixiviados' });
+    await expect(card.locator('img')).toBeVisible();
+    await expect(card).toContainText('Fotografía real');
+    await expect.poll(() => card.locator('img').evaluate((el) => el.complete && el.naturalWidth > 0)).toBe(true);
+    await card.locator('a.card-open').click();
+    const modal = page.getByRole('dialog');
+    const imgs = modal.locator('figure img');
+    await expect(imgs).toHaveCount(1);
+    await imgs.first().scrollIntoViewIfNeeded();
+    await expect.poll(() => imgs.first().evaluate((el) => el.complete && el.naturalWidth > 0)).toBe(true);
+    await expect(modal.locator('figure figcaption')).toHaveText('Planta de lixiviados de BMA, Buenaventura (2021).');
+    await expect(modal).not.toContainText('Todavía no hay documentos');
+  });
+
   test('the UAESP project has no horizontal overflow on a phone', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/#proyecto/monitoreo-automatizacion-uaesp');

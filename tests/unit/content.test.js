@@ -224,3 +224,31 @@ describe('perfil: credenciales, trayectoria y competencias', () => {
     }
   });
 });
+
+describe('proyectos con fotografías propias', () => {
+  const withPhotos = projectsData.filter((p) => p.photos && p.photos.length);
+  it('hay al menos P-005 y P-007 con fotografías', () => {
+    expect(withPhotos.map((p) => p.id)).toEqual(expect.arrayContaining(['P-005', 'P-007']));
+  });
+  it('cada portada y cada fotografía existen en disco y pesan menos de 300 KB', () => {
+    for (const p of withPhotos) {
+      for (const src of [p.cover, ...p.photos.map((ph) => ph.src)]) {
+        const f = path.join(ROOT, 'public', src);
+        expect(fs.existsSync(f), `${p.id} ${src}`).toBe(true);
+        expect(fs.statSync(f).size, `${p.id} ${src}`).toBeLessThan(300 * 1024);
+      }
+    }
+  });
+  it.each(LANGS)('%s: cada fotografía tiene texto alternativo y pie, y no hay coordenadas en los pies', (lang) => {
+    for (const p of withPhotos) {
+      const texts = dictionary[lang].projects.data[p.id].photos;
+      expect(texts, `${lang} ${p.id}`).toHaveLength(p.photos.length);
+      for (const t of texts) { expect(t.alt.length).toBeGreaterThan(10); expect(t.caption.length).toBeGreaterThan(10); expect(t.alt + t.caption).not.toMatch(/\d°/); }
+    }
+  });
+  it.each(LANGS)('%s: P-005 dice que la fotografía es de Buenaventura y de 2021', (lang) => {
+    const c = dictionary[lang].projects.data['P-005'].photos[0].caption;
+    expect(c).toMatch(/Buenaventura/);
+    expect(c).toMatch(/2021/);
+  });
+});
