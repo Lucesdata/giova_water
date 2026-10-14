@@ -29,7 +29,11 @@ export const projectsData = [
   { id: 'P-004', slug: 'iotio-telemetria', featured: false, year: '2023', scheme: 'iot',
     tags: ['Django', 'React', 'InfluxDB'], filters: ['digital'], files: [] },
   { id: 'P-005', slug: 'plantas-lixiviados-bma', featured: false, year: '2018–25', scheme: 'industrial',
-    tags: [{ k: 'fisicoquimico' }, { k: 'biologico' }, 'SCADA', 'P&IDs'], filters: ['agua'], files: [] },
+    tags: [{ k: 'fisicoquimico' }, { k: 'biologico' }, 'SCADA', 'P&IDs'], filters: ['agua'], files: [],
+    // Own photograph, Buenaventura, 2021. `cover` is a tight crop of it for the card
+    // (the full photo, with the author in it, goes in the gallery).
+    cover: '/assets/proyectos/lixiviados-bma-portada.jpg',
+    photos: [{ src: '/assets/proyectos/lixiviados-bma-planta.jpg', w: 800, h: 1066 }] },
   { id: 'P-006', slug: 'psmv-rural-inalter', featured: false, year: '2019', scheme: 'network',
     tags: ['EPA-SWMM', 'Manning', 'MAGNA-SIRGAS', 'PSMV'], filters: ['agua'], files: [] },
 ];
