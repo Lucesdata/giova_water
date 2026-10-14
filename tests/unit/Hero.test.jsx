@@ -4,10 +4,9 @@ import { render } from '@testing-library/react';
 import Hero from '../../src/components/Hero.jsx';
 
 const T = {
-  'hero.schematicLabels': {
-    captacion: 'Captación', coagFloc: 'Coag/Floc', sedimentacion: 'Sedim.',
-    lamelar: 'Lamelar', filtracion: 'Filtr.', desinfeccion: 'Desin.', reserva: 'Reserva',
-    sensors: { caudal: 'Caudal', presion: 'Presión', turb: 'Turbidez', ph: 'pH' },
+  'hero.video': {
+    fig: 'Pantalla', note: 'Video real', badge: 'Video real', alt: 'Texto alternativo del video',
+    pause: 'Pausar video', play: 'Reproducir video', varsLabel: 'Variables', vars: ['Caudal', 'pH'],
   },
   'hero.stats': [{ v: '11', l: 'años' }],
 };
@@ -27,27 +26,32 @@ function mockMotion(reduce) {
   });
 }
 
-describe('Hero — portada sin vídeo', () => {
+describe('Hero — video real de la pantalla SCADA', () => {
   let raf;
   beforeEach(() => {
     raf = vi.spyOn(window, 'requestAnimationFrame').mockImplementation(() => 1);
   });
   afterEach(() => { raf.mockRestore(); });
 
-  it('shows the illustrative schematic and never requests a video', () => {
+  it('shows real footage: silent, looping, with a poster and a text alternative', () => {
     mockMotion(false);
-    const { container } = render(<Hero />);
-    expect(container.querySelector('video')).toBeNull();
-    expect(container.querySelector('svg')).not.toBeNull();
-    expect(container.innerHTML).not.toMatch(/ptap-intro|\.mp4/);
+    const { container, getByText } = render(<Hero />);
+    const v = container.querySelector('video');
+    expect(v).not.toBeNull();
+    expect(v.muted).toBe(true);
+    expect(v.loop).toBe(true);
+    expect(v.getAttribute('poster')).toBe('/assets/video/scada-ptap-poster.jpg');
+    expect(v.getAttribute('aria-label')).toBe('Texto alternativo del video');
+    expect([...v.querySelectorAll('source')].map((s) => s.getAttribute('type'))).toEqual(['video/webm', 'video/mp4']);
+    expect(getByText('hero.video.fig'.replace('hero.video.fig', 'Pantalla'))).toBeTruthy();
+    expect(container.querySelector('#inicio svg, .hero-below svg')).toBeNull();
   });
 
-  it('labels the diagram as illustrative and exposes a text alternative', () => {
+  it('always offers a pause/play control and lists the supervised variables', () => {
     mockMotion(false);
-    const { getByText, getByRole } = render(<Hero />);
-    expect(getByText('hero.badge')).toBeTruthy();
-    expect(getByText('hero.figNote')).toBeTruthy();
-    expect(getByRole('img', { name: 'hero.schematicAlt' })).toBeTruthy();
+    const { container, getByRole } = render(<Hero />);
+    expect(getByRole('button', { name: /Reproducir video|Pausar video/ })).toBeTruthy();
+    expect([...container.querySelectorAll('.hero-vars li')].map((li) => li.textContent)).toEqual(['Caudal', 'pH']);
   });
 
   it('has a single level-1 heading with the value proposition key', () => {
@@ -74,16 +78,11 @@ describe('Hero — portada sin vídeo', () => {
     expect(links).toEqual([['#proyectos', 'hero.ctaProjects →'], ['#contacto', 'hero.ctaContact →']]);
   });
 
-  it('animates the flow when motion is allowed', () => {
-    mockMotion(false);
-    render(<Hero />);
-    expect(raf).toHaveBeenCalled();
-  });
-
-  it('keeps a static diagram (no animation loop) with prefers-reduced-motion', () => {
+  it('with reduced motion the video does not start by itself', () => {
     mockMotion(true);
-    const { container } = render(<Hero />);
-    expect(raf).not.toHaveBeenCalled();
-    expect(container.querySelector('svg')).not.toBeNull();
+    const play = vi.spyOn(window.HTMLMediaElement.prototype, 'play').mockImplementation(() => Promise.resolve());
+    render(<Hero />);
+    expect(play).not.toHaveBeenCalled();
+    play.mockRestore();
   });
 });

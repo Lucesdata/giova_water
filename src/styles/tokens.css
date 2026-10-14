@@ -597,6 +597,16 @@ a.text-link { display: inline-flex; align-items: center; min-height: 44px; }
 @keyframes scope-draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .scope-note { margin: 10px 0 0; font-size: 13px; color: var(--ink-2); }
 
+/* Hero video: real footage of a supervision screen, with a visible pause control */
+.hero-video { position: relative; border: 1px solid var(--line-hi); background: var(--bg-1); aspect-ratio: 16 / 9; width: 100%; overflow: hidden; }
+.hero-video video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hero-video-badge { position: absolute; top: 8px; right: 8px; }
+.hero-video-toggle { position: absolute; left: 8px; bottom: 8px; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; font-family: var(--f-mono); font-size: 13px; color: var(--ink); background: rgba(6, 9, 12, 0.82); border: 1px solid var(--ctl); cursor: pointer; }
+.hero-video-toggle:hover, .hero-video-toggle:focus-visible { border-color: var(--accent); color: var(--accent); }
+.hero-vars { margin-top: 12px; display: grid; gap: 8px; }
+.hero-vars ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.hero-vars li { font-family: var(--f-mono); font-size: 13px; color: var(--ink-1); padding: 4px 10px; border: 1px solid var(--line-2); background: var(--bg-1); }
+
 /* Cycle: need -> operation, one node per stage, the line is the flow of the schematic */
 .cycle { padding: 56px 0 24px; }
 .cycle-head { max-width: 760px; margin-bottom: 36px; }

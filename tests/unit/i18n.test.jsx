@@ -47,12 +47,12 @@ describe('i18n', () => {
   it('resolves objects (used by destructured labels)', () => {
     render(
       <LangProvider>
-        <Probe k="hero.schematicLabels" />
+        <Probe k="hero.video" />
       </LangProvider>
     );
     const parsed = JSON.parse(screen.getByTestId('out').textContent);
-    expect(parsed.captacion).toBeDefined();
-    expect(parsed.sensors.caudal).toBeDefined();
+    expect(parsed.fig).toBeDefined();
+    expect(parsed.vars).toHaveLength(6);
   });
 
   it('persists language to localStorage', async () => {
@@ -119,7 +119,7 @@ describe('dictionary completeness', () => {
   it('resolves sampled keys in every language through t()', async () => {
     const mod = await import('../../src/i18n.jsx');
     const sampleKeys = [
-      'nav.items.inicio', 'hero.h1', 'hero.intro', 'hero.schematicLabels.captacion',
+      'nav.items.inicio', 'hero.h1', 'hero.intro', 'hero.video.fig',
       'about.method.title', 'projects.h2a', 'projects.data.P-007.budgets.title', 'twins.scenarios.items.alta.name',
       'projects.data.P-001.title', 'projects.data.P-007.title',
       'twins.badge', 'contact.form.prepare', 'footer.copy', 'common.tweaks',

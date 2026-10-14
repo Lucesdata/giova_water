@@ -678,33 +678,39 @@ test.describe('responsive y accesibilidad', () => {
     expect(Math.abs(a.left - b.left)).toBeLessThan(1);
   });
 
-  test('the hydraulic diagram stays legible: no text is under 9.5 px on screen at any width (stage names ≥ 11 px)', async ({ page }) => {
+  test('the hero shows the real SCADA footage with a visible pause control and no overflow at any width', async ({ page }) => {
     for (const vp of WIDTHS) {
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await page.goto('/');
-      const smallest = await page.evaluate(() => {
-        const svg = document.querySelector('#inicio figure svg');
-        let min = Infinity;
-        svg.querySelectorAll('text').forEach((t) => {
-          const scale = t.getScreenCTM().a;
-          const size = parseFloat(t.getAttribute('font-size') || getComputedStyle(t).fontSize) * scale;
-          if (t.textContent.trim()) min = Math.min(min, size);
-        });
-        return min;
-      });
-      // 20 m scale bar and unit labels are the smallest; stage names are far above.
-      expect(smallest, vp.name).toBeGreaterThanOrEqual(9.5);
-      // Below 560 px of drawing width the diagram becomes numbered stages plus a text legend.
-      const frameW = await page.locator('#inicio figure svg').evaluate((el) => el.getBoundingClientRect().width);
-      await expect(page.locator('#inicio figure ol li')).toHaveCount(frameW < 560 ? 6 : 0);
+      const video = page.locator('#inicio figure video');
+      await expect(video).toHaveCount(1);
+      await expect(video).toHaveJSProperty('muted', true);
+      await expect(page.locator('#inicio figure .hero-video-badge')).toContainText('Video real');
+      const toggle = page.locator('#inicio figure .hero-video-toggle');
+      await toggle.scrollIntoViewIfNeeded();
+      const box = await toggle.boundingBox();
+      expect(box.height, vp.name).toBeGreaterThanOrEqual(44);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), vp.name).toBe(true);
     }
   });
 
-  test('the hero still says the diagram is illustrative with example values', async ({ page }) => {
+  test('the pause button stops the footage and play restarts it', async ({ page }) => {
+    await page.goto('/');
+    const video = page.locator('#inicio figure video');
+    const toggle = page.locator('#inicio figure .hero-video-toggle');
+    await toggle.scrollIntoViewIfNeeded();
+    await expect.poll(() => video.evaluate((v) => !v.paused)).toBe(true);
+    await toggle.click();
+    await expect.poll(() => video.evaluate((v) => v.paused)).toBe(true);
+    await toggle.click();
+    await expect.poll(() => video.evaluate((v) => !v.paused)).toBe(true);
+  });
+
+  test('the hero says it is real footage and lists the supervised variables', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
-    await expect(page.locator('#inicio figure')).toContainText('Esquema ilustrativo');
-    await expect(page.locator('#inicio figure')).toContainText('Valores de ejemplo, no son datos reales');
+    await expect(page.locator('#inicio figure')).toContainText('Video real de la UAESP');
+    await expect(page.locator('#inicio figure .hero-vars li')).toHaveCount(6);
   });
 
   test('projects grid uses 1, 2 and 3 columns by width', async ({ page }) => {
