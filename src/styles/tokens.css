@@ -568,11 +568,47 @@ a.text-link { display: inline-flex; align-items: center; min-height: 44px; }
 .hero-secondary { background: color-mix(in srgb, var(--bg) 70%, transparent); }
 .hero-below { display: grid; gap: 40px; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; padding: 20px 0 24px; }
 .hero-stats { display: grid; gap: 20px; margin: 0; padding: 0; }
+
+/* Hero side column: credentials, then the scale of past work */
+.hero-side { display: grid; gap: 28px; min-width: 0; }
+.hero-side .hero-stats { grid-template-columns: repeat(3, minmax(0, auto)); justify-content: start; gap: 12px 32px; }
+.scope-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.scope-tile { position: relative; display: grid; gap: 4px; align-content: start; height: 100%; padding: 16px 16px 16px; background: var(--bg-1); color: var(--ink); text-decoration: none; }
+.scope-tile:hover, .scope-tile:focus-visible { background: var(--bg-2); }
+.scope-tile:hover .scope-go { color: var(--accent); transform: translateX(3px); }
+.scope-v { font-family: var(--f-mono); font-size: clamp(24px, 2.4vw, 34px); letter-spacing: -0.03em; color: var(--accent); line-height: 1.1; }
+.scope-l { font-size: 14px; line-height: 1.4; color: var(--ink-1); padding-right: 18px; }
+.scope-go { position: absolute; right: 12px; bottom: 12px; color: var(--ink-2); transition: transform 200ms, color 200ms; }
+.scope-note { margin: 10px 0 0; font-size: 13px; color: var(--ink-2); }
+
+/* Cycle: need -> operation, one node per stage, the line is the flow of the schematic */
+.cycle { padding: 56px 0 24px; }
+.cycle-head { max-width: 760px; margin-bottom: 36px; }
+.cycle-title { font-family: var(--f-mono); font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; margin: 0 0 14px; font-size: clamp(26px, 3.2vw, 44px); text-wrap: balance; }
+.cycle-lead { margin: 0; max-width: 640px; color: var(--ink-1); }
+.cycle-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px; position: relative; counter-reset: none; }
+.cycle-steps::before { content: ""; position: absolute; left: 0; right: 0; top: 17px; height: 1px; background: linear-gradient(90deg, var(--accent), var(--accent-line)); }
+.cycle-step { position: relative; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.cycle-node { position: relative; z-index: 1; display: grid; place-items: center; width: 36px; height: 36px; background: var(--bg); border: 1px solid var(--accent); color: var(--accent); font-family: var(--f-mono); font-size: 13px; }
+.cycle-name { font-family: var(--f-mono); font-size: 17px; font-weight: 600; margin: 8px 0 0; letter-spacing: -0.01em; }
+.cycle-does { margin: 0; font-size: 15px; line-height: 1.55; color: var(--ink-1); }
+.cycle-proof { display: grid; gap: 4px; margin-top: 4px; padding: 10px 12px; border: 1px solid var(--line); border-left: 2px solid var(--accent); background: var(--bg-1); font-size: 14px; line-height: 1.45; color: var(--ink); text-decoration: none; }
+.cycle-proof:hover, .cycle-proof:focus-visible { border-color: var(--accent); }
+.cycle-cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; margin-top: 40px; padding: 20px 24px; border: 1px solid var(--line-hi); background: var(--bg-1); }
+.cycle-cta p { margin: 0; font-family: var(--f-mono); font-size: clamp(16px, 1.6vw, 20px); }
+@media (max-width: 1099px) {
+  .cycle-steps { grid-template-columns: minmax(0, 1fr); gap: 0; padding-left: 0; }
+  .cycle-steps::before { left: 17px; right: auto; top: 0; bottom: 0; width: 1px; height: auto; background: linear-gradient(180deg, var(--accent), var(--accent-line)); }
+  .cycle-step { padding: 0 0 28px 56px; }
+  .cycle-node { position: absolute; left: 0; top: 0; }
+  .cycle-name { margin-top: 6px; }
+}
+@media (prefers-reduced-motion: reduce) { .scope-go { transition: none; } }
 @media (max-width: 899px) {
   .hero { display: flex; flex-direction: column; border-left: none; border-right: none; }
   .hero-photo { position: relative; inset: auto; z-index: auto; height: 150px; }
   .hero-photo::after { background: linear-gradient(180deg, transparent 35%, var(--bg-1) 100%); }
   .hero-copy { padding: 8px 16px 24px; max-width: none; }
   .hero-below { grid-template-columns: minmax(0, 1fr); padding-top: 28px; }
-  .hero-stats { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .hero-stats, .hero-side .hero-stats { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useOnScreen, usePrefersReducedMotion } from './primitives.jsx';
 import { useT } from '../i18n.jsx';
+import Cycle, { Scope } from './Cycle.jsx';
 
 // Fixed example readings. The diagram is illustrative: nothing here is measured.
 const EXAMPLE = { caudal: '42.3', presion: '3.24', turbidez: '0.80', ph: '7.21' };
@@ -227,6 +228,7 @@ export default function Hero() {
       </div>
 
       <div className="hero-below">
+        <div className="hero-side">
         <dl className="hero-stats">
           {(Array.isArray(stats) ? stats : []).map((s, i) => (
             <div key={i}>
@@ -235,6 +237,8 @@ export default function Hero() {
             </div>
           ))}
         </dl>
+        <Scope />
+        </div>
 
         <figure ref={figRef} style={{ margin: 0, minWidth: 0 }}>
           <figcaption style={{
@@ -274,6 +278,8 @@ export default function Hero() {
           )}
         </figure>
       </div>
+
+      <Cycle />
     </div>
   );
 }
