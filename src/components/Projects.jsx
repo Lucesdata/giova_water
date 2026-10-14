@@ -21,7 +21,7 @@ function ProjectCard({ p, onOpen }) {
   const i18n = t(`projects.data.${p.id}`) || {};
   const title = i18n.title || p.id;
   return (
-    <Reveal as="article" className="project-card">
+    <Reveal as="article" className={p.highlight ? 'project-card is-highlight' : 'project-card'}>
       <div style={{ aspectRatio: '16/7', position: 'relative', background: 'var(--bg-2)', borderBottom: '1px solid var(--line)', overflow: 'hidden' }}>
         {p.cover ? (
           <>
@@ -39,6 +39,7 @@ function ProjectCard({ p, onOpen }) {
 
       <div style={{ padding: 20, flex: 1, display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div className="mono" style={{ fontSize: 12, letterSpacing: '0.08em', color: 'var(--accent)' }}>
+          {p.highlight && <span className="chip accent" style={{ marginRight: 8 }}>{t('projects.highlightBadge')}</span>}
           {i18n.cat} <span style={{ color: 'var(--ink-2)' }}>· {p.year}</span>
         </div>
         <h3 style={{ margin: 0, fontSize: 19, fontWeight: 500, letterSpacing: '-0.01em', fontFamily: 'var(--f-sans)', lineHeight: 1.3, textWrap: 'balance' }}>{title}</h3>

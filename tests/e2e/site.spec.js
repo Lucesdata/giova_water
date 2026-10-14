@@ -29,7 +29,7 @@ function watch(page) {
 }
 
 const openMenu = async (page) => { await page.getByRole('button', { name: 'Abrir menú' }).click(); };
-const FEATURED = ['Monitoreo y automatización de PTAP rurales · UAESP, Cali', 'PTAR y alcantarillado · Montebello, Cali', 'Gemelo digital · PTAP La Vorágine'];
+const FEATURED = ['3 plantas de lixiviados · BMA', 'Monitoreo y automatización de PTAP rurales · UAESP, Cali', 'PTAR y alcantarillado · Montebello, Cali', 'Gemelo digital · PTAP La Vorágine'];
 
 test.beforeEach(async ({ page }) => { await seedLang(page, 'es'); await offlineFonts(page); });
 
@@ -207,12 +207,12 @@ test.describe('movimiento', () => {
 });
 
 test.describe('proyectos', () => {
-  test('selection shows UAESP monitoring, Montebello and La Vorágine first; “Ver todos” reveals the seven', async ({ page }) => {
+  test('selection shows the leachate plants, UAESP monitoring, Montebello and La Vorágine first; “Ver todos” reveals the seven', async ({ page }) => {
     await page.goto('/');
     const cards = page.locator('#proyectos article');
-    await expect(cards).toHaveCount(3);
+    await expect(cards).toHaveCount(4);
     await expect(cards.locator('h3')).toHaveText(FEATURED);
-    await expect(page.locator('#proyectos [role=status]')).toContainText('Mostrando 3 de 7');
+    await expect(page.locator('#proyectos [role=status]')).toContainText('Mostrando 4 de 7');
     const all = page.locator('#proyectos [aria-controls="lista-proyectos"]');
     await expect(all).toHaveText(/Ver todos los proyectos \(7\)/);
     await all.click();
@@ -221,7 +221,7 @@ test.describe('proyectos', () => {
     await expect(all).toBeFocused();
     await expect(all).toHaveText('Mostrar solo destacados');
     await all.click();
-    await expect(cards).toHaveCount(3);
+    await expect(cards).toHaveCount(4);
   });
 
   test('filters keep correct counters and narrow the grid', async ({ page }) => {
@@ -261,7 +261,7 @@ test.describe('proyectos', () => {
 
   test('opening a project: stable URL, structure, Escape closes and returns focus', async ({ page }) => {
     await page.goto('/');
-    const opener = page.locator('#proyectos article a.card-open').nth(1);
+    const opener = page.locator('#proyectos article a.card-open').nth(2);
     await opener.focus();
     await page.keyboard.press('Enter');
     const modal = page.getByRole('dialog');
@@ -328,7 +328,7 @@ test.describe('proyectos', () => {
 
   test('the UAESP project shows real photographs with descriptions, phases with status and the role', async ({ page }) => {
     await page.goto('/');
-    const card = page.locator('#proyectos article').first();
+    const card = page.locator('#proyectos article', { hasText: 'UAESP' }).first();
     await expect(card.locator('img')).toBeVisible();
     await expect(card).toContainText('Fotografía real');
     await expect(card).toContainText('Responsable del proyecto');
