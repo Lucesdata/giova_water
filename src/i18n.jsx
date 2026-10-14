@@ -144,46 +144,24 @@ const dict = {
       },
     },
     about: {
-      kicker: 'Perfil y método', title: 'perfil_y_metodo',
-      h2a: 'Perfil y', h2b: 'método', h2c: 'de trabajo',
+      kicker: 'Perfil y trayectoria', title: 'perfil_y_trayectoria',
+      h2a: 'Perfil y', h2b: 'trayectoria', h2c: 'profesional',
       card: {
         role: 'Ingeniero de procesos · agua y saneamiento',
         location: 'Sant Feliu de Llobregat, Barcelona',
         locationLabel: 'Ubicación',
-        exp: 'Experiencia profesional', years: '11 años',
-        langs: 'Idiomas', langsValue: 'Francés y español nativos · inglés profesional',
+        formation: 'Formación', formationValue: 'Ing. Químico · UPEC Paris-Est Créteil · título 2012',
+        license: 'Licencia profesional', licenseValue: 'CPQCOL PQ-6061',
         photoAlt: 'Retrato de Giovanni X. Guevara Duque',
+        imageNote: 'Imagen ilustrativa',
       },
       bio1: 'Ingeniero de procesos (Ing. Químico, UPEC Paris-Est Créteil) con {years} de experiencia profesional en agua y saneamiento, entre Colombia y España.',
       bio1Years: '11 años',
       bio2: 'Trabajo desde el diagnóstico en campo hasta el presupuesto, los P&IDs y la puesta en marcha, con la meta de que cada necesidad termine en una solución técnica y un presupuesto que se pueda defender.',
-      bio3: 'También desarrollo mis propias herramientas, como {iotio}, una plataforma IoT con Django y React. Licencia profesional CPQCOL PQ-6061.',
+      bio3: 'También desarrollo mis propias herramientas, como {iotio}, una plataforma IoT con Django y React.',
       bio3Iotio: 'IOTIO',
-      method: {
-        label: 'Cómo trabajo',
-        title: 'Cuatro etapas, del diagnóstico a la entrega',
-        more: 'Qué incluye',
-        note: 'Participo desde el área técnica. Las decisiones de contratación y adjudicación corresponden a cada entidad.',
-        stages: [
-          { t: 'Diagnóstico y levantamiento', d: 'Entender el problema real en el sitio antes de proponer nada.',
-            steps: [{ t: 'Diagnóstico en campo', d: 'Visita al sistema y levantamiento de información para entender el problema real.' }] },
-          { t: 'Modelación y diseño', d: 'Pasar de los datos a una solución que se pueda construir.',
-            steps: [
-              { t: 'Proyecciones técnicas', d: 'Población, demanda y caudales de diseño que sustentan la solución.' },
-              { t: 'Diseño', d: 'Procesos, hidráulica y esquemas P&ID de la solución elegida.' },
-            ] },
-          { t: 'Presupuesto y sustentación', d: 'Un costo que se puede revisar línea a línea y defender ante la entidad o el cliente.',
-            steps: [
-              { t: 'Presupuesto detallado', d: 'Cantidades, precios unitarios y capítulos que se pueden revisar línea a línea.' },
-              { t: 'Sustentación técnica', d: 'Explicar y defender la solución y su costo ante la entidad o el cliente.' },
-            ] },
-          { t: 'Acompañamiento técnico y entrega', d: 'Apoyo técnico hasta que la solución queda entregada.',
-            steps: [
-              { t: 'Evaluación de propuestas', d: 'Participación técnica en la revisión de las ofertas recibidas.' },
-              { t: 'Ejecución y entrega', d: 'Acompañamiento técnico durante la obra y en la entrega.' },
-            ] },
-        ],
-      },
+      note: 'Participo desde el área técnica. Las decisiones de contratación y adjudicación corresponden a cada entidad.',
+      methodLink: 'Ver cómo llevo un proyecto, de la necesidad a la operación →',
       skills: {
         label: 'Competencias y proyectos relacionados',
         appliedIn: 'Proyectos',
@@ -252,6 +230,7 @@ const dict = {
       data: {
         'P-001': {
           cat: 'SANEAMIENTO', loc: 'Cali, CO',
+          short: 'Montebello · PTAR',
           title: 'PTAR y alcantarillado · Montebello, Cali',
           role: 'Diseño de procesos y dirección de obra civil y electromecánica.',
           result: 'Eliminados 16 de 16 vertidos ilegales a la Quebrada El Chocho.',
@@ -264,6 +243,7 @@ const dict = {
         },
         'P-002': {
           cat: 'AGUA POTABLE', loc: 'Cali, CO',
+          short: 'PTAPs rurales UAESP',
           title: 'PTAPs rurales · UAESP, Cali',
           role: 'Supervisión técnica de 37 plantas y modelación de redes.',
           result: '60 % menos de tiempo de reporte regulatorio con dashboards propios.',
@@ -276,6 +256,7 @@ const dict = {
         },
         'P-003': {
           cat: 'GEMELO DIGITAL', loc: 'Cali, CO',
+          short: 'Gemelo La Vorágine',
           title: 'Gemelo digital · PTAP La Vorágine',
           role: 'Diseño y desarrollo de la plataforma.',
           result: 'Motor hidráulico, visualización 3D y tablero de sensores en una sola herramienta.',
@@ -288,6 +269,7 @@ const dict = {
         },
         'P-004': {
           cat: 'PLATAFORMA IOT', loc: 'Remoto',
+          short: 'IOTIO',
           title: 'IOTIO · Plataforma de telemetría',
           role: 'Diseño y desarrollo de la plataforma.',
           result: 'Ingesta MQTT, dashboards y alertas para infraestructura de agua.',
@@ -300,6 +282,7 @@ const dict = {
         },
         'P-005': {
           cat: 'INDUSTRIAL', loc: 'Buenaventura, CO',
+          short: 'Lixiviados BMA',
           title: '3 plantas de lixiviados · BMA',
           role: 'Diseño de procesos, SCADA y puesta en marcha.',
           result: 'Cumplimiento ambiental durante 7 años operativos, sin rechazos de permiso.',
@@ -312,6 +295,7 @@ const dict = {
         },
         'P-006': {
           cat: 'MODELACIÓN', loc: 'Cali, CO',
+          short: 'PSMV rural',
           title: 'PSMV rural · INALTER',
           role: 'Modelación hidráulica y rediseño de redes rurales.',
           result: '5 PSMV entregados en plazo, sin cláusulas de penalidad.',
@@ -324,6 +308,7 @@ const dict = {
         },
         'P-007': {
           cat: 'AUTOMATIZACIÓN', loc: 'Cali, CO',
+          short: 'Monitoreo UAESP',
           title: 'Monitoreo y automatización de PTAP rurales · UAESP, Cali',
           role: 'Responsable del proyecto (UAESP, Equipo AP-SB).',
           result: 'Medición de caudal entregada en 10 PTAP rurales (2023), sobre un piloto de calidad del agua en 3 plantas.',
@@ -568,46 +553,24 @@ const dict = {
       },
     },
     about: {
-      kicker: 'Profile and method', title: 'profile_and_method',
-      h2a: 'Profile and', h2b: 'working', h2c: 'method',
+      kicker: 'Profile and career', title: 'profile_and_career',
+      h2a: 'Profile and', h2b: 'career', h2c: 'path',
       card: {
         role: 'Process engineer · water and sanitation',
         location: 'Sant Feliu de Llobregat, Barcelona',
         locationLabel: 'Location',
-        exp: 'Professional experience', years: '11 years',
-        langs: 'Languages', langsValue: 'Native French and Spanish · professional English',
+        formation: 'Education', formationValue: 'Chemical Eng. · UPEC Paris-Est Créteil · degree 2012',
+        license: 'Professional licence', licenseValue: 'CPQCOL PQ-6061',
         photoAlt: 'Portrait of Giovanni X. Guevara Duque',
+        imageNote: 'Illustrative image',
       },
       bio1: 'Process engineer (Chemical Eng., UPEC Paris-Est Créteil) with {years} of professional experience in water and sanitation, between Colombia and Spain.',
       bio1Years: '11 years',
       bio2: 'I work from field diagnosis through to the budget, the P&IDs and commissioning, aiming for every need to end in a technical solution and a budget that can be defended.',
-      bio3: 'I also build my own tools, such as {iotio}, an IoT platform built with Django and React. CPQCOL PQ-6061 professional licence.',
+      bio3: 'I also build my own tools, such as {iotio}, an IoT platform built with Django and React.',
       bio3Iotio: 'IOTIO',
-      method: {
-        label: 'How I work',
-        title: 'Four stages, from diagnosis to handover',
-        more: 'What it includes',
-        note: 'I take part from the technical side. Procurement and award decisions belong to each organisation.',
-        stages: [
-          { t: 'Diagnosis and survey', d: 'Understand the real problem on site before proposing anything.',
-            steps: [{ t: 'Field diagnosis', d: 'Site visit and data gathering to understand the real problem.' }] },
-          { t: 'Modelling and design', d: 'Go from data to a solution that can be built.',
-            steps: [
-              { t: 'Technical projections', d: 'Population, demand and design flows that support the solution.' },
-              { t: 'Design', d: 'Processes, hydraulics and P&ID diagrams for the chosen solution.' },
-            ] },
-          { t: 'Budget and technical defence', d: 'A cost that can be reviewed line by line and defended before the client.',
-            steps: [
-              { t: 'Detailed budget', d: 'Quantities, unit prices and chapters that can be reviewed line by line.' },
-              { t: 'Technical defence', d: 'Explaining and defending the solution and its cost to the client.' },
-            ] },
-          { t: 'Technical support and handover', d: 'Technical support until the solution is handed over.',
-            steps: [
-              { t: 'Proposal evaluation', d: 'Technical participation in the review of the bids received.' },
-              { t: 'Execution and handover', d: 'Technical support during construction and at handover.' },
-            ] },
-        ],
-      },
+      note: 'I take part from the technical side. Procurement and award decisions belong to each organisation.',
+      methodLink: 'See how I take a project from need to operation →',
       skills: {
         label: 'Skills and related projects',
         appliedIn: 'Projects',
@@ -676,6 +639,7 @@ const dict = {
       data: {
         'P-001': {
           cat: 'SANITATION', loc: 'Cali, CO',
+          short: 'Montebello WWTP',
           title: 'WWTP and sewer network · Montebello, Cali',
           role: 'Process design and supervision of civil and electromechanical works.',
           result: '16 of 16 illegal discharges to Quebrada El Chocho eliminated.',
@@ -688,6 +652,7 @@ const dict = {
         },
         'P-002': {
           cat: 'DRINKING WATER', loc: 'Cali, CO',
+          short: 'UAESP rural plants',
           title: 'Rural WTPs · UAESP, Cali',
           role: 'Technical supervision of 37 plants and network modelling.',
           result: '60% less regulatory reporting time with in-house dashboards.',
@@ -700,6 +665,7 @@ const dict = {
         },
         'P-003': {
           cat: 'DIGITAL TWIN', loc: 'Cali, CO',
+          short: 'La Vorágine twin',
           title: 'Digital twin · La Vorágine WTP',
           role: 'Design and development of the platform.',
           result: 'Hydraulic engine, 3D view and sensor dashboard in a single tool.',
@@ -712,6 +678,7 @@ const dict = {
         },
         'P-004': {
           cat: 'IOT PLATFORM', loc: 'Remote',
+          short: 'IOTIO',
           title: 'IOTIO · Telemetry platform',
           role: 'Design and development of the platform.',
           result: 'MQTT ingestion, dashboards and alerts for water infrastructure.',
@@ -724,6 +691,7 @@ const dict = {
         },
         'P-005': {
           cat: 'INDUSTRIAL', loc: 'Buenaventura, CO',
+          short: 'BMA leachate',
           title: '3 leachate plants · BMA',
           role: 'Process design, SCADA and commissioning.',
           result: 'Environmental compliance over 7 operating years, no permit rejections.',
@@ -736,6 +704,7 @@ const dict = {
         },
         'P-006': {
           cat: 'MODELLING', loc: 'Cali, CO',
+          short: 'Rural sewer plan',
           title: 'Rural PSMV · INALTER',
           role: 'Hydraulic modelling and redesign of rural networks.',
           result: '5 PSMVs delivered on time, no penalty clauses.',
@@ -748,6 +717,7 @@ const dict = {
         },
         'P-007': {
           cat: 'AUTOMATION', loc: 'Cali, CO',
+          short: 'UAESP monitoring',
           title: 'Rural water treatment plant monitoring and automation · UAESP, Cali',
           role: 'Project lead (UAESP, AP-SB team).',
           result: 'Flow measurement delivered at 10 rural treatment plants (2023), on top of a water-quality pilot at 3 plants.',
@@ -992,46 +962,24 @@ const dict = {
       },
     },
     about: {
-      kicker: 'Profil et méthode', title: 'profil_et_methode',
-      h2a: 'Profil et', h2b: 'méthode', h2c: 'de travail',
+      kicker: 'Profil et parcours', title: 'profil_et_parcours',
+      h2a: 'Profil et', h2b: 'parcours', h2c: 'professionnel',
       card: {
         role: 'Ingénieur procédés · eau et assainissement',
         location: 'Sant Feliu de Llobregat, Barcelone',
         locationLabel: 'Lieu',
-        exp: 'Expérience professionnelle', years: '11 ans',
-        langs: 'Langues', langsValue: 'Français et espagnol natifs · anglais professionnel',
+        formation: 'Formation', formationValue: 'Ing. chimiste · UPEC Paris-Est Créteil · diplôme 2012',
+        license: 'Licence professionnelle', licenseValue: 'CPQCOL PQ-6061',
         photoAlt: 'Portrait de Giovanni X. Guevara Duque',
+        imageNote: 'Image illustrative',
       },
       bio1: 'Ingénieur procédés (ing. chimiste, UPEC Paris-Est Créteil) avec {years} d’expérience professionnelle dans l’eau et l’assainissement, entre la Colombie et l’Espagne.',
       bio1Years: '11 ans',
       bio2: 'Je travaille du diagnostic de terrain jusqu’au budget, aux P&ID et à la mise en service, avec l’objectif que chaque besoin débouche sur une solution technique et un budget défendable.',
-      bio3: 'Je développe aussi mes propres outils, comme {iotio}, une plateforme IoT avec Django et React. Licence professionnelle CPQCOL PQ-6061.',
+      bio3: 'Je développe aussi mes propres outils, comme {iotio}, une plateforme IoT avec Django et React.',
       bio3Iotio: 'IOTIO',
-      method: {
-        label: 'Ma méthode',
-        title: 'Quatre étapes, du diagnostic à la livraison',
-        more: 'Ce que cela inclut',
-        note: 'J’interviens côté technique. Les décisions de passation et d’attribution des marchés reviennent à chaque organisme.',
-        stages: [
-          { t: 'Diagnostic et relevé', d: 'Comprendre le vrai problème sur place avant de proposer quoi que ce soit.',
-            steps: [{ t: 'Diagnostic de terrain', d: 'Visite du système et collecte d’informations pour comprendre le vrai problème.' }] },
-          { t: 'Modélisation et conception', d: 'Passer des données à une solution constructible.',
-            steps: [
-              { t: 'Projections techniques', d: 'Population, demande et débits de conception qui étayent la solution.' },
-              { t: 'Conception', d: 'Procédés, hydraulique et schémas P&ID de la solution retenue.' },
-            ] },
-          { t: 'Budget et défense technique', d: 'Un coût vérifiable ligne par ligne et défendable devant le maître d’ouvrage.',
-            steps: [
-              { t: 'Budget détaillé', d: 'Quantités, prix unitaires et chapitres vérifiables ligne par ligne.' },
-              { t: 'Défense technique', d: 'Expliquer et défendre la solution et son coût devant le maître d’ouvrage.' },
-            ] },
-          { t: 'Accompagnement technique et livraison', d: 'Un appui technique jusqu’à la livraison de la solution.',
-            steps: [
-              { t: 'Évaluation des offres', d: 'Participation technique à l’examen des offres reçues.' },
-              { t: 'Exécution et livraison', d: 'Accompagnement technique pendant les travaux et à la livraison.' },
-            ] },
-        ],
-      },
+      note: 'Je participe depuis le volet technique. Les décisions de passation et d’attribution des marchés reviennent à chaque organisme.',
+      methodLink: 'Voir comment je mène un projet, du besoin à l’exploitation →',
       skills: {
         label: 'Compétences et projets liés',
         appliedIn: 'Projets',
@@ -1100,6 +1048,7 @@ const dict = {
       data: {
         'P-001': {
           cat: 'ASSAINISSEMENT', loc: 'Cali, CO',
+          short: 'STEP Montebello',
           title: 'STEP et réseau · Montebello, Cali',
           role: 'Conception des procédés et direction des travaux de génie civil et électromécanique.',
           result: '16 rejets illégaux sur 16 supprimés vers la Quebrada El Chocho.',
@@ -1112,6 +1061,7 @@ const dict = {
         },
         'P-002': {
           cat: 'EAU POTABLE', loc: 'Cali, CO',
+          short: 'Usines rurales UAESP',
           title: 'UDEP rurales · UAESP, Cali',
           role: 'Supervision technique de 37 stations et modélisation des réseaux.',
           result: '60 % de temps de reporting réglementaire en moins grâce à des tableaux de bord maison.',
@@ -1124,6 +1074,7 @@ const dict = {
         },
         'P-003': {
           cat: 'JUMEAU NUMÉRIQUE', loc: 'Cali, CO',
+          short: 'Jumeau La Vorágine',
           title: 'Jumeau numérique · UDEP La Vorágine',
           role: 'Conception et développement de la plateforme.',
           result: 'Moteur hydraulique, vue 3D et tableau de capteurs dans un seul outil.',
@@ -1136,6 +1087,7 @@ const dict = {
         },
         'P-004': {
           cat: 'PLATEFORME IOT', loc: 'À distance',
+          short: 'IOTIO',
           title: 'IOTIO · Plateforme de télémétrie',
           role: 'Conception et développement de la plateforme.',
           result: 'Ingestion MQTT, tableaux de bord et alertes pour l’infrastructure de l’eau.',
@@ -1148,6 +1100,7 @@ const dict = {
         },
         'P-005': {
           cat: 'INDUSTRIEL', loc: 'Buenaventura, CO',
+          short: 'Lixiviats BMA',
           title: '3 stations de lixiviats · BMA',
           role: 'Conception des procédés, SCADA et mise en service.',
           result: 'Conformité environnementale sur 7 ans d’exploitation, sans refus de permis.',
@@ -1160,6 +1113,7 @@ const dict = {
         },
         'P-006': {
           cat: 'MODÉLISATION', loc: 'Cali, CO',
+          short: 'PSMV rural',
           title: 'PSMV rural · INALTER',
           role: 'Modélisation hydraulique et reconception de réseaux ruraux.',
           result: '5 PSMV livrés dans les délais, sans pénalités.',
@@ -1172,6 +1126,7 @@ const dict = {
         },
         'P-007': {
           cat: 'AUTOMATISATION', loc: 'Cali, CO',
+          short: 'Suivi UAESP',
           title: 'Suivi et automatisation de stations d’eau potable rurales · UAESP, Cali',
           role: 'Responsable du projet (UAESP, équipe AP-SB).',
           result: 'Mesure de débit livrée sur 10 stations rurales (2023), après un pilote de qualité de l’eau sur 3 stations.',

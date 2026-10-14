@@ -85,7 +85,7 @@ giova_water/
 |---|---|---|---|
 | 00 | `inicio` | `Hero` | Titular, «Ver proyectos» (principal) y «Consultar un proyecto», esquema PTAP ilustrativo. |
 | 01 | `proyectos` | `Projects` + `ProjectModal` | Tres destacados (Montebello, PTAPs rurales UAESP, La Vorágine), «Ver todos los proyectos» (7) y filtros con contadores. |
-| 02 | `sobre` | `About` + `Method` | Perfil, competencias ↔ proyectos, método en cuatro etapas y cronología breve. |
+| 02 | `sobre` | `About` | Perfil con credenciales, trayectoria desplegable (más reciente primero) y competencias ↔ proyectos con el nombre de cada uno. |
 | 03 | `gemelos` | `DigitalTwins` | Demo con datos simulados: escenarios, pausa y restablecer. |
 | 04 | `faq` | `Faq` | Preguntas frecuentes. |
 | 05 | `contacto` | `Contact` | Formulario que prepara un email, tarjeta de contacto y pie. |

@@ -64,7 +64,7 @@ describe('presupuestos UAESP (datos del autor, sin sumar)', () => {
     expect(b).not.toMatch(/€|\bEUR\b|US\$|USD|\$ ?\d/);
   });
   it.each(LANGS)('%s: lenguaje de participación, no de gestión directa', (lang) => {
-    expect(dictionary[lang].about.method.note).toBeTruthy();
+    expect(dictionary[lang].about.note).toBeTruthy();
     expect(dictionary[lang].projects.data['P-007'].budgets.label).toBeTruthy();
     expect(dictionary[lang].projects.data['P-007'].budgets.participation).toBeTruthy();
   });
@@ -194,5 +194,33 @@ describe('P-007: proyecto destacado con fotografías reales', () => {
   });
   it('las fotografías publicadas no llevan coordenadas: no hay texto de coordenadas en los pies', () => {
     expect(JSON.stringify(dictionary.es.projects.data['P-007'].photos)).not.toMatch(/\d°/);
+  });
+});
+
+describe('perfil: credenciales, trayectoria y competencias', () => {
+  it.each(LANGS)('%s: la tarjeta lleva formación con el año de título, licencia y nota de imagen ilustrativa', (lang) => {
+    const c = dictionary[lang].about.card;
+    expect(c.formationValue).toMatch(/UPEC/);
+    expect(c.formationValue).toMatch(/2012/);
+    expect(c.licenseValue).toBe('CPQCOL PQ-6061');
+    expect(c.imageNote).toMatch(/\S/);
+    // lo que ya dice el hero no se repite en la tarjeta
+    expect(c.years).toBeUndefined();
+    expect(c.langsValue).toBeUndefined();
+  });
+  it.each(LANGS)('%s: la aclaración sobre contratación se conserva y enlaza al recorrido del hero', (lang) => {
+    const a = dictionary[lang].about;
+    expect(a.note).toMatch(/\S/);
+    expect(a.methodLink).toMatch(/\S/);
+    expect(a.method).toBeUndefined();
+    expect(a.bio3).not.toMatch(/PQ-6061/);
+  });
+  it.each(LANGS)('%s: cada proyecto tiene un nombre corto y legible para los chips', (lang) => {
+    for (const p of projectsData) {
+      const short = dictionary[lang].projects.data[p.id].short;
+      expect(short, `${lang} ${p.id}`).toMatch(/\S/);
+      expect(short, `${lang} ${p.id}`).not.toMatch(/^P-\d{3}$/);
+      expect(short.length, `${lang} ${p.id}`).toBeLessThanOrEqual(28);
+    }
   });
 });

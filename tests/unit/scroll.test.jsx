@@ -3,7 +3,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
 import { LangProvider } from '../../src/i18n.jsx';
 import Faq from '../../src/components/Faq.jsx';
-import Method from '../../src/components/Method.jsx';
 import fs from 'node:fs';
 import path from 'node:path';
 import { dictionary } from '../../src/i18n.jsx';
@@ -57,27 +56,6 @@ describe('Reveal', () => {
     render(<Reveal>x</Reveal>);
     expect(spy.mock.calls.some(([type]) => type === 'scroll')).toBe(false);
     spy.mockRestore();
-  });
-});
-
-describe('Method', () => {
-  const method = dictionary.es.about.method;
-  it('shows four stages as a plain list and keeps the contracting note', () => {
-    motion(false);
-    const { container } = render(<Method method={method} />);
-    expect(container.querySelectorAll('.method-stage')).toHaveLength(4);
-    expect(container.textContent).toMatch(/decisiones de contratación y adjudicación corresponden a cada entidad/);
-  });
-  it('puts the detail of every stage in an accessible native disclosure, closed by default', () => {
-    motion(false);
-    const { container } = render(<Method method={method} />);
-    const details = [...container.querySelectorAll('details')];
-    expect(details).toHaveLength(4);
-    expect(details.every((d) => !d.open && d.querySelector('summary'))).toBe(true);
-  });
-  it('covers the seven original steps inside the four stages', () => {
-    const steps = method.stages.flatMap((s) => s.steps);
-    expect(steps).toHaveLength(7);
   });
 });
 

@@ -404,7 +404,7 @@ test.describe('proyectos', () => {
   });
 });
 
-test.describe('perfil y método', () => {
+test.describe('perfil y trayectoria', () => {
   test('mobile: synthesis before the portrait, portrait ≤ 320 px tall', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
@@ -418,39 +418,79 @@ test.describe('perfil y método', () => {
     expect(r.portraitH).toBeLessThanOrEqual(320);
   });
 
-  test('desktop: the card sits beside the text and the text column is not shorter than it', async ({ page }) => {
+  test('desktop: the card sits beside the text and the text plus chronology column is not shorter than it', async ({ page }) => {
     await page.goto('/');
     const r = await page.evaluate(() => {
       const text = document.querySelector('.profile-text').getBoundingClientRect();
+      const tl = document.querySelector('.profile-timeline').getBoundingClientRect();
       const card = document.querySelector('.profile-card').getBoundingClientRect();
-      return { sameRow: Math.abs(text.top - card.top) < 8, textH: text.height, cardH: card.height, portraitH: document.querySelector('.portrait').getBoundingClientRect().height };
+      return { sameRow: Math.abs(text.top - card.top) < 8, colH: tl.bottom - text.top, cardH: card.height, portraitH: document.querySelector('.portrait').getBoundingClientRect().height };
     });
     expect(r.sameRow).toBe(true);
-    expect(r.textH).toBeGreaterThanOrEqual(r.cardH);
+    expect(r.colH).toBeGreaterThanOrEqual(r.cardH);
     expect(r.portraitH).toBeLessThanOrEqual(320);
   });
 
-  test('the method has four stages with accessible details and keeps the contracting note', async ({ page }) => {
+  test('the card shows education with the degree year, the licence and that the portrait is illustrative', async ({ page }) => {
     await page.goto('/');
-    const stages = page.locator('.method-stage');
-    await expect(stages).toHaveCount(4);
-    await expect(stages.locator('h4')).toHaveText(['Diagnóstico y levantamiento', 'Modelación y diseño', 'Presupuesto y sustentación', 'Acompañamiento técnico y entrega']);
-    await expect(page.locator('#sobre')).toContainText('Las decisiones de contratación y adjudicación corresponden a cada entidad');
-    const first = stages.first().locator('details');
-    await first.locator('summary').click();
-    await expect(first).toHaveAttribute('open', '');
-    expect((await first.locator('summary').boundingBox()).height).toBeGreaterThanOrEqual(43.5);
-    await expect(page.locator('.cycle-stage')).toHaveCount(0);
+    const card = page.locator('.profile-card');
+    await expect(card).toContainText('UPEC Paris-Est Créteil');
+    await expect(card).toContainText('título 2012');
+    await expect(card).toContainText('CPQCOL PQ-6061');
+    await expect(card.locator('.portrait-note')).toHaveText('Imagen ilustrativa');
+    await expect(card).not.toContainText('Experiencia profesional');
   });
 
-  test('competences link to their projects and the chronology has no mixed-language titles', async ({ page }) => {
+  test('the chronology comes right after the introduction, most recent first, each job opens and closes', async ({ page }) => {
     await page.goto('/');
-    await page.locator('#sobre .chip-btn', { hasText: 'P-003' }).click();
+    const [text, tl, skills] = await Promise.all([
+      page.locator('.profile-text').boundingBox(), page.locator('.profile-timeline').boundingBox(),
+      page.locator('#sobre h3', { hasText: 'Competencias' }).boundingBox(),
+    ]);
+    expect(tl.y).toBeGreaterThan(text.y);
+    expect(tl.y).toBeLessThan(skills.y);
+    const rows = page.locator('#sobre .timeline-row details');
+    await expect(rows).toHaveCount(5);
+    await expect(rows.first()).toHaveAttribute('open', '');
+    await expect(rows.nth(1)).not.toHaveAttribute('open', '');
+    const summary = rows.nth(1).locator('summary');
+    expect((await summary.boundingBox()).height).toBeGreaterThanOrEqual(43.5);
+    await summary.click();
+    await expect(rows.nth(1)).toHaveAttribute('open', '');
+    await expect(rows.nth(1).locator('.timeline-body')).toBeVisible();
+    await summary.click();
+    await expect(rows.nth(1)).not.toHaveAttribute('open', '');
+  });
+
+  test('the method section is gone, the contracting note stays and points to the hero chain', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('.method-stage')).toHaveCount(0);
+    await expect(page.locator('#sobre')).not.toContainText('Cuatro etapas');
+    await expect(page.locator('#sobre')).toContainText('Las decisiones de contratación y adjudicación corresponden a cada entidad');
+    await expect(page.locator('#sobre .profile-text a.text-link')).toHaveAttribute('href', '#inicio');
+  });
+
+  test('competences lead with SCADA and IoT, show project names (not codes) and open the project', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('#sobre ul h4').first()).toHaveText('SCADA e IoT');
+    const chips = await page.locator('#sobre .chip-btn').allTextContents();
+    expect(chips.length).toBeGreaterThan(6);
+    for (const c of chips) expect(c).not.toMatch(/^P-\d{3}$/);
+    await page.locator('#sobre .chip-btn', { hasText: 'Gemelo La Vorágine' }).click();
     await expect(page.getByRole('dialog').getByRole('heading', { level: 2 })).toContainText('La Vorágine');
     await page.keyboard.press('Escape');
     const roles = await page.locator('#sobre .timeline-row h4').allTextContents();
     expect(roles.join(' ')).not.toMatch(/Project Lead|Technical Director|Specialist/);
     expect(roles).toHaveLength(5);
+  });
+
+  test('no horizontal overflow in the profile at any width', async ({ page }) => {
+    for (const vp of WIDTHS) {
+      await page.setViewportSize({ width: vp.width, height: vp.height });
+      await page.goto('/#sobre');
+      await page.waitForTimeout(300);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), vp.name).toBe(true);
+    }
   });
 });
 
