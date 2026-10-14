@@ -270,12 +270,20 @@ test.describe('proyectos', () => {
     for (const h of ['Reto', 'Responsabilidad personal', 'Solución', 'Resultado', 'Evidencia', 'Tecnologías', 'Contacto']) {
       await expect(modal.getByRole('heading', { name: new RegExp(h) })).toBeVisible();
     }
-    await expect(modal).toContainText('Todavía no hay documentos ni capturas publicados');
-    await expect(modal).toContainText('Esquema conceptual');
+    await expect(modal).toContainText('Fotografía real');
+    await expect(modal).not.toContainText('Todavía no hay documentos');
     await page.keyboard.press('Escape');
     await expect(modal).toHaveCount(0);
     await expect(opener).toBeFocused();
     await expect(page).not.toHaveURL(/#proyecto\//);
+  });
+
+  test('a project without photographs says so and keeps its conceptual scheme (IOTIO)', async ({ page }) => {
+    await page.goto('/#proyecto/iotio-telemetria');
+    const modal = page.getByRole('dialog');
+    await expect(modal).toContainText('Todavía no hay documentos ni capturas publicados');
+    await expect(modal).toContainText('Esquema conceptual');
+    await expect(modal.locator('figure')).toHaveCount(0);
   });
 
   test('the browser Back button closes the project', async ({ page }) => {
