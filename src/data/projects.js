@@ -6,14 +6,26 @@
 // documents or captures that exist: { href, kind } with the text of each one in
 // i18n under projects.data.<id>.files[i]. It stays empty until real files exist.
 export const projectsData = [
+  { id: 'P-007', slug: 'monitoreo-automatizacion-uaesp', featured: true, year: '2020–27', scheme: 'automation',
+    tags: ['SCADA', 'IoT', 'Front end'], filters: ['agua', 'digital'], files: [],
+    // Real photographs (project presentation, UAESP, Sept 2024). Texts in i18n:
+    // projects.data.P-007.photos[i] = { alt, caption }. `cover` is photos[0].
+    // `milestonesDone` = how many leading timeline items are delivered.
+    cover: '/assets/uaesp/ptap-vista-aerea.jpg', milestonesDone: 2,
+    photos: [
+      { src: '/assets/uaesp/ptap-vista-aerea.jpg', w: 922, h: 518 },
+      { src: '/assets/uaesp/scada-hmi-ptap-soledad.jpg', w: 552, h: 414 },
+      { src: '/assets/uaesp/macromedidores-camara.jpg', w: 870, h: 1149 },
+      { src: '/assets/uaesp/torre-comunicacion.jpg', w: 330, h: 669 },
+      { src: '/assets/uaesp/sensores-calidad-gabinete.jpg', w: 874, h: 1144 },
+      { src: '/assets/uaesp/app-movil-monitoreo.jpg', w: 600, h: 1067 },
+    ] },
   { id: 'P-001', slug: 'montebello-ptar-alcantarillado', featured: true, year: '2022–25', scheme: 'ptar',
     tags: ['EPA-SWMM', 'P&IDs', 'CVC', 'Res.330/2017'], filters: ['agua'], files: [] },
-  { id: 'P-002', slug: 'ptaps-rurales-uaesp', featured: true, year: '2018–24', scheme: 'rural',
+  { id: 'P-002', slug: 'ptaps-rurales-uaesp', featured: false, year: '2018–24', scheme: 'rural',
     tags: ['EPANET', 'Python', 'Power BI', 'SCADA'], filters: ['agua'], files: [] },
   { id: 'P-003', slug: 'gemelo-digital-la-voragine', featured: true, year: '2024', scheme: 'twin',
     tags: ['Three.js', 'Chart.js', 'Motor HID'], filters: ['digital'], files: [] },
-  { id: 'P-007', slug: 'monitoreo-automatizacion-uaesp', featured: false, year: '2020–23', scheme: 'automation',
-    tags: ['SCADA', 'IoT', 'Front end'], filters: ['agua', 'digital'], files: [] },
   { id: 'P-004', slug: 'iotio-telemetria', featured: false, year: '2023', scheme: 'iot',
     tags: ['Django', 'React', 'InfluxDB'], filters: ['digital'], files: [] },
   { id: 'P-005', slug: 'plantas-lixiviados-bma', featured: false, year: '2018–25', scheme: 'industrial',

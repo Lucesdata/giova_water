@@ -29,7 +29,7 @@ function watch(page) {
 }
 
 const openMenu = async (page) => { await page.getByRole('button', { name: 'Abrir menú' }).click(); };
-const FEATURED = ['PTAR y alcantarillado · Montebello, Cali', 'PTAPs rurales · UAESP, Cali', 'Gemelo digital · PTAP La Vorágine'];
+const FEATURED = ['Monitoreo y automatización de PTAP rurales · UAESP, Cali', 'PTAR y alcantarillado · Montebello, Cali', 'Gemelo digital · PTAP La Vorágine'];
 
 test.beforeEach(async ({ page }) => { await seedLang(page, 'es'); await offlineFonts(page); });
 
@@ -207,7 +207,7 @@ test.describe('movimiento', () => {
 });
 
 test.describe('proyectos', () => {
-  test('selection shows Montebello, PTAPs rurales and La Vorágine first; “Ver todos” reveals the seven', async ({ page }) => {
+  test('selection shows UAESP monitoring, Montebello and La Vorágine first; “Ver todos” reveals the seven', async ({ page }) => {
     await page.goto('/');
     const cards = page.locator('#proyectos article');
     await expect(cards).toHaveCount(3);
@@ -261,7 +261,7 @@ test.describe('proyectos', () => {
 
   test('opening a project: stable URL, structure, Escape closes and returns focus', async ({ page }) => {
     await page.goto('/');
-    const opener = page.locator('#proyectos article a.card-open').first();
+    const opener = page.locator('#proyectos article a.card-open').nth(1);
     await opener.focus();
     await page.keyboard.press('Enter');
     const modal = page.getByRole('dialog');
@@ -289,7 +289,7 @@ test.describe('proyectos', () => {
   for (const [slug, title] of [
     ['montebello-ptar-alcantarillado', 'PTAR y alcantarillado · Montebello, Cali'],
     ['gemelo-digital-la-voragine', 'Gemelo digital · PTAP La Vorágine'],
-    ['monitoreo-automatizacion-uaesp', 'Monitoreo y automatización de acueductos rurales · UAESP'],
+    ['monitoreo-automatizacion-uaesp', 'Monitoreo y automatización de PTAP rurales · UAESP, Cali'],
     ['psmv-rural-inalter', 'PSMV rural · INALTER'],
   ]) {
     test(`direct URL #proyecto/${slug} shows the right project`, async ({ page }) => {
@@ -322,8 +322,38 @@ test.describe('proyectos', () => {
     for (const n of ['104.338', '9.433.328.555', '9.544.068.544', '1.019.830.000', '10 de 12']) await expect(modal).toContainText(n);
     await expect(modal).toContainText('Los importes no se suman');
     await expect(modal).toContainText('pendientes de cotejar');
-    await expect(modal).toContainText('Mi participación');
-    await expect(modal).toContainText('no son importes que yo haya gestionado');
+    await expect(modal).toContainText('Mi rol');
+    await expect(modal).toContainText('no son cifras que yo haya ejecutado');
+  });
+
+  test('the UAESP project shows real photographs with descriptions, phases with status and the role', async ({ page }) => {
+    await page.goto('/');
+    const card = page.locator('#proyectos article').first();
+    await expect(card.locator('img')).toBeVisible();
+    await expect(card).toContainText('Fotografía real');
+    await expect(card).toContainText('Responsable del proyecto');
+    await card.locator('a.card-open').click();
+    const modal = page.getByRole('dialog');
+    const imgs = modal.locator('figure img');
+    await expect(imgs).toHaveCount(6);
+    for (let i = 0; i < 6; i++) {
+      await imgs.nth(i).scrollIntoViewIfNeeded();
+      await expect.poll(() => imgs.nth(i).evaluate((el) => el.complete && el.naturalWidth > 0)).toBe(true);
+      expect((await imgs.nth(i).getAttribute('alt')).length).toBeGreaterThan(10);
+    }
+    await expect(modal.locator('figure figcaption')).toHaveCount(6);
+    const phases = modal.locator('ol li');
+    await expect(phases).toHaveCount(6);
+    await expect(phases.nth(1)).toContainText('Entregado');
+    await expect(phases.nth(2)).toContainText('Planificado');
+    await expect(modal).not.toContainText('Todavía no hay documentos');
+  });
+
+  test('the UAESP project has no horizontal overflow on a phone', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/#proyecto/monitoreo-automatizacion-uaesp');
+    await expect(page.getByRole('dialog')).toBeVisible();
+    expect(await page.evaluate(() => document.querySelector('.modal-panel').scrollWidth <= document.querySelector('.modal-panel').clientWidth + 1)).toBe(true);
   });
 
   test('the “Consultar un proyecto” button in a project closes it and lands on the contact section', async ({ page }) => {
@@ -359,7 +389,7 @@ test.describe('proyectos', () => {
     // Key facts: no empty fourth cell.
     const cells = page.locator('.modal-body dl.cells > div');
     const n = await cells.count();
-    expect(n).toBe(2);
+    expect(n).toBe(3);
   });
 
   test('La Vorágine key facts have three cells and no empty fourth one at 390 px', async ({ page }) => {

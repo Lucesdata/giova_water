@@ -103,7 +103,7 @@ describe('proyectos', () => {
   });
   it('el alcance técnico de 11 acueductos no se confunde con la meta de 12', () => {
     const d = dictionary.es.projects.data['P-007'];
-    expect(d.metrics.find(m => m.v === '11')).toBeDefined();
+    expect(d.metrics.find(m => m.v === '10')).toBeDefined();
     expect(d.resultFull).toMatch(/no es el alcance técnico de 11/);
   });
 });
@@ -117,11 +117,11 @@ describe('estructura de la página', () => {
       expect(dictionary[lang].nav.items[id], `${lang} nav.items.${id}`).toBeTruthy();
     }
   });
-  it('cada proyecto tiene una URL estable única y los destacados son Montebello, PTAPs rurales y La Vorágine', () => {
+  it('cada proyecto tiene una URL estable única y los destacados son monitoreo y automatización UAESP, Montebello y La Vorágine', () => {
     const slugs = projectsData.map((p) => p.slug);
     expect(new Set(slugs).size).toBe(projectsData.length);
     for (const s of slugs) expect(s).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
-    expect(projectsData.filter((p) => p.featured).map((p) => p.id)).toEqual(['P-001', 'P-002', 'P-003']);
+    expect(projectsData.filter((p) => p.featured).map((p) => p.id)).toEqual(['P-007', 'P-001', 'P-003']);
     expect(projectsData).toHaveLength(7);
   });
   it.each(LANGS)('%s: horario en hora de Madrid, sin CET ni React · Vite en el pie', (lang) => {
@@ -161,5 +161,38 @@ describe('recursos multimedia', () => {
       }
     }
     expect(missing).toEqual([]);
+  });
+});
+
+describe('P-007: proyecto destacado con fotografías reales', () => {
+  const p7 = projectsData.find((p) => p.id === 'P-007');
+  it('es el primero de la lista y su portada es la primera fotografía', () => {
+    expect(projectsData[0].id).toBe('P-007');
+    expect(p7.cover).toBe(p7.photos[0].src);
+  });
+  it('cada fotografía existe en disco y pesa menos de 300 KB', () => {
+    for (const ph of p7.photos) {
+      const f = path.join(ROOT, 'public', ph.src);
+      expect(fs.existsSync(f), ph.src).toBe(true);
+      expect(fs.statSync(f).size, ph.src).toBeLessThan(300 * 1024);
+    }
+  });
+  it.each(LANGS)('%s: cada fotografía tiene texto alternativo y pie, y las fases tienen estado', (lang) => {
+    const d = dictionary[lang].projects.data['P-007'];
+    expect(d.photos).toHaveLength(p7.photos.length);
+    for (const ph of d.photos) { expect(ph.alt.length).toBeGreaterThan(10); expect(ph.caption.length).toBeGreaterThan(10); }
+    expect(d.timeline.items).toHaveLength(6);
+    expect(p7.milestonesDone).toBe(2);
+    for (const it of d.timeline.items) expect(it.status).toMatch(/\S/);
+  });
+  it.each(LANGS)('%s: las fases futuras no se presentan como entregadas y no hay cifras en disputa', (lang) => {
+    const d = dictionary[lang].projects.data['P-007'];
+    const planned = d.timeline.items.slice(p7.milestonesDone).map((i) => i.status);
+    expect(new Set(planned).size).toBe(1);
+    expect(planned[0]).not.toBe(d.timeline.items[0].status);
+    expect(JSON.stringify(d)).not.toMatch(/60[\s., ]?000|\b20 (plantas|plants|stations)\b/);
+  });
+  it('las fotografías publicadas no llevan coordenadas: no hay texto de coordenadas en los pies', () => {
+    expect(JSON.stringify(dictionary.es.projects.data['P-007'].photos)).not.toMatch(/\d°/);
   });
 });
