@@ -2,10 +2,17 @@
 // result, metrics, challenge… and the location label) lives in i18n.jsx under
 // projects.data.<id>. `scheme` picks the conceptual diagram in ProjectScheme.jsx.
 // `slug` is the stable address of the project (#proyecto/<slug>); never rename it.
-// `featured` projects are the ones shown first. `files` lists real evidence
+// `highlight` marks the one project the page leads with (leachate plants): first in
+// the list, with its own badge and border. `featured` projects are the ones shown first. `files` lists real evidence
 // documents or captures that exist: { href, kind } with the text of each one in
 // i18n under projects.data.<id>.files[i]. It stays empty until real files exist.
 export const projectsData = [
+  { id: 'P-005', slug: 'plantas-lixiviados-bma', featured: true, highlight: true, year: '2018–25', scheme: 'industrial',
+    tags: [{ k: 'fisicoquimico' }, { k: 'biologico' }, 'SCADA', 'P&IDs'], filters: ['agua'], files: [],
+    // Own photograph, Buenaventura, 2021. `cover` is a tight crop of it for the card
+    // (the full photo, with the author in it, goes in the gallery).
+    cover: '/assets/proyectos/lixiviados-bma-portada.jpg',
+    photos: [{ src: '/assets/proyectos/lixiviados-bma-planta.jpg', w: 800, h: 1066 }] },
   { id: 'P-007', slug: 'monitoreo-automatizacion-uaesp', featured: true, year: '2020–27', scheme: 'automation',
     tags: ['SCADA', 'IoT', 'Front end'], filters: ['agua', 'digital'], files: [],
     // Real photographs (project presentation, UAESP, Sept 2024). Texts in i18n:
@@ -28,12 +35,6 @@ export const projectsData = [
     tags: ['Three.js', 'Chart.js', 'Motor HID'], filters: ['digital'], files: [] },
   { id: 'P-004', slug: 'iotio-telemetria', featured: false, year: '2023', scheme: 'iot',
     tags: ['Django', 'React', 'InfluxDB'], filters: ['digital'], files: [] },
-  { id: 'P-005', slug: 'plantas-lixiviados-bma', featured: false, year: '2018–25', scheme: 'industrial',
-    tags: [{ k: 'fisicoquimico' }, { k: 'biologico' }, 'SCADA', 'P&IDs'], filters: ['agua'], files: [],
-    // Own photograph, Buenaventura, 2021. `cover` is a tight crop of it for the card
-    // (the full photo, with the author in it, goes in the gallery).
-    cover: '/assets/proyectos/lixiviados-bma-portada.jpg',
-    photos: [{ src: '/assets/proyectos/lixiviados-bma-planta.jpg', w: 800, h: 1066 }] },
   { id: 'P-006', slug: 'psmv-rural-inalter', featured: false, year: '2019', scheme: 'network',
     tags: ['EPA-SWMM', 'Manning', 'MAGNA-SIRGAS', 'PSMV'], filters: ['agua'], files: [] },
 ];
