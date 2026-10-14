@@ -23,8 +23,18 @@ function ProjectCard({ p, onOpen }) {
   return (
     <Reveal as="article" className="project-card">
       <div style={{ aspectRatio: '16/7', position: 'relative', background: 'var(--bg-2)', borderBottom: '1px solid var(--line)', overflow: 'hidden' }}>
-        <ProjectScheme type={p.scheme} label={`${t('projects.schemeBadge')}: ${title}`} />
-        <span className="chip" style={{ position: 'absolute', left: 8, bottom: 8 }}>{t('projects.schemeBadge')}</span>
+        {p.cover ? (
+          <>
+            <img src={p.cover} alt={i18n.photos?.[0]?.alt || title} width={922} height={518} loading="lazy"
+                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            <span className="chip" style={{ position: 'absolute', left: 8, bottom: 8 }}>{t('projects.modal.photoBadge')}</span>
+          </>
+        ) : (
+          <>
+            <ProjectScheme type={p.scheme} label={`${t('projects.schemeBadge')}: ${title}`} />
+            <span className="chip" style={{ position: 'absolute', left: 8, bottom: 8 }}>{t('projects.schemeBadge')}</span>
+          </>
+        )}
       </div>
 
       <div style={{ padding: 20, flex: 1, display: 'flex', flexDirection: 'column', gap: 14 }}>

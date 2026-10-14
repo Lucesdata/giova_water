@@ -32,6 +32,57 @@ function Budgets({ b }) {
   );
 }
 
+/* Phases of the programme. The first `done` items are delivered; the rest is
+   plan. The status is always written out, never carried by colour alone. */
+function Timeline({ tl, done, statusLabel }) {
+  if (!tl || !Array.isArray(tl.items)) return null;
+  return (
+    <section aria-labelledby="m-phases" style={{ margin: '0 0 28px' }}>
+      <h3 id="m-phases" className="label-accent" style={{ margin: '0 0 6px', fontWeight: 400 }}>{tl.label}</h3>
+      <p style={{ margin: '0 0 8px', fontFamily: 'var(--f-mono)', fontSize: 17, color: 'var(--ink)' }}>{tl.title}</p>
+      <p className="prose" style={{ margin: '0 0 16px', maxWidth: 720 }}>{tl.intro}</p>
+      <ol style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 10 }}>
+        {tl.items.map((it, i) => {
+          const isDone = i < done;
+          return (
+            <li key={it.year} style={{
+              display: 'grid', gridTemplateColumns: 'minmax(0, 64px) minmax(0, 1fr) auto', gap: 14, alignItems: 'baseline',
+              border: `1px ${isDone ? 'solid' : 'dashed'} ${isDone ? 'var(--line-hi)' : 'var(--line)'}`,
+              background: isDone ? 'var(--bg-2)' : 'transparent', padding: '12px 14px',
+            }}>
+              <span className="mono" style={{ fontSize: 16, color: isDone ? 'var(--accent)' : 'var(--ink-1)' }}>{it.year}</span>
+              <span style={{ color: 'var(--ink)', fontSize: 15, lineHeight: 1.5 }}>{it.text}</span>
+              <span className="mono" aria-label={`${statusLabel}: ${it.status}`} style={{ fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', color: isDone ? 'var(--accent)' : 'var(--ink-2)' }}>
+                <span aria-hidden="true">{isDone ? '● ' : '○ '}</span>{it.status}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  );
+}
+
+/* Real photographs of the project, each with its own description. */
+function Photos({ photos, texts }) {
+  if (!photos.length) return null;
+  return (
+    <ul style={{ listStyle: 'none', margin: 0, padding: 0, columnWidth: 220, columnGap: 14 }}>
+      {photos.map((ph, i) => (
+        <li key={ph.src} style={{ margin: '0 0 14px', minWidth: 0, breakInside: 'avoid' }}>
+          <figure style={{ margin: 0, display: 'grid', gap: 6 }}>
+            <a href={ph.src} target="_blank" rel="noopener noreferrer" style={{ display: 'block', background: 'var(--bg-2)', border: '1px solid var(--line)' }}>
+              <img src={ph.src} alt={texts[i]?.alt || ''} width={ph.w} height={ph.h} loading="lazy"
+                   style={{ width: '100%', height: 'auto', display: 'block' }} />
+            </a>
+            <figcaption style={{ color: 'var(--ink-1)', fontSize: 14, lineHeight: 1.45 }}>{texts[i]?.caption}</figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default function ProjectModal({ project, onClose }) {
   const t = useT();
   const panelRef = useRef(null);
@@ -71,6 +122,8 @@ export default function ProjectModal({ project, onClose }) {
   const evidence = Array.isArray(i18n.evidence) ? i18n.evidence : [];
   const files = Array.isArray(project.files) ? project.files : [];
   const fileTexts = Array.isArray(i18n.files) ? i18n.files : [];
+  const photos = Array.isArray(project.photos) ? project.photos : [];
+  const photoTexts = Array.isArray(i18n.photos) ? i18n.photos : [];
   const shareUrl = projectUrl(project);
 
   const sections = [
@@ -80,6 +133,7 @@ export default function ProjectModal({ project, onClose }) {
     ['result', M.result, <p key="x" className="modal-text">{i18n.resultFull}</p>],
     ['evidence', M.evidence, (
       <div key="e" style={{ display: 'grid', gap: 12 }}>
+        <Photos photos={photos} texts={photoTexts} />
         {files.length > 0 ? (
           <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'grid', gap: 10 }}>
             {files.map((f, i) => (
@@ -89,7 +143,7 @@ export default function ProjectModal({ project, onClose }) {
               </li>
             ))}
           </ul>
-        ) : (
+        ) : photos.length === 0 && (
           <p className="modal-text" style={{ color: 'var(--ink)' }}>{M.noFiles}</p>
         )}
         <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 8 }}>
@@ -144,8 +198,18 @@ export default function ProjectModal({ project, onClose }) {
 
         <div style={{ overflowY: 'auto', flex: 1 }}>
           <div style={{ position: 'relative', borderBottom: '1px solid var(--line)', background: 'var(--bg-2)', height: 'clamp(140px, 22vw, 240px)' }}>
-            <ProjectScheme type={project.scheme} label={`${t('projects.schemeBadge')}: ${i18n.title}`} />
-            <span className="chip" style={{ position: 'absolute', left: 12, bottom: 12 }}>{t('projects.schemeNote')}</span>
+            {project.cover ? (
+              <>
+                <img src={project.cover} alt={photoTexts[0]?.alt || i18n.title} width={922} height={518}
+                     style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                <span className="chip" style={{ position: 'absolute', left: 12, bottom: 12 }}>{M.photoBadge}</span>
+              </>
+            ) : (
+              <>
+                <ProjectScheme type={project.scheme} label={`${t('projects.schemeBadge')}: ${i18n.title}`} />
+                <span className="chip" style={{ position: 'absolute', left: 12, bottom: 12 }}>{t('projects.schemeNote')}</span>
+              </>
+            )}
           </div>
 
           <div className="modal-body">
@@ -177,6 +241,7 @@ export default function ProjectModal({ project, onClose }) {
               ))}
             </dl>
 
+            <Timeline tl={i18n.timeline} done={project.milestonesDone || 0} statusLabel={M.phasesStatus} />
             <Budgets b={i18n.budgets} />
 
             <div style={{ display: 'grid', gap: 24, marginBottom: 12 }}>
