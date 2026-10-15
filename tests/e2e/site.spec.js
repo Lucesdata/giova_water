@@ -36,8 +36,9 @@ test.beforeEach(async ({ page }) => { await seedLang(page, 'es'); await offlineF
 test.describe('estructura', () => {
   test('six sections in the requested order, a skip link and one h1', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('main section')).toHaveCount(6);
-    const ids = await page.locator('main section').evaluateAll((els) => els.map((e) => e.id));
+    // Solo las secciones de primer nivel: el hero lleva dentro «scope» y «cycle».
+    await expect(page.locator('main > section')).toHaveCount(6);
+    const ids = await page.locator('main > section').evaluateAll((els) => els.map((e) => e.id));
     expect(ids).toEqual(SECTION_IDS);
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.locator('h1')).toContainText('Ingeniería del agua, de la necesidad a la operación.');
