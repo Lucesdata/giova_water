@@ -4,6 +4,7 @@ import { SCENARIO_IDS, LIMITS, statusOf, simReducer, initialState } from '../lib
 import { sectionNumber } from '../data/sections.js';
 import { useT } from '../i18n.jsx';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
+import { projectById, projectHash } from '../data/projects.js';
 
 function DashGauge({ label, value, unit, k, decimals, inView, statusLabels, dirLabels, showBorder = true }) {
   const { min, max } = LIMITS[k];
@@ -216,6 +217,13 @@ export default function DigitalTwins() {
   const features = t('twins.features');
   const S = t('twins.scenarios');
   const current = S.items[sim.scenario];
+  // The actual twin (P-003): its capture, its caption and its two first facts come from the project sheet.
+  const twin = projectById('P-003');
+  const real = t('twins.real');
+  const photos = t('projects.data.P-003.photos');
+  const photo = Array.isArray(photos) ? photos[0] : null;
+  const metrics = t('projects.data.P-003.metrics');
+  const facts = Array.isArray(metrics) ? metrics.slice(0, 2) : [];
 
   const reset = () => { dispatch({ type: 'reset' }); setPaused(reduced); };
 
@@ -249,7 +257,7 @@ export default function DigitalTwins() {
             <span className="mono" style={{ fontSize: 14, color: 'var(--ink)' }}>{D.title}</span>
             <span className="mono" style={{ fontSize: 13, color: 'var(--ink-1)' }}>{D.sensors}</span>
           </div>
-          <span className="chip accent">{paused ? S.paused : t('twins.badge')}</span>
+          {paused && <span className="chip accent">{S.paused}</span>}
         </div>
 
         <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--line)', display: 'grid', gap: 14 }}>
@@ -266,9 +274,13 @@ export default function DigitalTwins() {
               <button type="button" onClick={reset}>{S.reset}</button>
             </div>
           </div>
-          <div role="status" aria-live="polite" style={{ display: 'grid', gap: 6, fontSize: 16, lineHeight: 1.55, color: 'var(--ink-1)' }}>
-            <p style={{ margin: 0 }}><strong style={{ color: 'var(--ink)', fontWeight: 500 }}>{S.changedLabel}</strong> {current.changed}</p>
-            <p style={{ margin: 0 }}><strong style={{ color: 'var(--ink)', fontWeight: 500 }}>{S.checkLabel}</strong> {current.check}</p>
+          <div role="status" aria-live="polite" style={{ display: 'grid', gap: 10, gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, minmax(0, 1fr))' }}>
+            {[[S.changedLabel, current.changed], [S.checkLabel, current.check]].map(([label, text]) => (
+              <p key={label} style={{ margin: 0, padding: '12px 14px', background: 'var(--bg-2)', border: '1px solid var(--line)', fontSize: 16, lineHeight: 1.55, color: 'var(--ink-1)' }}>
+                <strong style={{ display: 'block', marginBottom: 4, color: 'var(--ink)', fontWeight: 500 }}>{label}</strong>
+                {text}
+              </p>
+            ))}
           </div>
         </div>
 
@@ -324,6 +336,31 @@ export default function DigitalTwins() {
           <span style={{ color: 'var(--accent)' }}>{D.log.replace('{tick}', `#${sim.tick}`)}</span>
         </div>
       </div>
+
+      {real && photo && (
+        <div className="twin-real">
+          <figure style={{ margin: 0, position: 'relative', minWidth: 0 }}>
+            <img src={twin.photos[0].src} alt={photo.alt} width={twin.photos[0].w} height={twin.photos[0].h} loading="lazy"
+                 style={{ display: 'block', width: '100%', height: 'auto', border: '1px solid var(--line-hi)', background: 'var(--bg-2)' }} />
+            <span className="chip" style={{ position: 'absolute', left: 8, bottom: 8 }}>{t('projects.modal.captureBadge')}</span>
+          </figure>
+          <div style={{ display: 'grid', gap: 12, alignContent: 'start', minWidth: 0 }}>
+            <p className="label-accent" style={{ margin: 0 }}>{real.kicker}</p>
+            <h3 style={{ margin: 0, fontFamily: 'var(--f-mono)', fontWeight: 500, fontSize: 'clamp(19px, 2.2vw, 24px)', lineHeight: 1.25, letterSpacing: '-0.02em' }}>{real.title}</h3>
+            <p className="prose" style={{ margin: 0 }}>{real.body}</p>
+            <p className="mono" style={{ margin: 0, fontSize: 13, color: 'var(--ink-1)' }}>{photo.caption}</p>
+            <dl style={{ display: 'flex', gap: 24, flexWrap: 'wrap', margin: 0 }}>
+              {facts.map((f) => (
+                <div key={f.l}>
+                  <dd style={{ margin: 0, fontFamily: 'var(--f-mono)', fontSize: 24, color: 'var(--ink)' }}>{f.v}</dd>
+                  <dt className="label" style={{ marginTop: 2 }}>{f.l}</dt>
+                </div>
+              ))}
+            </dl>
+            <a href={projectHash(twin)} className="btn primary" style={{ justifySelf: 'start' }}>{real.cta}</a>
+          </div>
+        </div>
+      )}
 
       <div style={{ marginTop: 40 }}>
         <h3 className="label-accent" style={{ margin: '0 0 16px', fontWeight: 400 }}>{t('twins.utilityLabel')}</h3>
