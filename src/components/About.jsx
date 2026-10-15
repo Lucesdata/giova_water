@@ -2,7 +2,6 @@ import React from 'react';
 import { SectionIndex, Reveal } from './primitives.jsx';
 import { useT } from '../i18n.jsx';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
-import { projectById } from '../data/projects.js';
 import { sectionNumber } from '../data/sections.js';
 
 function interpolate(template, replacements) {
@@ -15,45 +14,6 @@ function interpolate(template, replacements) {
     }
     return <React.Fragment key={i}>{part}</React.Fragment>;
   });
-}
-
-// Each competence points at the projects where it was applied (ids only; the
-// text lives in i18n under about.skills.items.<key>).
-// Strongest first: the one behind the featured project leads, then the ones with
-// the most projects behind them.
-const COMPETENCIAS = [
-  { key: 'scada', projects: ['P-007', 'P-004', 'P-002'] },
-  { key: 'hidraulica', projects: ['P-006', 'P-002', 'P-001'] },
-  { key: 'procesos', projects: ['P-001', 'P-005'] },
-  { key: 'presupuestos', projects: ['P-007'] },
-  { key: 'datos', projects: ['P-002'] },
-  { key: 'gemelos', projects: ['P-003'] },
-];
-
-
-function Competencia({ skill, projects, onOpenProject, label }) {
-  const t = useT();
-  const I = t(`about.skills.items.${skill}`);
-  return (
-    <li style={{ border: '1px solid var(--line)', background: 'var(--bg-1)', padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <h4 style={{ margin: 0, fontFamily: 'var(--f-mono)', fontSize: 15, fontWeight: 500, color: 'var(--ink)' }}>{I.name}</h4>
-      <p style={{ margin: 0, color: 'var(--ink-1)', fontSize: 15, lineHeight: 1.55, flex: 1 }}>{I.uses}</p>
-      <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
-        <span className="label" style={{ flexBasis: '100%' }}>{label}</span>
-        {projects.map(id => {
-          const p = projectById(id);
-          if (!p) return null;
-          const title = t(`projects.data.${id}.title`);
-          const short = t(`projects.data.${id}.short`);
-          return (
-            <button key={id} type="button" className="chip-btn" onClick={() => onOpenProject?.(p)} aria-label={title}>
-              {short}
-            </button>
-          );
-        })}
-      </div>
-    </li>
-  );
 }
 
 /* Chronology, most recent first: when, role and where in the summary; a line
@@ -91,7 +51,7 @@ function Timeline({ rows, label, summary }) {
   );
 }
 
-export default function About({ onOpenProject }) {
+export default function About() {
   const { isMobile } = useBreakpoint();
   const t = useT();
   const rows = t('about.timeline.rows');
@@ -150,15 +110,6 @@ export default function About({ onOpenProject }) {
         </div>
 
         <Timeline rows={rows} label={t('about.timeline.label')} summary={t('about.timeline.summary')} />
-      </div>
-
-      <div style={{ marginTop: 56 }}>
-        <h3 className="label-accent" style={{ margin: '0 0 14px', fontWeight: 400 }}>{t('about.skills.label')}</h3>
-        <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))' }}>
-          {COMPETENCIAS.map((c) => (
-            <Competencia key={c.key} skill={c.key} projects={c.projects} onOpenProject={onOpenProject} label={t('about.skills.appliedIn')} />
-          ))}
-        </ul>
       </div>
     </section>
   );
