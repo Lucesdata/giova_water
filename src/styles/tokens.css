@@ -546,7 +546,6 @@ a.text-link { display: inline-flex; align-items: center; min-height: 44px; }
   .profile-timeline { grid-area: timeline; order: 0; }
 }
 .portrait { position: relative; overflow: hidden; background: var(--bg-2); border-bottom: 1px solid var(--line); aspect-ratio: 4 / 3; max-height: 320px; }
-.portrait-note { position: absolute; left: 8px; bottom: 8px; font-size: 11px; }
 .portrait img { width: 100%; height: 100%; object-fit: cover; object-position: center 24%; display: block; }
 @media (min-width: 900px) { .portrait { aspect-ratio: 1 / 1; max-height: 300px; } }
 
@@ -571,7 +570,6 @@ a.text-link { display: inline-flex; align-items: center; min-height: 44px; }
   content: ""; position: absolute; inset: 0;
   background: linear-gradient(90deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 94%, transparent) 54%, color-mix(in srgb, var(--bg) 55%, transparent) 68%, transparent 90%);
 }
-.hero-photo-note { position: absolute; right: 12px; bottom: 12px; z-index: 1; background: color-mix(in srgb, var(--bg) 85%, transparent); color: var(--ink); }
 .hero-copy { position: relative; padding: 24px 40px 28px; max-width: min(700px, 58%); }
 .hero-secondary { background: color-mix(in srgb, var(--bg) 70%, transparent); }
 .hero-below { display: grid; gap: 40px; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; padding: 20px 0 24px; }

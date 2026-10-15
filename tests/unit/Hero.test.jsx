@@ -68,7 +68,7 @@ describe('Hero — video real de la pantalla SCADA', () => {
     const img = container.querySelector('.hero-photo img');
     expect(img.getAttribute('src')).toBe('/assets/giovanni-field.jpg');
     expect(img.getAttribute('alt')).toBe('');
-    expect(getByText('hero.imageNote')).toBeTruthy();
+    expect(container.querySelector('.hero-photo-note')).toBeNull();
   });
 
   it('has one primary and one secondary call to action', () => {

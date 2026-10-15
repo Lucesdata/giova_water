@@ -107,7 +107,6 @@ export default function Hero() {
       <div className="hero">
         <div className="hero-photo">
           <img src="/assets/giovanni-field.jpg" alt="" width="1600" height="1066" fetchpriority="high" />
-          <span className="chip hero-photo-note">{t('hero.imageNote')}</span>
         </div>
         <div className="hero-copy">
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14, flexWrap: 'wrap' }}>

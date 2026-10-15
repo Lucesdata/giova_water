@@ -496,7 +496,7 @@ test.describe('perfil y trayectoria', () => {
     await expect(card).toContainText('UPEC Paris-Est Créteil');
     await expect(card).toContainText('título 2012');
     await expect(card).toContainText('CPQCOL PQ-6061');
-    await expect(card.locator('.portrait-note')).toHaveText('Imagen ilustrativa');
+    await expect(card.locator('.portrait-note')).toHaveCount(0);
     await expect(card).not.toContainText('Experiencia profesional');
   });
 
@@ -775,7 +775,7 @@ test.describe('responsive y accesibilidad', () => {
     });
     expect(d.phW).toBeGreaterThan(d.heroW - 4);
     expect(d.overlap).toBe(true);
-    await expect(page.locator('.hero-photo-note')).toContainText('Imagen ilustrativa');
+    await expect(page.locator('.hero-photo-note')).toHaveCount(0);
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
     const m = await page.evaluate(() => ({ ph: document.querySelector('.hero-photo').getBoundingClientRect().height, bottom: document.querySelector('.hero-photo').getBoundingClientRect().bottom, copyTop: document.querySelector('.hero-copy h1').getBoundingClientRect().top }));
