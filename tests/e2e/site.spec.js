@@ -502,12 +502,10 @@ test.describe('perfil y trayectoria', () => {
 
   test('the chronology comes right after the introduction, most recent first, each job opens and closes', async ({ page }) => {
     await page.goto('/');
-    const [text, tl, skills] = await Promise.all([
+    const [text, tl] = await Promise.all([
       page.locator('.profile-text').boundingBox(), page.locator('.profile-timeline').boundingBox(),
-      page.locator('#sobre h3', { hasText: 'Competencias' }).boundingBox(),
     ]);
     expect(tl.y).toBeGreaterThan(text.y);
-    expect(tl.y).toBeLessThan(skills.y);
     const rows = page.locator('#sobre .timeline-row details');
     await expect(rows).toHaveCount(5);
     await expect(rows.first()).toHaveAttribute('open', '');
@@ -529,15 +527,10 @@ test.describe('perfil y trayectoria', () => {
     await expect(page.locator('#sobre .profile-text a.text-link')).toHaveAttribute('href', '#inicio');
   });
 
-  test('competences lead with SCADA and IoT, show project names (not codes) and open the project', async ({ page }) => {
+  test('the profile has no competences block repeating the projects; the chronology lists five roles', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('#sobre ul h4').first()).toHaveText('SCADA e IoT');
-    const chips = await page.locator('#sobre .chip-btn').allTextContents();
-    expect(chips.length).toBeGreaterThan(6);
-    for (const c of chips) expect(c).not.toMatch(/^P-\d{3}$/);
-    await page.locator('#sobre .chip-btn', { hasText: 'Gemelo La Soledad' }).click();
-    await expect(page.getByRole('dialog').getByRole('heading', { level: 2 })).toContainText('La Soledad');
-    await page.keyboard.press('Escape');
+    await expect(page.locator('#sobre h3', { hasText: 'Competencias' })).toHaveCount(0);
+    await expect(page.locator('#sobre .chip-btn')).toHaveCount(0);
     const roles = await page.locator('#sobre .timeline-row h4').allTextContents();
     expect(roles.join(' ')).not.toMatch(/Project Lead|Technical Director|Specialist/);
     expect(roles).toHaveLength(5);

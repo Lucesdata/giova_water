@@ -161,18 +161,6 @@ const dict = {
       bio3Iotio: 'IOTIO',
       note: 'Participo desde el área técnica. Las decisiones de contratación y adjudicación corresponden a cada entidad.',
       methodLink: 'Ver cómo llevo un proyecto, de la necesidad a la operación →',
-      skills: {
-        label: 'Competencias y proyectos relacionados',
-        appliedIn: 'Proyectos',
-        items: {
-          hidraulica: { name: 'Modelación hidráulica', uses: 'EPANET y EPA-SWMM en redes rurales y en planes de manejo de vertimientos (PSMV).' },
-          procesos: { name: 'Diseño de procesos de tratamiento', uses: 'Aguas residuales, lixiviados y potabilización: balances, P&IDs y puesta en marcha.' },
-          presupuestos: { name: 'Estructuración y presupuestos', uses: 'Presupuestos técnicos de monitoreo y automatización de acueductos rurales.' },
-          scada: { name: 'SCADA e IoT', uses: 'Monitoreo y automatización de acueductos rurales y una plataforma propia de telemetría.' },
-          datos: { name: 'Datos y reportes', uses: 'Python, Power BI y ArcGIS para el reporte regulatorio de plantas rurales.' },
-          gemelos: { name: 'Gemelos digitales', uses: 'Visualización 3D con Three.js, línea de gradiente hidráulico y tableros de sensores.' },
-        },
-      },
       timeline: {
         label: 'Trayectoria',
         summary: '11 años de experiencia profesional',
@@ -571,18 +559,6 @@ const dict = {
       bio3Iotio: 'IOTIO',
       note: 'I take part from the technical side. Procurement and award decisions belong to each organisation.',
       methodLink: 'See how I take a project from need to operation →',
-      skills: {
-        label: 'Skills and related projects',
-        appliedIn: 'Projects',
-        items: {
-          hidraulica: { name: 'Hydraulic modelling', uses: 'EPANET and EPA-SWMM on rural networks and on wastewater management plans (PSMV).' },
-          procesos: { name: 'Treatment process design', uses: 'Wastewater, leachate and drinking water: balances, P&IDs and commissioning.' },
-          presupuestos: { name: 'Project structuring and budgets', uses: 'Technical budgets for monitoring and automation of rural water systems.' },
-          scada: { name: 'SCADA and IoT', uses: 'Monitoring and automation of rural water systems and an own telemetry platform.' },
-          datos: { name: 'Data and reporting', uses: 'Python, Power BI and ArcGIS for regulatory reporting of rural plants.' },
-          gemelos: { name: 'Digital twins', uses: '3D visualisation with Three.js, hydraulic grade line and sensor dashboards.' },
-        },
-      },
       timeline: {
         label: 'Career',
         summary: '11 years of professional experience',
@@ -981,18 +957,6 @@ const dict = {
       bio3Iotio: 'IOTIO',
       note: 'Je participe depuis le volet technique. Les décisions de passation et d’attribution des marchés reviennent à chaque organisme.',
       methodLink: 'Voir comment je mène un projet, du besoin à l’exploitation →',
-      skills: {
-        label: 'Compétences et projets liés',
-        appliedIn: 'Projets',
-        items: {
-          hidraulica: { name: 'Modélisation hydraulique', uses: 'EPANET et EPA-SWMM sur des réseaux ruraux et des plans de gestion des rejets (PSMV).' },
-          procesos: { name: 'Conception de procédés de traitement', uses: 'Eaux usées, lixiviats et potabilisation : bilans, P&ID et mise en service.' },
-          presupuestos: { name: 'Structuration et budgets', uses: 'Budgets techniques de suivi et d’automatisation de systèmes d’eau ruraux.' },
-          scada: { name: 'SCADA et IoT', uses: 'Suivi et automatisation de systèmes d’eau ruraux et plateforme de télémétrie propre.' },
-          datos: { name: 'Données et rapports', uses: 'Python, Power BI et ArcGIS pour le reporting réglementaire de stations rurales.' },
-          gemelos: { name: 'Jumeaux numériques', uses: 'Visualisation 3D avec Three.js, ligne piézométrique et tableaux de capteurs.' },
-        },
-      },
       timeline: {
         label: 'Parcours',
         summary: '11 ans d’expérience professionnelle',

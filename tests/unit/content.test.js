@@ -198,7 +198,7 @@ describe('P-007: proyecto destacado con fotografías reales', () => {
   });
 });
 
-describe('perfil: credenciales, trayectoria y competencias', () => {
+describe('perfil: credenciales y trayectoria', () => {
   it.each(LANGS)('%s: la tarjeta lleva formación con el año de título, y licencia, sin aviso de imagen', (lang) => {
     const c = dictionary[lang].about.card;
     expect(c.formationValue).toMatch(/UPEC/);

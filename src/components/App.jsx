@@ -187,7 +187,7 @@ export default function App() {
           <Hero />
         </section>
         <Projects onOpen={openProjectFromUi} />
-        <About onOpenProject={openProjectFromUi} />
+        <About />
         <DigitalTwins />
         <Faq />
         <Contact />
