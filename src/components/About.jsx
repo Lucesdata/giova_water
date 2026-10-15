@@ -113,7 +113,6 @@ export default function About({ onOpenProject }) {
         <div className="profile-card" style={{ border: '1px solid var(--line-hi)', background: 'var(--bg-1)' }}>
           <div className="portrait">
             <img src="/assets/giovanni-portrait.jpg" alt={card.photoAlt} loading="lazy" width="933" height="1400"/>
-            <span className="chip portrait-note">{card.imageNote}</span>
           </div>
           <div style={{ padding: 20 }}>
             <div style={{ fontFamily: 'var(--f-mono)', fontSize: 17, fontWeight: 500, color: 'var(--ink)', marginBottom: 6 }}>

@@ -199,12 +199,12 @@ describe('P-007: proyecto destacado con fotografías reales', () => {
 });
 
 describe('perfil: credenciales, trayectoria y competencias', () => {
-  it.each(LANGS)('%s: la tarjeta lleva formación con el año de título, licencia y nota de imagen ilustrativa', (lang) => {
+  it.each(LANGS)('%s: la tarjeta lleva formación con el año de título, y licencia, sin aviso de imagen', (lang) => {
     const c = dictionary[lang].about.card;
     expect(c.formationValue).toMatch(/UPEC/);
     expect(c.formationValue).toMatch(/2012/);
     expect(c.licenseValue).toBe('CPQCOL PQ-6061');
-    expect(c.imageNote).toMatch(/\S/);
+    expect(c.imageNote).toBeUndefined();
     // lo que ya dice el hero no se repite en la tarjeta
     expect(c.years).toBeUndefined();
     expect(c.langsValue).toBeUndefined();
