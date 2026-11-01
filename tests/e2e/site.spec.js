@@ -7,7 +7,7 @@ const WIDTHS = [
   { name: 'escritorio-1024', width: 1024, height: 768 },
   { name: 'escritorio-1440', width: 1440, height: 900 },
 ];
-const SECTION_IDS = ['inicio', 'proyectos', 'sobre', 'gemelos', 'faq', 'contacto'];
+const SECTION_IDS = ['inicio', 'proyectos', 'sobre', 'gemelos', 'watertracking', 'faq', 'contacto'];
 
 async function seedLang(page, lang = 'es') {
   await page.addInitScript((l) => { localStorage.setItem('giova_water:lang', l); }, lang);
@@ -34,10 +34,10 @@ const FEATURED = ['3 plantas de lixiviados · BMA', 'Monitoreo y automatización
 test.beforeEach(async ({ page }) => { await seedLang(page, 'es'); await offlineFonts(page); });
 
 test.describe('estructura', () => {
-  test('six sections in the requested order, a skip link and one h1', async ({ page }) => {
+  test('seven sections in the requested order, a skip link and one h1', async ({ page }) => {
     await page.goto('/');
     // Solo las secciones de primer nivel: el hero lleva dentro «scope» y «cycle».
-    await expect(page.locator('main > section')).toHaveCount(6);
+    await expect(page.locator('main > section')).toHaveCount(7);
     const ids = await page.locator('main > section').evaluateAll((els) => els.map((e) => e.id));
     expect(ids).toEqual(SECTION_IDS);
     await expect(page.locator('h1')).toHaveCount(1);
@@ -49,7 +49,7 @@ test.describe('estructura', () => {
     await page.goto('/');
     const items = await page.locator('nav a.nav-link').allTextContents();
     expect(items.map((t) => t.replace(/\s+/g, '').trim())).toEqual(
-      ['00Inicio', '01Proyectos', '02Perfil', '03Demo', '04Preguntas', '05Contacto']);
+      ['00Inicio', '01Proyectos', '02Perfil', '03Demo', '04WaterTracking', '05Preguntas', '06Contacto']);
   });
 
   for (const [lang, h1, projects, demo] of [
@@ -134,7 +134,7 @@ test.describe('anclas y cabecera', () => {
 
   test('the active section indicator follows the scroll', async ({ page }) => {
     await page.goto('/');
-    for (const id of ['proyectos', 'sobre', 'gemelos', 'faq', 'contacto']) {
+    for (const id of ['proyectos', 'sobre', 'gemelos', 'watertracking', 'faq', 'contacto']) {
       await page.locator(`nav a.nav-link[href="#${id}"]`).click();
       await expect(page.locator(`nav a.nav-link[href="#${id}"]`)).toHaveAttribute('aria-current', 'page');
     }
@@ -982,4 +982,17 @@ test.describe('anuncios sobre el video SCADA', () => {
       expect(problems).toEqual([]);
     });
   }
+});
+
+test.describe('watertracking', () => {
+  test('el usuario arma su planta: quitar la filtración cambia el resultado y se puede reiniciar', async ({ page }) => {
+    await page.goto('/#watertracking');
+    const sec = page.locator('#watertracking');
+    await expect(sec).toContainText('Modelo ilustrativo');
+    await expect(sec.getByRole('status')).toContainText('Cumple las comprobaciones');
+    await sec.getByRole('checkbox', { name: /Filtración rápida/ }).uncheck();
+    await expect(sec.getByRole('status')).toContainText('No cumple todas las comprobaciones');
+    await sec.getByRole('button', { name: 'Reiniciar planta' }).click();
+    await expect(sec.getByRole('status')).toContainText('Cumple las comprobaciones');
+  });
 });

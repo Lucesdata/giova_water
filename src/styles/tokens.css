@@ -393,6 +393,7 @@ a:focus-visible { outline-offset: 3px; }
   transition: color 160ms var(--ease);
 }
 .nav-link:hover { color: var(--accent); }
+@media (max-width: 1180px) { .nav-link { padding: 0 7px; gap: 5px; letter-spacing: 0.02em; } }
 .nav-avail { display: inline-flex; align-items: center; text-decoration: none; }
 .menu-link {
   display: flex; justify-content: space-between; align-items: center;

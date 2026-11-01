@@ -87,8 +87,9 @@ giova_water/
 | 01 | `proyectos` | `Projects` + `ProjectModal` | Tres destacados (Montebello, PTAPs rurales UAESP, La Vorágine), «Ver todos los proyectos» (7) y filtros con contadores. |
 | 02 | `sobre` | `About` | Perfil con credenciales, trayectoria desplegable (más reciente primero) y competencias ↔ proyectos con el nombre de cada uno. |
 | 03 | `gemelos` | `DigitalTwins` | Demo con datos simulados: escenarios, pausa y restablecer. |
-| 04 | `faq` | `Faq` | Preguntas frecuentes. |
-| 05 | `contacto` | `Contact` | Formulario que prepara un email, tarjeta de contacto y pie. |
+| 04 | `watertracking` | `WaterTracking` + `lib/plantModel.js` | Modelador del tren de tratamiento: etapas, caudal, turbidez, tiempos de retención, cargas y CT; resultado orientativo, no para dimensionamiento. Se guarda solo en `localStorage`. |
+| 05 | `faq` | `Faq` | Preguntas frecuentes. |
+| 06 | `contacto` | `Contact` | Formulario que prepara un email, tarjeta de contacto y pie. |
 
 Cada proyecto tiene una URL estable `/#proyecto/<slug>` (los slugs están en `src/data/projects.js` y no se renombran). Es una ruta por fragmento: no necesita reescrituras en el servidor y abre la ficha correcta al cargarla directamente.
 
