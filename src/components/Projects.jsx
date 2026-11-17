@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { SectionIndex, Reveal } from './primitives.jsx';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
+import { SectionIndex, Reveal, useOnScreen, usePrefersReducedMotion } from './primitives.jsx';
+import { loadFlip, FLIP_VARS } from '../lib/flip.js';
 import { useT } from '../i18n.jsx';
 import { projectsData, projectHash } from '../data/projects.js';
 import { sectionNumber } from '../data/sections.js';
@@ -21,7 +22,7 @@ function ProjectCard({ p, onOpen }) {
   const i18n = t(`projects.data.${p.id}`) || {};
   const title = i18n.title || p.id;
   return (
-    <Reveal as="article" className={p.highlight ? 'project-card is-highlight' : 'project-card'}>
+    <Reveal as="article" data-flip-id={p.id} className={p.highlight ? 'project-card is-highlight' : 'project-card'}>
       <div style={{ aspectRatio: '16/7', position: 'relative', background: 'var(--bg-2)', borderBottom: '1px solid var(--line)', overflow: 'hidden' }}>
         {p.cover ? (
           <>
@@ -80,7 +81,43 @@ export default function Projects({ onOpen }) {
   const canCollapse = expanded && filter === 'all';
   const showToggle = !showAll || canCollapse;
 
-  const pick = (id) => { setFilter(id); if (id === 'all') setExpanded(true); };
+  /* Changing the filter or "see all" moves the cards that stay to their new place
+     (FLIP, 240 ms) instead of jumping; new cards keep their usual entry. GSAP is
+     fetched once the section is near the screen, and never with reduced motion. */
+  const gridRef = useRef(null);
+  const flipRef = useRef(null);
+  const flipState = useRef(null);
+  const reduced = usePrefersReducedMotion();
+  const near = useOnScreen(gridRef, '600px');
+  useEffect(() => {
+    if (reduced || !near || flipRef.current) return;
+    let alive = true;
+    loadFlip().then((Flip) => { if (alive) flipRef.current = Flip; });
+    return () => { alive = false; };
+  }, [near, reduced]);
+
+  const capture = () => {
+    const Flip = flipRef.current;
+    if (Flip && !reduced && gridRef.current) flipState.current = Flip.getState(gridRef.current.children);
+  };
+
+  useLayoutEffect(() => {
+    const Flip = flipRef.current;
+    const state = flipState.current;
+    const grid = gridRef.current;
+    flipState.current = null;
+    if (!Flip || !state || !grid) return undefined;
+    grid.classList.add('is-flipping');
+    const tl = Flip.from(state, {
+      ...FLIP_VARS,
+      targets: grid.children,
+      onComplete: () => grid.classList.remove('is-flipping'),
+    });
+    return () => { tl.progress(1).kill(); grid.classList.remove('is-flipping'); };
+  }, [filter, expanded]);
+
+  const pick = (id) => { capture(); setFilter(id); if (id === 'all') setExpanded(true); };
+  const toggleExpanded = () => { capture(); setExpanded(e => !e); };
 
   return (
     <section id="proyectos" className="section" aria-labelledby="projects-title">
@@ -112,14 +149,14 @@ export default function Projects({ onOpen }) {
         </div>
       </div>
 
-      <div className="projects-grid" id="lista-proyectos">
+      <div className="projects-grid" id="lista-proyectos" ref={gridRef}>
         {visible.map(p => <ProjectCard key={p.id} p={p} onOpen={onOpen} />)}
       </div>
 
       <div style={{ marginTop: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, flexWrap: 'wrap', borderTop: '1px solid var(--line)', paddingTop: 20 }}>
         {showToggle ? (
           <button type="button" className="btn primary" aria-controls="lista-proyectos" aria-expanded={showAll}
-                  onClick={() => setExpanded(e => !e)}>
+                  onClick={toggleExpanded}>
             {showAll ? t('projects.showFeatured') : t('projects.seeAll', { total })}
           </button>
         ) : <span />}

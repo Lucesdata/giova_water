@@ -239,6 +239,32 @@ test.describe('proyectos', () => {
     await expect(cards).toHaveCount(7);
   });
 
+  test('filtering moves the cards that stay (FLIP ≤ 250 ms) and leaves no transforms behind', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('#proyectos').scrollIntoViewIfNeeded();
+    // GSAP is fetched on demand when the section is near the screen.
+    await expect.poll(() => page.evaluate(() => performance.getEntriesByType('resource').some((r) => /\/Flip-/.test(r.name)))).toBe(true);
+    await page.waitForTimeout(300);
+    const grid = page.locator('#lista-proyectos');
+    await page.getByRole('button', { name: /Digital e IoT/ }).click();
+    await expect(grid).toHaveClass(/is-flipping/);
+    await expect(grid).not.toHaveClass(/is-flipping/, { timeout: 1000 });
+    const transforms = await page.locator('#proyectos article').evaluateAll((els) => els.map((e) => e.style.transform).filter(Boolean));
+    expect(transforms).toEqual([]);
+    await expect(page.locator('#proyectos article')).toHaveCount(3);
+  });
+
+  test('with reduced motion the filter is instant and GSAP is never downloaded', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/');
+    await page.locator('#proyectos').scrollIntoViewIfNeeded();
+    await page.getByRole('button', { name: /Digital e IoT/ }).click();
+    await expect(page.locator('#lista-proyectos')).not.toHaveClass(/is-flipping/);
+    await expect(page.locator('#proyectos article')).toHaveCount(3);
+    const loaded = await page.evaluate(() => performance.getEntriesByType('resource').some((r) => /\/Flip-/.test(r.name)));
+    expect(loaded).toBe(false);
+  });
+
   test('every card shows title, responsibility, main result and a link to the detail; no budgets', async ({ page }) => {
     await page.goto('/');
     await page.getByRole('button', { name: /Ver todos los proyectos/ }).click();

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { useActiveSection, useScrollProgress } from './primitives.jsx';
 import { SECTIONS, SECTION_IDS } from '../data/sections.js';
 import { projectFromHash, projectHash } from '../data/projects.js';
@@ -12,8 +12,19 @@ import ProjectModal from './ProjectModal.jsx';
 import DigitalTwins from './DigitalTwins.jsx';
 import { Contact, Footer } from './Contact.jsx';
 import Faq from './Faq.jsx';
-import { ScrollBackground } from './ScrollBackground.jsx';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
+
+// The scroll background (Remotion Player) is decorative and heavy. It is loaded
+// in its own chunk, and only where it will be shown: not with reduced motion and
+// not on narrow screens (the same rule ScrollBackground applies itself).
+const ScrollBackground = lazy(() =>
+  import('./ScrollBackground.jsx').then((m) => ({ default: m.ScrollBackground })));
+
+function wantsScrollBackground() {
+  if (typeof window === 'undefined') return false;
+  const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  return !reduced && window.innerWidth > 768;
+}
 
 function ScrollRail({ active }) {
   const p = useScrollProgress();
@@ -128,6 +139,7 @@ export default function App() {
       return { ...TWEAK_DEFAULTS, ...(palette ? { palette } : {}), ...(typeof grid === 'boolean' ? { grid } : {}) };
     } catch { return TWEAK_DEFAULTS; }
   });
+  const [showScrollBg] = useState(wantsScrollBackground);
   const [panelOpen, setPanelOpen] = useState(false);
   // The open project is part of the address (#proyecto/<slug>), so a project can
   // be opened directly, shared, and closed with the browser's Back button.
@@ -179,7 +191,7 @@ export default function App() {
     <>
       <a href="#main" className="skip-link">{t('nav.aria.skip')}</a>
       {tweaks.grid && <div className="grid-bg" aria-hidden="true"/>}
-      <ScrollBackground />
+      {showScrollBg && <Suspense fallback={null}><ScrollBackground /></Suspense>}
       <Nav active={active} />
       {!isMobile && <ScrollRail active={active} />}
       <main id="main" tabIndex={-1} className="page">
