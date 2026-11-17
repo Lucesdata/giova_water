@@ -3640,10 +3640,34 @@ function frame(now) {
   if (now - lastUI > 250) { lastUI = now; refreshPanels(false); drawMicro(VIEW.time); }
   requestAnimationFrame(frame);
 }
+/* Embed mode (?embed=1): only the diorama, no panels or labels, a slow turn,
+   and the host page may set the turn through postMessage({ yaw }). Used by the
+   giovawater home hero; the standalone piece is unchanged without the flag. */
+const EMBED = new URLSearchParams(location.search).has('embed');
+if (EMBED) {
+  document.documentElement.classList.add('embed');
+  const st = document.createElement('style');
+  st.textContent = '.embed body>*:not(.stage){display:none!important}.embed #labels{display:none!important}.embed #gpu{cursor:default}.embed .stage{background:transparent}.embed body{background:transparent}';
+  document.head.appendChild(st);
+  const baseYaw = cam.tYaw;
+  let hostYaw = null;
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  addEventListener('message', (e) => {
+    if (e.origin !== location.origin || !e.data || typeof e.data.yaw !== 'number') return;
+    hostYaw = e.data.yaw;
+  });
+  let t0 = performance.now();
+  (function spin(now) {
+    const drift = still ? 0 : ((now - t0) / 1000) * 0.06;
+    cam.tYaw = baseYaw - drift - (hostYaw ?? 0);
+    requestAnimationFrame(spin);
+  })(t0);
+}
 (async () => {
   let ok = false;
   try { ok = await initGPU(canvas); } catch (e) { console.error(e); ok = false; }
-  if (!ok) { $('#fallback').hidden = false; labels.hidden = true; }
+  if (EMBED) { try { parent.postMessage({ lj: 'ready', ok }, location.origin); } catch (e) {} }
+  if (!ok) { $('#fallback').hidden = EMBED; labels.hidden = true; }
   if (isPhone()) cam.tDist = cam.dist = 36;
   setSpeed(2); refreshPanels(true);
   requestAnimationFrame(frame);
