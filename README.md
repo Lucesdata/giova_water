@@ -30,7 +30,7 @@ Single-page application en **React 18 + Vite 6**, trilingüe (ES/EN/FR), con cua
 | Hosting | Vercel (framework preset `vite`) |
 | Gráficos | SVG inline + Canvas 2D (LGH) — sin librerías de charts en el bundle |
 
-Build de producción: **~256 KB JS / 75 KB gzip · 6 KB CSS**.
+Build de producción: **~315 KB JS inicial / 96 KB gzip · 26 KB CSS**. Se cargan aparte, solo cuando hacen falta: el fondo de scroll de Remotion (~205 KB, solo en escritorio y sin reduced-motion) y GSAP + Flip (~96 KB, al acercarse a Proyectos).
 
 ---
 

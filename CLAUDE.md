@@ -9,7 +9,9 @@ Portafolio en producción (giovawater.vercel.app). React 18 + Vite 6, CSS plano 
 
 ## Motion
 - Motor único: **GSAP** (`gsap` + `@gsap/react`, gratuito con todos sus plugins). Skills en `.claude/skills/gsap-*`.
-- En React: siempre `useGSAP()` con `scope`, nunca `useEffect` sin limpieza.
+- En React: `useGSAP()` con `scope`, nunca `useEffect` sin limpieza. Si GSAP se carga de forma diferida (patrón de `src/lib/flip.js`), `useLayoutEffect` que mata la animación en la limpieza.
+- Presupuesto aprobado (test e2e «movimiento»): ≤ 250 ms, sin retardo, sin stagger, sin desenfoque, sin animación de entrada en el hero.
+- GSAP no va en el bundle inicial: se descarga cuando la sección está cerca de la pantalla, y nunca con reduced-motion.
 - Envuelve todo en `gsap.matchMedia()` con una rama `(prefers-reduced-motion: reduce)` que deja el estado final sin animar.
 - Anima solo `transform` / `opacity` (ver `gsap-performance`). Registra plugins una sola vez.
 - Importa GSAP solo en componentes que lo usen; los plugins pesados (SplitText, MorphSVG) con `import()` dinámico.
