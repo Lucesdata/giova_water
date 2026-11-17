@@ -47,7 +47,7 @@ img{display:block;max-width:100%}
 .hero h1 em{font-style:normal;color:var(--accent-ink)}
 .object{position:relative;z-index:1;margin:clamp(-10px,-2vh,0px) auto 0;width:min(1500px,112vw);left:50%;transform:translateX(-50%);height:min(74vh,780px);will-change:transform}
 .object iframe,.object .poster{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none}
-.object .poster{object-fit:contain;opacity:1;transition:opacity 1s var(--ease)}
+.object .poster{object-fit:contain;opacity:1;transition:opacity 1s var(--ease);-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 72%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 72%,transparent 100%)}
 .object iframe{opacity:0;transition:opacity 1.2s var(--ease)}
 .object.live iframe{opacity:1}
 .object.live .poster{opacity:0}
@@ -157,7 +157,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
   <div class="sec-head rv"><h2 id="p-title">Piezas</h2><span class="mono">Material Studies y gemelos digitales</span></div>
   <div class="grid">
     <a class="piece rv" href="/leachate-jelly/">
-      <div class="img"><img src="/leachate-jelly/og.jpg" alt="Diorama 3D de un vertedero y su planta de lixiviados" loading="lazy"></div>
+      <div class="img"><img src="/propuesta/poster.jpg" alt="Diorama 3D de un vertedero y su planta de lixiviados" loading="lazy"></div>
       <div class="meta"><span class="mono">Material Studies · 01</span><h3>Leachate Jelly</h3><p>Lixiviados, lluvia y tratamiento en un bloque de gelatina interactivo.</p></div>
     </a>
     <a class="piece rv" href="/#proyecto/gemelo-digital-la-voragine">
