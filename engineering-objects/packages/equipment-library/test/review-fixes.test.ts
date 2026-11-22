@@ -203,3 +203,12 @@ describe('segunda revisión', () => {
     expect(() => createVariant(b, { tag: 'X', mechanical: { bridgeGirderDepthM: 0.5 } }, { mode: 'C', allowedResize: [] })).toThrow(/mechanical/);
   });
 });
+
+describe('tercera revisión', () => {
+  it('la ecuación de la deducción del manto refleja si se resta el solape con el pozo', () => {
+    const g = (exclude: boolean) =>
+      designClarifier({ ...DEC_005_DIDACTIC, geometry: { ...DEC_005_DIDACTIC.geometry, sludgeBlanketDepthM: 2.2, excludeFeedwellFromEffectiveVolume: exclude } }).values['volume.deduction.sludgeBlanket']!;
+    expect(g(true).equation).toMatch(/min\(hmanto, H\)/);
+    expect(g(false).equation).not.toMatch(/rpa,int/);
+  });
+});

@@ -567,7 +567,9 @@ export function runEngine(
       label: 'Deducción: manto de lodos de diseño',
       unit: 'm3',
       inputs: ['volume.floorCone', 'column.outerRadius', 'floor.dropAtSump', 'tank.diameter', 'input.geometry.sludgeBlanketDepthM', 'level.feedwellBottom', 'feedwell.diameter'],
-      equation: 'V = (Vfondo − π·rc²·Δy) + π·(R² − rc²)·hmanto − π·(rpa,int² − rc²)·max(0, hmanto − ypozo,inf) (sin doble deducción con el pozo)',
+      equation: feedwellDeducted
+        ? 'V = (Vfondo − π·rc²·Δy) + π·(R² − rc²)·hmanto − π·(rpa,int² − rc²)·max(0, min(hmanto, H) − ypozo,inf) (sin doble deducción con el pozo)'
+        : 'V = (Vfondo − π·rc²·Δy) + π·(R² − rc²)·hmanto (el pozo no se descuenta: no hay solape que restar)',
     });
     const clear = t.record('sludgeBlanket.clearanceToFeedwell', yFwBottom - yBlanket, { label: 'Resguardo entre manto y pozo de alimentación', unit: 'm', inputs: ['level.feedwellBottom', 'input.geometry.sludgeBlanketDepthM'], equation: 'Δ = ypozo,inf − hmanto' });
     simple('HYD-SLUDGE-BLANKET', 2, clear > 0 ? 'PASS' : 'FAIL', 'Manto de lodos por debajo del pozo de alimentación', clear > 0 ? 'La entrada no descarga sobre el manto de diseño.' : 'El manto de diseño alcanza el pozo de alimentación: resuspensión del lodo.', { value: clear, limit: '> 0', unit: 'm', componentIds: ['HYD-002', 'CIV-003'] });
