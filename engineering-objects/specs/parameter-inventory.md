@@ -125,8 +125,10 @@ ningún valor de UNE-EN 12255-4:2023**; sus requisitos deben introducirse como c
 | Variable | Unidad | Se compara con |
 |---|---|---|
 | `flowLps` | L/s | `flow.avg.Ls` / `flow.peak.Ls` |
-| `influentTssMgL`, `effluentTssMgL` | mg/L | — (eliminación observada) |
-| `influentBod5MgL`, `effluentBod5MgL` | mg/L | — (eliminación observada) |
+| `influentTssMgL` | mg/L | `input.influent.tssMgL` (lectura informativa) |
+| `effluentTssMgL` | mg/L | — (con la entrada: eliminación observada) |
+| `influentBod5MgL` | mg/L | `input.influent.bod5MgL` (lectura informativa) |
+| `effluentBod5MgL` | mg/L | — (con la entrada: eliminación observada) |
 | `influentTurbidityNtu`, `effluentTurbidityNtu` | NTU | — |
 | `temperatureC` | °C | `input.influent.temperatureC` |
 | `sludgeBlanketDepthM` | m (sobre y = 0) | `input.geometry.sludgeBlanketDepthM`, `level.feedwellBottom` |
