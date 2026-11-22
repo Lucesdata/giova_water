@@ -64,6 +64,31 @@ function Water({ design, plane }: { design: ClarifierDesign; plane: THREE.Plane 
   );
 }
 
+/** Manto de lodos de diseño: capa translúcida desde el fondo hasta su cota (solo visual). */
+function SludgeBlanket({ design, plane }: { design: ClarifierDesign; plane: THREE.Plane | null }) {
+  const h = design.input.geometry.sludgeBlanketDepthM;
+  const m = design.model;
+  const geometry = useMemo(() => {
+    if (h === undefined) return null;
+    const pts = [
+      new THREE.Vector2(0, -m.sumpDrop),
+      new THREE.Vector2(m.rSump, -m.sumpDrop),
+      ...(m.rSlopeStart < m.R ? [new THREE.Vector2(m.rSlopeStart, 0)] : []),
+      new THREE.Vector2(m.R - 0.01, 0),
+      new THREE.Vector2(m.R - 0.01, h),
+      new THREE.Vector2(0, h),
+    ];
+    return new THREE.LatheGeometry(pts, 96);
+  }, [h, m]);
+  useEffect(() => () => geometry?.dispose(), [geometry]);
+  if (!geometry) return null;
+  return (
+    <mesh geometry={geometry} renderOrder={1}>
+      <meshStandardMaterial color="#6b4f2a" transparent opacity={0.45} depthWrite={false} side={THREE.DoubleSide} clippingPlanes={plane ? [plane] : []} />
+    </mesh>
+  );
+}
+
 export interface ViewerProps {
   design: ClarifierDesign;
   view: ViewMode;
@@ -88,6 +113,7 @@ export function Viewer({ design, view, viewNonce, section, showDims, showWater, 
       <directionalLight position={[-6, 5, -8]} intensity={0.45} />
       <EngineeringAssembly assembly={design.assembly} selectedId={selectedId} isolatedIds={isolatedIds} sectionPlane={section ? plane : null} onSelect={onSelect} />
       {showWater && !isolatedIds && <Water design={design} plane={section ? plane : null} />}
+      {showWater && !isolatedIds && <SludgeBlanket design={design} plane={section ? plane : null} />}
       {showDims && <Dimensions design={design} />}
       <Grid position={[0, design.model.yPitBottom - 0.01, 0]} args={[40, 40]} cellSize={0.5} sectionSize={2.5} cellColor="#26303a" sectionColor="#3a4856" fadeDistance={40} infiniteGrid />
       <OrbitControls makeDefault enableDamping dampingFactor={0.12} />

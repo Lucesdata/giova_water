@@ -40,6 +40,11 @@ const HYD = [
   'feedwell.downwardVelocity.peak',
   'column.portVelocity.peak',
   'launder.freeFall',
+  'solids.influentLoad.avg',
+  'loading.solids.avg',
+  'loading.solids.peak',
+  'volume.deduction.sludgeBlanket',
+  'sludgeBlanket.clearanceToFeedwell',
 ];
 
 const STATUS_CLASS: Record<CheckStatus, string> = { PASS: 'ok', WARNING: 'warn', FAIL: 'fail', NOT_EVALUATED: 'ne' };

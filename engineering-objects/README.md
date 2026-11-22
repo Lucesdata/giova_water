@@ -16,7 +16,7 @@ perimetral exterior y rasquetas de fondo (SPEC-DEC-001 + SPEC-DEC-002, v1.0).
 ```bash
 cd engineering-objects
 npm install
-npm test               # 85 pruebas (unitarias + integración + arquitectura)
+npm test               # 97 pruebas (unitarias + integración + arquitectura)
 npm run typecheck      # capas puras sin DOM/React/Three + proyecto completo
 npm run lab            # laboratorio visual (Vite, http://localhost:5173)
 npm run examples:presets   # regenera examples/output (variantes JSON + memorias)
@@ -115,9 +115,26 @@ Evaluar el equipo de 5 L/s a 10 L/s (modo B) da `FAILED` (CHS real 3,0 > 1,5 m/h
 | Advertencias presentadas | ✔ | panel de validación y memoria de cálculo |
 | Originales conservados | ✔ | variantes congeladas (`deepFreeze`) |
 | Exportar/importar configuraciones | ✔ | `exportVariant` / `importVariant` con recálculo e integridad |
-| Pruebas automatizadas | ✔ | 85 pruebas |
+| Pruebas automatizadas | ✔ | 97 pruebas |
 | Integrable sin el laboratorio | ✔ | `@eo/equipment-library` es independiente |
 | Verificaciones pendientes identificadas | ✔ | comprobaciones críticas NOT_EVALUATED |
+
+## Cambios V1.1 (modelo `PC-ENG-1.1.0`)
+
+Tras revisar una guía técnica sobre tipos de clarificadores (SOR, SLR, TRH, WLR y monitorización):
+
+- **Carga de sólidos** `SLR = Q·Cs/A` y carga de SST afluente (kg/d), a caudal medio y punta, con
+  los SST de entrada que ya se pedían. Es un indicador: no hay criterio por defecto para primarios
+  (`solidsLoadingPeak` admite un criterio con fuente).
+- **Manto de lodos de diseño** (`geometry.sludgeBlanketDepthM`): se descuenta del volumen efectivo y se
+  comprueba que no alcance el pozo de alimentación. Sin definir, nada cambia y la comprobación queda N/E.
+- **Contrato de datos de operación** (`operations/record.ts`): formato validado de registros medidos y
+  lectura frente al diseño. No es monitorización.
+- Los rangos de la guía (Ontario Drinking Water Design Guidelines) son de agua potable y **no** se han
+  incorporado a los perfiles de este decantador.
+
+El cambio de versión del modelo es deliberado: los archivos exportados con `PC-ENG-1.0.0` se importan,
+se recalculan con el modelo actual y se marcan como no verificados (test en `tests/examples.test.ts`).
 
 ## Límites conocidos de V1
 

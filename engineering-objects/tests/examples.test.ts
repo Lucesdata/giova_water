@@ -15,4 +15,10 @@ describe('configuraciones de ejemplo', () => {
     const r = importVariant(readFileSync(join(dir, f), 'utf8'));
     expect(r.verified).toBe(true);
   });
+  it('un archivo de un modelo anterior se recalcula con el actual y lo indica', () => {
+    const r = importVariant(readFileSync(join(__dirname, 'fixtures', 'DEC-005.model-PC-ENG-1.0.0.variant.json'), 'utf8'));
+    expect(r.verified).toBe(false);
+    expect(r.notes.join(' ')).toMatch(/PC-ENG-1\.0\.0/);
+    expect(r.variant.engineeringModelVersion).not.toBe('PC-ENG-1.0.0');
+  });
 });

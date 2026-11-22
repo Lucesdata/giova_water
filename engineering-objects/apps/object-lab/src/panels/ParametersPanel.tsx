@@ -42,6 +42,7 @@ const GROUPS: { title: string; fields: Field[] }[] = [
       { path: 'geometry.sumpDiameterM', label: 'Diámetro de poceta', unit: 'm', kind: 'number', step: 0.05 },
       { path: 'geometry.sumpDepthM', label: 'Profundidad de poceta', unit: 'm', kind: 'number', step: 0.05 },
       { path: 'geometry.freeboardM', label: 'Resguardo', unit: 'm', kind: 'number', step: 0.05 },
+      { path: 'geometry.sludgeBlanketDepthM', label: 'Altura del manto de lodos', unit: 'm', kind: 'optional-number', step: 0.1 },
     ],
   },
   {

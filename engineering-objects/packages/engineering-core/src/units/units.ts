@@ -22,6 +22,9 @@ export type Dimension =
   | 'density'
   | 'stress'
   | 'slope'
+  | 'massFlow'
+  | 'solidsLoading'
+  | 'turbidity'
   | 'dimensionless';
 
 interface UnitDef {
@@ -54,6 +57,12 @@ const UNITS = {
   d: { dimension: 'time', toBase: 86400, label: 'd' },
   'mg/L': { dimension: 'concentration', toBase: 1e-3, label: 'mg/L' },
   'kg/m3': { dimension: 'density', toBase: 1, label: 'kg/m³' },
+  'kg/d': { dimension: 'massFlow', toBase: 1 / 86400, label: 'kg/d' },
+  'kg/h': { dimension: 'massFlow', toBase: 1 / 3600, label: 'kg/h' },
+  /** Carga de sólidos superficial kg/(m²·d). */
+  'kg/(m2.d)': { dimension: 'solidsLoading', toBase: 1 / 86400, label: 'kg/(m²·d)' },
+  'kg/(m2.h)': { dimension: 'solidsLoading', toBase: 1 / 3600, label: 'kg/(m²·h)' },
+  NTU: { dimension: 'turbidity', toBase: 1, label: 'NTU' },
   degC: { dimension: 'temperature', toBase: 1, label: '°C' },
   rad: { dimension: 'angle', toBase: 1, label: 'rad' },
   deg: { dimension: 'angle', toBase: Math.PI / 180, label: '°' },

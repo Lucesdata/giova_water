@@ -13,9 +13,9 @@ Decantador primario 5 L/s — escenario didáctico
 | parentVariantId | `DEC-005@1d5b1b57d1` |
 | Modo | B |
 | createdAt | 2026-11-22T00:00:00.000Z |
-| outputsHash | `e7b633ce073ca634` |
+| outputsHash | `791f2c008e99daac` |
 | Versión de esquema | 1.0.0 |
-| Modelo de cálculo | PC-ENG-1.0.0 |
+| Modelo de cálculo | PC-ENG-1.1.0 |
 | Estado de validación | **FAILED** |
 
 ## 2. Perfil de diseño: Escenario didáctico
@@ -157,6 +157,9 @@ Comprobación matemática del motor (spec §6.2). No es un diseño. (aprobación
 | `tank.area` | Superficie libre adoptada | 12 | m² | A = π·D²/4 | `tank.diameter` | CALCULATED |
 | `loading.surface.avg` | Carga superficial real a caudal medio | 3 | m³/(m²·h) | CHS = Qmed / A | `flow.avg.m3h`, `tank.area` | CALCULATED |
 | `loading.surface.peak` | Carga superficial real a caudal punta | 7.500 | m³/(m²·h) | CHS = Qmax / A | `flow.peak.m3h`, `tank.area` | CALCULATED |
+| `solids.influentLoad.avg` | Carga de SST afluente a caudal medio | 216.0 | kg/d | M = Qmed[m³/d] · SST[mg/L] / 1000 | `flow.avg.m3d`, `input.influent.tssMgL` | CALCULATED |
+| `loading.solids.avg` | Carga de sólidos superficial a caudal medio | 18.000 | kg/(m²·d) | SLR = Qmed · Cs / A | `solids.influentLoad.avg`, `tank.area` | CALCULATED |
+| `loading.solids.peak` | Carga de sólidos superficial a caudal punta | 45 | kg/(m²·d) | SLR = Qmax · Cs / A (SST de entrada supuestos constantes) | `flow.peak.m3d`, `input.influent.tssMgL`, `tank.area` | CALCULATED |
 | `tank.depth` | Profundidad útil en pared (fondo → cresta) | 3 | m | H fijada por la geometría existente | `input.geometry.sideWaterDepthM` | FIXED_BY_CONSTRAINT |
 | `floor.slopeStartRadius` | Radio de comienzo de la pendiente | 1.954 | m | rs = D/2 | `tank.diameter`, `input.geometry.slopeStartRadiusM` | CALCULATED |
 | `floor.dropAtSump` | Descenso del fondo hasta el borde de la poceta | 0.130 | m | Δy = s · (rs − rp) | `floor.slopeStartRadius`, `input.geometry.floorSlope`, `input.geometry.sumpDiameterM` | CALCULATED |
@@ -271,7 +274,7 @@ Reglas de modelado (no son criterios de diseño):
 
 ## 7. Validación
 
-Estado global: **FAILED** — PASS 34 · WARNING 2 · FAIL 6 · NOT_EVALUATED 27
+Estado global: **FAILED** — PASS 35 · WARNING 2 · FAIL 6 · NOT_EVALUATED 29
 
 ### Nivel 1 — Datos
 
@@ -289,6 +292,7 @@ Estado global: **FAILED** — PASS 34 · WARNING 2 · FAIL 6 · NOT_EVALUATED 27
 | NOT_EVALUATED | `HYD-CHS-PEAK-ADMISSIBLE` | CHS punta ≤ admisible de diseño | 7.500 m³/(m²·h) |  | No se ha definido carga superficial admisible a caudal punta. |
 | NOT_EVALUATED | `HYD-CHS-AVG-CRITERION` | Carga hidráulica superficial a caudal medio | 3 m³/(m²·h) |  | El perfil de diseño no define criterio para esta magnitud. |
 | NOT_EVALUATED | `HYD-CHS-PEAK-CRITERION` | Carga hidráulica superficial a caudal punta | 7.500 m³/(m²·h) |  | El perfil de diseño no define criterio para esta magnitud. |
+| NOT_EVALUATED | `HYD-SLR-CRITERION` | Carga de sólidos superficial a caudal punta | 45 kg/(m²·d) |  | El perfil de diseño no define criterio para esta magnitud. |
 | NOT_EVALUATED | `HYD-DEPTH-CRITERION` | Profundidad útil en pared | 3 m |  | El perfil de diseño no define criterio para esta magnitud. |
 | FAIL | `HYD-INLET-VMAX` | Velocidad máxima en la entrada | 2.037 m/s | ≤ 1.5 | La velocidad a caudal punta supera el máximo adoptado. |
 | PASS | `HYD-INLET-VMIN` | Velocidad mínima en la entrada (autolimpieza) | 0.815 m/s | recomendado 0.5…— | Cumple. |
@@ -303,6 +307,8 @@ Estado global: **FAILED** — PASS 34 · WARNING 2 · FAIL 6 · NOT_EVALUATED 27
 | FAIL | `HYD-EFFLUENT-VMAX` | Velocidad en el colector de efluente | 2.037 m/s | ≤ 1.5 | Supera la velocidad máxima adoptada. |
 | PASS | `HYD-SLUDGE-MIN-DN` | DN mínimo de la conducción de lodos | 150 mm | ≥ 150 | Cumple. |
 | NOT_EVALUATED | `HYD-SLUDGE-HYDRAULICS` | Hidráulica de purga de lodos |  |  | Pérdidas, carga disponible, bombeo o purga telescópica no evaluados en V1. El caudal de purga es una hipótesis de prediseño. |
+| NOT_EVALUATED | `HYD-SLUDGE-BLANKET` | Manto de lodos por debajo del pozo de alimentación |  |  | No se ha definido la altura de diseño del manto (geometry.sludgeBlanketDepthM): el volumen efectivo no lo descuenta. |
+| PASS | `HYD-EFFECTIVE-VOLUME-POSITIVE` | Volumen efectivo positivo | 35.843 m³ | > 0 | Cumple. |
 | NOT_EVALUATED | `HYD-HRT-TARGET` | TRH ≥ objetivo de diseño | 0.996 h |  | No se ha definido TRH objetivo. |
 | NOT_EVALUATED | `HYD-HRT-CRITERION` | Tiempo de retención hidráulico a caudal medio | 0.996 h |  | El perfil de diseño no define criterio para esta magnitud. |
 | NOT_EVALUATED | `HYD-REMOVAL-EFFICIENCY` | Eficiencia de eliminación de SST y DBO₅ |  |  | V1 conserva la calidad del agua como dato técnico pero no calcula rendimientos (spec §4.1). |

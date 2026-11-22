@@ -8,3 +8,4 @@ export * from './definition/report.js';
 export * from './presets/presets.js';
 export { floorProfile } from './civil/geometry.js';
 export { bladeLayout, armAngles } from './mechanical/geometry.js';
+export * from './operations/record.js';

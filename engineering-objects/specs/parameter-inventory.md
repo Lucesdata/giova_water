@@ -40,7 +40,7 @@ de entrada en grados (convertidos a rad en el motor), caudales de entrada en L/s
 
 | Grupo | Claves | Observación |
 |---|---|---|
-| `geometry` | `diameterRoundingStepM`, `minDiameterM`, `adoptedDiameterM?`, `freeboardM`, `floorSlope`, `slopeStartRadiusM?`, `sumpDiameterM`, `sumpDepthM`, `excludeFeedwellFromEffectiveVolume` | `adoptedDiameterM` < requerido ⇒ FAIL, nunca se corrige |
+| `geometry` | `diameterRoundingStepM`, `minDiameterM`, `adoptedDiameterM?`, `freeboardM`, `floorSlope`, `slopeStartRadiusM?`, `sumpDiameterM`, `sumpDepthM`, `sludgeBlanketDepthM?`, `excludeFeedwellFromEffectiveVolume` | `adoptedDiameterM` < requerido ⇒ FAIL, nunca se corrige. `sludgeBlanketDepthM` (sobre y = 0) descuenta tolva + capa del volumen efectivo |
 | `civil` | `wallThicknessM`, `baseSlabThicknessM`, `slabProjectionM`, `minFillThicknessM`, `sumpWallThicknessM`, `launderWidthM`, `launderDepthM`, `channelWallThicknessM`, `channelFloorThicknessM`, `concrete`, `fillConcrete`, `thicknessStatus`, `structuralVerificationRef?` | Espesores **explícitos**; no escalan con D. `PRELIMINARY_UNVERIFIED` ⇒ `STR-THICKNESS` crítica NOT_EVALUATED |
 | `hydraulics` | velocidades máx./mín. de entrada, ventanas y efluente; nº de ventanas; espesores de columna, chapas y tubos; `feedwellDiameterRatio`, `feedwellMinDiameterM`, `feedwellDepthM`; DN mínimo, velocidad y fracción de caudal de lodos; escotaduras (`vNotchAngleDeg`, `notchSpacingM`, `notchDepthM`, `weirCd`); `weirExclusionLengthM`; `launderFreeFallMinM`; materiales | Las velocidades son criterios del proyectista (fuente `USER`) |
 | `mechanical` | `bridgeType` (explícito, no se infiere de D), anchura, canto y apoyo del puente, gálibo mínimo, nº de brazos, canto de celosía, holguras (muro, fondo, jaula, pozo, barredor), paletas (altura, longitud, ángulo), deflector y caja de flotantes, accionamiento (envolvente), materiales | Representación paramétrica: no dimensiona para fabricación |
@@ -68,7 +68,8 @@ Modo B congela todas; modo C congela las de los grupos no permitidos y añade la
 ```
 Qmed[L/s] ─3,6→ Qmed[m³/h] ─┬─ /CHSmed → Amed ─┐
 Qmax = Fp·Qmed (o dato) ─────┴─ /CHSmax → Amax ─┴→ A = max → D = √(4A/π) → D adoptado
-D, H, s, rs, rp ─→ Vcil + Vfondo = Vbruto ─ Vcolumna ─ Vpozo = Vef → TRH = Vef / Q
+Qmed[m³/d] · SST/1000 ─→ carga de SST [kg/d] ─ /A → SLR = Q·Cs/A (media y punta; indicador)
+D, H, s, rs, rp ─→ Vcil + Vfondo = Vbruto ─ Vcolumna ─ Vpozo ─ Vmanto = Vef → TRH = Vef / Q
 D, e_chapa ─→ L = 2π(R − e/2) ─ Lexcl = Lef → CLV = Qdiario / Lef ; n escotaduras → h(Qmax) → lámina
 Qmax/2, b canal ─→ y₀ = √3·yc → resguardo de caída libre
 Qmax ─→ DN entrada → columna → ventanas → deflectores
@@ -116,6 +117,25 @@ Todas las fuentes bibliográficas están marcadas `TO_VERIFY`: se transcribieron
 y deben contrastarse con la edición citada antes de usarlas en proyecto. **No se ha transcrito
 ningún valor de UNE-EN 12255-4:2023**; sus requisitos deben introducirse como criterios de proyecto.
 
+## 6 bis. Datos de operación (contrato, V1.1)
+
+`operations/record.ts` define el formato `engineering-objects/primary-clarifier-operational-record`
+(v1) para que una extensión aporte datos medidos sin tocar la definición del equipo:
+
+| Variable | Unidad | Se compara con |
+|---|---|---|
+| `flowLps` | L/s | `flow.avg.Ls` / `flow.peak.Ls` |
+| `influentTssMgL`, `effluentTssMgL` | mg/L | — (eliminación observada) |
+| `influentBod5MgL`, `effluentBod5MgL` | mg/L | — (eliminación observada) |
+| `influentTurbidityNtu`, `effluentTurbidityNtu` | NTU | — |
+| `temperatureC` | °C | `input.influent.temperatureC` |
+| `sludgeBlanketDepthM` | m (sobre y = 0) | `input.geometry.sludgeBlanketDepthM`, `level.feedwellBottom` |
+| `sludgeWithdrawalM3h` | m³/h | `sludge.flow` |
+| `sludgeSolidsPercent` | % | — |
+
+`readAgainstDesign` solo hace aritmética sobre datos medidos (relación de caudal, resguardo del manto,
+eliminaciones observadas); no diagnostica ni modifica la variante.
+
 ## 7. Reglas de modelado (no normativas)
 
 | Regla | Valor | Motivo |
@@ -134,4 +154,5 @@ ningún valor de UNE-EN 12255-4:2023**; sus requisitos deben introducirse como c
 
 Estructura (espesores, fisuración/estanqueidad EN 1992-3, geotecnia, flotación, armaduras);
 mecánica (puente, par/potencia del accionamiento, jaula/brazos/paletas, aptitud para fabricación,
-interacción barredor–playa); hidráulica de purga de lodos; rendimientos de eliminación de SST/DBO₅.
+interacción barredor–playa); hidráulica de purga de lodos; rendimientos de eliminación de SST/DBO₅ previstos;
+criterio con fuente para la carga de sólidos en primarios (la SLR se calcula, pero no hay límite por defecto).

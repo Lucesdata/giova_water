@@ -13,9 +13,9 @@ Decantador primario 5 L/s — prediseño conceptual
 | parentVariantId | — |
 | Modo | BASE |
 | createdAt | 2026-11-22T00:00:00.000Z |
-| outputsHash | `f83bb280634b1d1d` |
+| outputsHash | `32c6db4e01284af0` |
 | Versión de esquema | 1.0.0 |
-| Modelo de cálculo | PC-ENG-1.0.0 |
+| Modelo de cálculo | PC-ENG-1.1.0 |
 | Estado de validación | **INCOMPLETE** |
 
 ## 2. Perfil de diseño: Prediseño conceptual
@@ -174,6 +174,9 @@ Encaje inicial de dimensiones con rangos típicos de bibliografía. (aprobación
 | `tank.area` | Superficie libre adoptada | 12.566 | m² | A = π·D²/4 | `tank.diameter` | CALCULATED |
 | `loading.surface.avg` | Carga superficial real a caudal medio | 1.432 | m³/(m²·h) | CHS = Qmed / A | `flow.avg.m3h`, `tank.area` | CALCULATED |
 | `loading.surface.peak` | Carga superficial real a caudal punta | 3.581 | m³/(m²·h) | CHS = Qmax / A | `flow.peak.m3h`, `tank.area` | CALCULATED |
+| `solids.influentLoad.avg` | Carga de SST afluente a caudal medio | 108.0 | kg/d | M = Qmed[m³/d] · SST[mg/L] / 1000 | `flow.avg.m3d`, `input.influent.tssMgL` | CALCULATED |
+| `loading.solids.avg` | Carga de sólidos superficial a caudal medio | 8.594 | kg/(m²·d) | SLR = Qmed · Cs / A | `solids.influentLoad.avg`, `tank.area` | CALCULATED |
+| `loading.solids.peak` | Carga de sólidos superficial a caudal punta | 21.486 | kg/(m²·d) | SLR = Qmax · Cs / A (SST de entrada supuestos constantes) | `flow.peak.m3d`, `input.influent.tssMgL`, `tank.area` | CALCULATED |
 | `tank.depth` | Profundidad útil en pared (fondo → cresta) | 3 | m | H (dato) | `input.geometry.sideWaterDepthM` | INPUT |
 | `floor.slopeStartRadius` | Radio de comienzo de la pendiente | 2 | m | rs = D/2 | `tank.diameter`, `input.geometry.slopeStartRadiusM` | CALCULATED |
 | `floor.dropAtSump` | Descenso del fondo hasta el borde de la poceta | 0.133 | m | Δy = s · (rs − rp) | `floor.slopeStartRadius`, `input.geometry.floorSlope`, `input.geometry.sumpDiameterM` | CALCULATED |
@@ -288,7 +291,7 @@ Reglas de modelado (no son criterios de diseño):
 
 ## 7. Validación
 
-Estado global: **INCOMPLETE** — PASS 51 · WARNING 3 · FAIL 0 · NOT_EVALUATED 14
+Estado global: **INCOMPLETE** — PASS 52 · WARNING 3 · FAIL 0 · NOT_EVALUATED 16
 
 ### Nivel 1 — Datos
 
@@ -306,6 +309,7 @@ Estado global: **INCOMPLETE** — PASS 51 · WARNING 3 · FAIL 0 · NOT_EVALUATE
 | PASS | `HYD-CHS-PEAK-ADMISSIBLE` | CHS punta ≤ admisible de diseño | 3.581 m³/(m²·h) | ≤ 4 | Cumple la carga admisible adoptada. |
 | PASS | `HYD-CHS-AVG-CRITERION` | Carga hidráulica superficial a caudal medio | 1.432 m³/(m²·h) | recomendado 1.25…2.083 | Cumple el criterio (Metcalf & Eddy \| AECOM — Wastewater Engineering: Treatment and Resource Recovery — 30–50 m³/(m²·d)). |
 | PASS | `HYD-CHS-PEAK-CRITERION` | Carga hidráulica superficial a caudal punta | 3.581 m³/(m²·h) | recomendado 3.333…5 | Cumple el criterio (Metcalf & Eddy \| AECOM — Wastewater Engineering: Treatment and Resource Recovery — 80–120 m³/(m²·d)). |
+| NOT_EVALUATED | `HYD-SLR-CRITERION` | Carga de sólidos superficial a caudal punta | 21.486 kg/(m²·d) |  | El perfil de diseño no define criterio para esta magnitud. |
 | PASS | `HYD-DEPTH-CRITERION` | Profundidad útil en pared | 3 m | recomendado 3…4.9 | Cumple el criterio (Metcalf & Eddy \| AECOM — Wastewater Engineering: Treatment and Resource Recovery). |
 | PASS | `HYD-INLET-VMAX` | Velocidad máxima en la entrada | 1.019 m/s | ≤ 1.5 | Cumple. |
 | WARNING | `HYD-INLET-VMIN` | Velocidad mínima en la entrada (autolimpieza) | 0.407 m/s | recomendado 0.5…— | A caudal medio la velocidad es inferior a la mínima adoptada: riesgo de sedimentación en la conducción. |
@@ -320,6 +324,8 @@ Estado global: **INCOMPLETE** — PASS 51 · WARNING 3 · FAIL 0 · NOT_EVALUATE
 | PASS | `HYD-EFFLUENT-VMAX` | Velocidad en el colector de efluente | 1.019 m/s | ≤ 1.5 | Cumple. |
 | PASS | `HYD-SLUDGE-MIN-DN` | DN mínimo de la conducción de lodos | 150 mm | ≥ 150 | Cumple. |
 | NOT_EVALUATED | `HYD-SLUDGE-HYDRAULICS` | Hidráulica de purga de lodos |  |  | Pérdidas, carga disponible, bombeo o purga telescópica no evaluados en V1. El caudal de purga es una hipótesis de prediseño. |
+| NOT_EVALUATED | `HYD-SLUDGE-BLANKET` | Manto de lodos por debajo del pozo de alimentación |  |  | No se ha definido la altura de diseño del manto (geometry.sludgeBlanketDepthM): el volumen efectivo no lo descuenta. |
+| PASS | `HYD-EFFECTIVE-VOLUME-POSITIVE` | Volumen efectivo positivo | 37.589 m³ | > 0 | Cumple. |
 | PASS | `HYD-HRT-TARGET` | TRH ≥ objetivo de diseño | 2.088 h | ≥ 1.5 | Cumple. |
 | PASS | `HYD-HRT-CRITERION` | Tiempo de retención hidráulico a caudal medio | 2.088 h | recomendado 1.5…2.5 | Cumple el criterio (Metcalf & Eddy \| AECOM — Wastewater Engineering: Treatment and Resource Recovery). |
 | NOT_EVALUATED | `HYD-REMOVAL-EFFICIENCY` | Eficiencia de eliminación de SST y DBO₅ |  |  | V1 conserva la calidad del agua como dato técnico pero no calcula rendimientos (spec §4.1). |

@@ -23,7 +23,7 @@ import { CRITERION_META, type Criterion, type CriterionKey } from './profiles.js
 import type { DesignInput } from './schema.js';
 
 /** Versión del método de cálculo. Cambia cuando cambia cualquier ecuación o regla. */
-export const ENGINEERING_MODEL_VERSION = 'PC-ENG-1.0.0';
+export const ENGINEERING_MODEL_VERSION = 'PC-ENG-1.1.0';
 
 /**
  * Decisiones de dimensionamiento: los valores que el motor ELIGE (frente a los que calcula
@@ -316,6 +316,18 @@ export function runEngine(
   criterionCheck('HYD-CHS-AVG-CRITERION', 2, 'surfaceLoadingAvg', chsAvg, ['CIV-002']);
   criterionCheck('HYD-CHS-PEAK-CRITERION', 2, 'surfaceLoadingPeak', chsPeak, ['CIV-002']);
 
+  // Carga de sólidos: SLR = Q · Cs / A (indicador; en un primario no suele gobernar el dimensionamiento).
+  const tss = input.influent.tssMgL;
+  if (tss !== undefined) {
+    const cs = tss / 1000; // mg/L = g/m³ → kg/m³
+    t.record('solids.influentLoad.avg', qAvgD * cs, { label: 'Carga de SST afluente a caudal medio', unit: 'kg/d', inputs: ['flow.avg.m3d', 'input.influent.tssMgL'], equation: 'M = Qmed[m³/d] · SST[mg/L] / 1000' });
+    t.record('loading.solids.avg', (qAvgD * cs) / area, { label: 'Carga de sólidos superficial a caudal medio', unit: 'kg/(m2.d)', inputs: ['solids.influentLoad.avg', 'tank.area'], equation: 'SLR = Qmed · Cs / A' });
+    const slrPeak = t.record('loading.solids.peak', (qPeakD * cs) / area, { label: 'Carga de sólidos superficial a caudal punta', unit: 'kg/(m2.d)', inputs: ['flow.peak.m3d', 'input.influent.tssMgL', 'tank.area'], equation: 'SLR = Qmax · Cs / A (SST de entrada supuestos constantes)' });
+    criterionCheck('HYD-SLR-CRITERION', 2, 'solidsLoadingPeak', slrPeak, ['CIV-002']);
+  } else {
+    simple('HYD-SLR-CRITERION', 2, 'NOT_EVALUATED', CRITERION_META.solidsLoadingPeak.label, 'Faltan los SST de entrada (influent.tssMgL): no se calcula la carga de sólidos.', {});
+  }
+
   // ───────────────────────── 3. Profundidad y fondo ─────────────────────────
   const hDecision = decide('sideWaterDepthM', () => g.sideWaterDepthM);
   if (hDecision.fixed && Math.abs(hDecision.value - g.sideWaterDepthM) > 1e-9) {
@@ -468,7 +480,28 @@ export function runEngine(
     g.excludeFeedwellFromEffectiveVolume ? Math.PI * (rFwInner ** 2 - rColumnOuter ** 2) * hy.feedwellDepthM : 0,
     { label: 'Deducción: interior del pozo de alimentación', unit: 'm3', inputs: ['feedwell.diameter', 'column.outerRadius', 'input.hydraulics.feedwellDepthM'], equation: g.excludeFeedwellFromEffectiveVolume ? 'V = π·(rpa,int² − rc²)·hpa' : 'No se deduce (opción de entrada)' },
   );
-  const vEffective = t.record('volume.effective', vGross - vColumn - vFeedwell, { label: 'Volumen efectivo de sedimentación', unit: 'm3', inputs: ['volume.gross', 'volume.deduction.column', 'volume.deduction.feedwell'], equation: 'Vef = Vbruto − Vcolumna − Vpozo (se desprecian chapas y mecanismos)' });
+  const yBlanket = g.sludgeBlanketDepthM;
+  let vBlanket = 0;
+  if (yBlanket !== undefined) {
+    // Zona bajo la cota del manto, neta de la columna (ya descontada en su propia deducción).
+    vBlanket = t.record('volume.deduction.sludgeBlanket', vCone - Math.PI * rColumnOuter ** 2 * sumpDrop + Math.PI * (R ** 2 - rColumnOuter ** 2) * yBlanket, {
+      label: 'Deducción: manto de lodos de diseño',
+      unit: 'm3',
+      inputs: ['volume.floorCone', 'column.outerRadius', 'floor.dropAtSump', 'tank.diameter', 'input.geometry.sludgeBlanketDepthM'],
+      equation: 'V = (Vfondo − π·rc²·Δy) + π·(R² − rc²)·hmanto',
+    });
+    const clear = t.record('sludgeBlanket.clearanceToFeedwell', yFwBottom - yBlanket, { label: 'Resguardo entre manto y pozo de alimentación', unit: 'm', inputs: ['level.feedwellBottom', 'input.geometry.sludgeBlanketDepthM'], equation: 'Δ = ypozo,inf − hmanto' });
+    simple('HYD-SLUDGE-BLANKET', 2, clear > 0 ? 'PASS' : 'FAIL', 'Manto de lodos por debajo del pozo de alimentación', clear > 0 ? 'La entrada no descarga sobre el manto de diseño.' : 'El manto de diseño alcanza el pozo de alimentación: resuspensión del lodo.', { value: clear, limit: '> 0', unit: 'm', componentIds: ['HYD-002', 'CIV-003'] });
+  } else {
+    simple('HYD-SLUDGE-BLANKET', 2, 'NOT_EVALUATED', 'Manto de lodos por debajo del pozo de alimentación', 'No se ha definido la altura de diseño del manto (geometry.sludgeBlanketDepthM): el volumen efectivo no lo descuenta.', { componentIds: ['HYD-002'] });
+  }
+  const vEffective = t.record('volume.effective', vGross - vColumn - vFeedwell - vBlanket, {
+    label: 'Volumen efectivo de sedimentación',
+    unit: 'm3',
+    inputs: ['volume.gross', 'volume.deduction.column', 'volume.deduction.feedwell', ...(yBlanket !== undefined ? ['volume.deduction.sludgeBlanket'] : [])],
+    equation: yBlanket !== undefined ? 'Vef = Vbruto − Vcolumna − Vpozo − Vmanto (se desprecian chapas y mecanismos)' : 'Vef = Vbruto − Vcolumna − Vpozo (se desprecian chapas y mecanismos)',
+  });
+  simple('HYD-EFFECTIVE-VOLUME-POSITIVE', 2, vEffective > 0 ? 'PASS' : 'FAIL', 'Volumen efectivo positivo', vEffective > 0 ? 'Cumple.' : 'Las deducciones superan el volumen bruto.', { value: vEffective, limit: '> 0', unit: 'm³' });
   t.record('volume.sump', Math.PI * rp * rp * g.sumpDepthM - Math.PI * rColumnOuter ** 2 * g.sumpDepthM, { label: 'Volumen de la poceta (almacenamiento de lodo, no efectivo)', unit: 'm3', inputs: ['input.geometry.sumpDiameterM', 'input.geometry.sumpDepthM', 'column.outerRadius'], equation: 'V = π·(rp² − rc²)·hp' });
   const hrtAvg = t.record('hrt.avg', vEffective / qAvgH, { label: 'TRH a caudal medio', unit: 'h', inputs: ['volume.effective', 'flow.avg.m3h'], equation: 'TRH = Vef / Qmed' });
   t.record('hrt.peak', vEffective / qPeakH, { label: 'TRH a caudal punta', unit: 'h', inputs: ['volume.effective', 'flow.peak.m3h'], equation: 'TRH = Vef / Qmax' });

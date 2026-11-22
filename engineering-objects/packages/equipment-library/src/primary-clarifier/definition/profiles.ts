@@ -19,6 +19,7 @@ export const CRITERION_KEYS = [
   'feedwellDownwardVelocityPeak',
   'diameter',
   'walkwayClearWidth',
+  'solidsLoadingPeak',
 ] as const;
 
 export type CriterionKey = (typeof CRITERION_KEYS)[number];
@@ -35,6 +36,7 @@ export const CRITERION_META: Record<CriterionKey, { label: string; unit: UnitId 
   feedwellDownwardVelocityPeak: { label: 'Velocidad descendente en el pozo de alimentación a caudal punta', unit: 'm/s' },
   diameter: { label: 'Diámetro interior', unit: 'm' },
   walkwayClearWidth: { label: 'Anchura libre de pasarela', unit: 'm' },
+  solidsLoadingPeak: { label: 'Carga de sólidos superficial a caudal punta', unit: 'kg/(m2.d)' },
 };
 
 export interface Criterion {

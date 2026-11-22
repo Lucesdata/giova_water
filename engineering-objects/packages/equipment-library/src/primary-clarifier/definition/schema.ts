@@ -76,6 +76,12 @@ export const designInputSchema = z
       slopeStartRadiusM: pos.optional(),
       sumpDiameterM: pos,
       sumpDepthM: pos,
+      /**
+       * Altura de diseño del manto de lodos sobre el fondo en pared (y = 0). Si se define, se descuenta
+       * del volumen efectivo toda la zona por debajo de ella (tolva incluida). Sin definir: no se descuenta
+       * y la comprobación del manto queda NOT_EVALUATED.
+       */
+      sludgeBlanketDepthM: nonNeg.optional(),
       /** Descontar del volumen efectivo el interior del pozo de alimentación. */
       excludeFeedwellFromEffectiveVolume: z.boolean().default(true),
     }),
