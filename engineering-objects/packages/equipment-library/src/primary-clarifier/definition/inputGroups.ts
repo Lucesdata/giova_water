@@ -40,10 +40,18 @@ const GEOMETRY_INPUTS: Record<string, readonly ResizeGroup[]> = {
 /** Prefijos de entradas mecánicas geométricas (todo `mechanical.*` salvo los materiales). */
 const MECHANICAL_PREFIX = 'mechanical.';
 const MECHANICAL_EXEMPT_PREFIX = 'mechanical.materials.';
+/** Límites mecánicos que solo intervienen en comprobaciones: no definen dimensiones instaladas. */
+const CHECK_ONLY_INPUTS = new Set([
+  'mechanical.bridgeClearanceAboveWaterMinM',
+  'mechanical.walkwayClearWidthMinM',
+  'mechanical.feedwellArmClearanceMinM',
+  'mechanical.cageColumnClearanceM',
+]);
 
 export function groupsRequiredFor(path: string): readonly ResizeGroup[] {
   const direct = GEOMETRY_INPUTS[path];
   if (direct) return direct;
+  if (CHECK_ONLY_INPUTS.has(path)) return [];
   if (path.startsWith(MECHANICAL_PREFIX) && !path.startsWith(MECHANICAL_EXEMPT_PREFIX)) return ['mechanical'];
   return [];
 }

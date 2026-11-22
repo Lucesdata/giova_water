@@ -112,7 +112,8 @@ export function Viewer({ design, view, viewNonce, section, showDims, showWater, 
       <directionalLight position={[8, 14, 6]} intensity={1.6} castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-12} shadow-camera-right={12} shadow-camera-top={12} shadow-camera-bottom={-12} />
       <directionalLight position={[-6, 5, -8]} intensity={0.45} />
       <EngineeringAssembly assembly={design.assembly} selectedId={selectedId} isolatedIds={isolatedIds} sectionPlane={section ? plane : null} onSelect={onSelect} />
-      {showWater && !isolatedIds && <Water design={design} plane={section ? plane : null} />}
+      {/* Sin lámina calculada (vertedero no disponible) no se dibuja una superficie supuesta. */}
+      {showWater && !isolatedIds && design.values['level.water.avg'] && <Water design={design} plane={section ? plane : null} />}
       {showWater && !isolatedIds && <SludgeBlanket design={design} plane={section ? plane : null} />}
       {showDims && <Dimensions design={design} />}
       <Grid position={[0, design.model.yPitBottom - 0.01, 0]} args={[40, 40]} cellSize={0.5} sectionSize={2.5} cellColor="#26303a" sectionColor="#3a4856" fadeDistance={40} infiniteGrid />

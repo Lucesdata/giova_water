@@ -133,8 +133,12 @@ ningún valor de UNE-EN 12255-4:2023**; sus requisitos deben introducirse como c
 | `sludgeWithdrawalM3h` | m³/h | `sludge.flow` |
 | `sludgeSolidsPercent` | % | — |
 
-`readAgainstDesign` solo hace aritmética sobre datos medidos (relación de caudal, resguardo del manto,
-eliminaciones observadas); no diagnostica ni modifica la variante.
+`readAgainstDesign` solo hace aritmética sobre datos medidos; no diagnostica ni modifica la variante:
+
+- `flowLps` y `sludgeBlanketDepthM`: lecturas con estado (dentro / fuera de diseño).
+- Resto de variables con referencia de diseño (SST y DBO₅ de entrada, temperatura, purga): lectura
+  `INFORMATIVE` observado frente a diseño; si la variante no define ese valor, se indica.
+- Pares entrada/salida de SST y DBO₅: eliminación observada (`INFORMATIVE`).
 
 ## 7. Reglas de modelado (no normativas)
 

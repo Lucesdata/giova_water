@@ -133,6 +133,25 @@ export function readAgainstDesign(record: OperationalRecord, variant: ClarifierV
               : 'Manto por debajo de la altura de diseño.',
     });
   }
+  // Resto de variables con referencia de diseño: lectura informativa observado frente a diseño.
+  const handled = new Set<string>(['flowLps', 'sludgeBlanketDepthM']);
+  for (const [key, def] of Object.entries(OPERATIONAL_VARIABLES) as [OperationalVariableKey, OperationalVariable][]) {
+    const observed = v[key];
+    if (observed === undefined || handled.has(key) || !def.designReference) continue;
+    const design = resolveDesignReference(def.designReference, variant);
+    out.push({
+      key: `${key}.vsDesign`,
+      label: `${def.label}: observado frente a diseño`,
+      unit: def.unit,
+      observed,
+      design,
+      status: 'INFORMATIVE',
+      message:
+        design === undefined
+          ? 'La variante no define valor de diseño para esta variable.'
+          : `Diseño ${Number(design.toPrecision(4))}; diferencia ${Number((observed - design).toPrecision(4))}.`,
+    });
+  }
   if (v.influentTssMgL !== undefined && v.effluentTssMgL !== undefined && v.influentTssMgL > 0) {
     out.push({
       key: 'removal.tss.observed',
@@ -154,4 +173,16 @@ export function readAgainstDesign(record: OperationalRecord, variant: ClarifierV
     });
   }
   return out;
+}
+
+/** Valor de diseño de una referencia: `input.<ruta>` en las entradas o clave trazada en las salidas. */
+function resolveDesignReference(ref: string, variant: ClarifierVariant): number | undefined {
+  if (ref.startsWith('input.')) {
+    const val = ref
+      .slice('input.'.length)
+      .split('.')
+      .reduce<unknown>((a, k) => (a && typeof a === 'object' ? (a as Record<string, unknown>)[k] : undefined), variant.designInputs);
+    return typeof val === 'number' ? val : undefined;
+  }
+  return variant.calculatedOutputs.values[ref]?.value;
 }

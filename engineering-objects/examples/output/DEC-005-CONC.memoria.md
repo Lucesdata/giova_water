@@ -13,9 +13,9 @@ Decantador primario 5 L/s — prediseño conceptual
 | parentVariantId | — |
 | Modo | BASE |
 | createdAt | 2026-11-22T00:00:00.000Z |
-| outputsHash | `c33bd5543782bba8` |
+| outputsHash | `f8bf120e2bfd7077` |
 | Versión de esquema | 1.0.0 |
-| Modelo de cálculo | PC-ENG-1.2.0 |
+| Modelo de cálculo | PC-ENG-1.3.0 |
 | Estado de validación | **INCOMPLETE** |
 
 ## 2. Perfil de diseño: Prediseño conceptual
@@ -174,9 +174,10 @@ Encaje inicial de dimensiones con rangos típicos de bibliografía. (aprobación
 | `tank.area` | Superficie libre adoptada | 12.566 | m² | A = π·D²/4 | `tank.diameter` | CALCULATED |
 | `loading.surface.avg` | Carga superficial real a caudal medio | 1.432 | m³/(m²·h) | CHS = Qmed / A | `flow.avg.m3h`, `tank.area` | CALCULATED |
 | `loading.surface.peak` | Carga superficial real a caudal punta | 3.581 | m³/(m²·h) | CHS = Qmax / A | `flow.peak.m3h`, `tank.area` | CALCULATED |
-| `solids.influentLoad.avg` | Carga de SST afluente a caudal medio | 108.0 | kg/d | M = Qmed[m³/d] · SST[mg/L] / 1000 | `flow.avg.m3d`, `input.influent.tssMgL` | CALCULATED |
-| `loading.solids.avg` | Carga de sólidos superficial a caudal medio | 8.594 | kg/(m²·d) | SLR = Qmed · Cs / A | `solids.influentLoad.avg`, `tank.area` | CALCULATED |
-| `loading.solids.peak` | Carga de sólidos superficial a caudal punta | 21.486 | kg/(m²·d) | SLR = Qmax · Cs / A (SST de entrada supuestos constantes) | `flow.peak.m3d`, `input.influent.tssMgL`, `tank.area` | CALCULATED |
+| `solids.influentLoad.avg` | Carga de SST afluente a caudal medio | 108.0 | kg/d | Mmed[kg/d] = Qmed[m³/d] · SST[mg/L] / 1000 | `flow.avg.m3d`, `input.influent.tssMgL` | CALCULATED |
+| `solids.influentLoad.peak` | Carga de SST afluente a caudal punta | 270 | kg/d | Mmax[kg/d] = Qmax[m³/d] · SST[mg/L] / 1000 (SST de entrada supuestos constantes) | `flow.peak.m3d`, `input.influent.tssMgL` | CALCULATED |
+| `loading.solids.avg` | Carga de sólidos superficial a caudal medio | 8.594 | kg/(m²·d) | SLR = Mmed / A | `solids.influentLoad.avg`, `tank.area` | CALCULATED |
+| `loading.solids.peak` | Carga de sólidos superficial a caudal punta | 21.486 | kg/(m²·d) | SLR = Mmax / A | `solids.influentLoad.peak`, `tank.area` | CALCULATED |
 | `tank.depth` | Profundidad útil en pared (fondo → cresta) | 3 | m | H (dato) | `input.geometry.sideWaterDepthM` | INPUT |
 | `floor.slopeStartRadius` | Radio de comienzo de la pendiente | 2 | m | rs = D/2 | `tank.diameter`, `input.geometry.slopeStartRadiusM` | CALCULATED |
 | `floor.dropAtSump` | Descenso del fondo hasta el borde de la poceta | 0.133 | m | Δy = s · (rs − rp) | `floor.slopeStartRadius`, `input.geometry.floorSlope`, `input.geometry.sumpDiameterM` | CALCULATED |
@@ -294,7 +295,7 @@ Reglas de modelado (no son criterios de diseño):
 
 ## 7. Validación
 
-Estado global: **INCOMPLETE** — PASS 55 · WARNING 3 · FAIL 0 · NOT_EVALUATED 16
+Estado global: **INCOMPLETE** — PASS 56 · WARNING 3 · FAIL 0 · NOT_EVALUATED 16
 
 ### Nivel 1 — Datos
 
@@ -322,6 +323,7 @@ Estado global: **INCOMPLETE** — PASS 55 · WARNING 3 · FAIL 0 · NOT_EVALUATE
 | PASS | `HYD-PORT-VELOCITY` | Velocidad de salida por las ventanas | 0.300 m/s | ≤ 0.3 | Cumple. |
 | PASS | `HYD-WEIR-LOADING-ADMISSIBLE` | CLV punta ≤ admisible de diseño | 86.051 m³/(m·d) | ≤ 250 | Cumple. |
 | PASS | `HYD-WEIR-LOADING-CRITERION` | Carga lineal sobre vertedero a caudal punta | 86.051 m³/(m·d) | recomendado —…500 | Cumple el criterio (Metcalf & Eddy \| AECOM — Wastewater Engineering: Treatment and Resource Recovery — Rango típico 125–500 m³/(m·d); cargas bajas no son desfavorables.). |
+| PASS | `HYD-NOTCH-COUNT` | Al menos una escotadura en V | 62 — | ≥ 1 | Cumple. |
 | PASS | `HYD-NOTCH-NOT-DROWNED` | Lámina dentro de la escotadura a caudal punta | 0.0293 m | ≤ 0.05 | Cumple. |
 | PASS | `HYD-SHELLS-ABOVE-WATER` | Pozo y deflector de flotantes por encima de la lámina en punta | 0.150 m | > 0 | Cumple. |
 | PASS | `HYD-LAUNDER-FREE-FALL` | Vertido libre al canal perimetral | 0.299 m | ≥ 0.05 | El canal no remansa el vertedero. |

@@ -6,7 +6,7 @@
     "variantId": "DEC-005-CONC@42e0059e6c",
     "parentVariantId": null,
     "schemaVersion": "1.0.0",
-    "engineeringModelVersion": "PC-ENG-1.2.0",
+    "engineeringModelVersion": "PC-ENG-1.3.0",
     "createdAt": "2026-11-22T00:00:00.000Z",
     "tag": "DEC-005-CONC",
     "mode": "BASE",
@@ -136,7 +136,7 @@
             "input.flow.averageLps"
           ],
           "equation": "Qmed (dato)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "INPUT",
           "status": "PASS",
           "warnings": []
@@ -150,7 +150,7 @@
             "flow.avg.Ls"
           ],
           "equation": "Q[m³/h] = 3,6 · Q[L/s]",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -164,7 +164,7 @@
             "flow.avg.m3h"
           ],
           "equation": "Q[m³/d] = 24 · Q[m³/h]",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -179,7 +179,7 @@
             "input.flow.peak.factor"
           ],
           "equation": "Qmax = Fp · Qmed",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -193,7 +193,7 @@
             "flow.peak.Ls"
           ],
           "equation": "Q[m³/h] = 3,6 · Q[L/s]",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -207,7 +207,7 @@
             "flow.peak.m3h"
           ],
           "equation": "Q[m³/d] = 24 · Q[m³/h]",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -222,7 +222,7 @@
             "input.designCriteria.surfaceLoadingAvgM_h"
           ],
           "equation": "A = Qmed / CHSmed",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -237,7 +237,7 @@
             "input.designCriteria.surfaceLoadingPeakM_h"
           ],
           "equation": "A = Qmax / CHSmax",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -252,7 +252,7 @@
             "area.required.peak"
           ],
           "equation": "A = max(Amed, Amax)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -266,7 +266,7 @@
             "area.required"
           ],
           "equation": "D = √(4A/π)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -282,7 +282,7 @@
             "input.geometry.minDiameterM"
           ],
           "equation": "D = ⌈max(Dteórico, Dmín) / paso⌉ · paso",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "ADOPTED",
           "status": "PASS",
           "warnings": []
@@ -296,7 +296,7 @@
             "tank.diameter"
           ],
           "equation": "A = π·D²/4",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -311,7 +311,7 @@
             "tank.area"
           ],
           "equation": "CHS = Qmed / A",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -326,7 +326,7 @@
             "tank.area"
           ],
           "equation": "CHS = Qmax / A",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -340,8 +340,23 @@
             "flow.avg.m3d",
             "input.influent.tssMgL"
           ],
-          "equation": "M = Qmed[m³/d] · SST[mg/L] / 1000",
-          "methodVersion": "PC-ENG-1.2.0",
+          "equation": "Mmed[kg/d] = Qmed[m³/d] · SST[mg/L] / 1000",
+          "methodVersion": "PC-ENG-1.3.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "solids.influentLoad.peak": {
+          "key": "solids.influentLoad.peak",
+          "label": "Carga de SST afluente a caudal punta",
+          "value": 270,
+          "unit": "kg/d",
+          "inputs": [
+            "flow.peak.m3d",
+            "input.influent.tssMgL"
+          ],
+          "equation": "Mmax[kg/d] = Qmax[m³/d] · SST[mg/L] / 1000 (SST de entrada supuestos constantes)",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -355,8 +370,8 @@
             "solids.influentLoad.avg",
             "tank.area"
           ],
-          "equation": "SLR = Qmed · Cs / A",
-          "methodVersion": "PC-ENG-1.2.0",
+          "equation": "SLR = Mmed / A",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -367,12 +382,11 @@
           "value": 21.48591731740587,
           "unit": "kg/(m2.d)",
           "inputs": [
-            "flow.peak.m3d",
-            "input.influent.tssMgL",
+            "solids.influentLoad.peak",
             "tank.area"
           ],
-          "equation": "SLR = Qmax · Cs / A (SST de entrada supuestos constantes)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "equation": "SLR = Mmax / A",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -386,7 +400,7 @@
             "input.geometry.sideWaterDepthM"
           ],
           "equation": "H (dato)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "INPUT",
           "status": "PASS",
           "warnings": []
@@ -401,7 +415,7 @@
             "input.geometry.slopeStartRadiusM"
           ],
           "equation": "rs = D/2",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -417,7 +431,7 @@
             "input.geometry.sumpDiameterM"
           ],
           "equation": "Δy = s · (rs − rp)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -432,7 +446,7 @@
             "input.geometry.sumpDepthM"
           ],
           "equation": "y = −Δy − hp",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -447,7 +461,7 @@
             "input.hydraulics.inletMaxVelocityM_s"
           ],
           "equation": "menor DN (ISO 6708) con v(Qmax) ≤ vmax",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "ADOPTED",
           "status": "PASS",
           "warnings": []
@@ -462,7 +476,7 @@
             "flow.peak.m3h"
           ],
           "equation": "v = Qmax / (π·DN²/4)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -477,7 +491,7 @@
             "flow.avg.m3h"
           ],
           "equation": "v = Qmed / (π·DN²/4)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -492,7 +506,7 @@
             "input.hydraulics.columnWallThicknessM"
           ],
           "equation": "rc = DN/2 + e",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -508,7 +522,7 @@
             "input.hydraulics.feedwellMinDiameterM"
           ],
           "equation": "Dpa = max(k · D, Dpa,mín constructivo)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "ADOPTED",
           "status": "PASS",
           "warnings": [
@@ -525,7 +539,7 @@
             "input.hydraulics.feedwellDepthM"
           ],
           "equation": "y = H − hpa",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -541,7 +555,7 @@
             "column.outerRadius"
           ],
           "equation": "v = Qmax / (π·(rpa,int² − rc²))",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -556,7 +570,7 @@
             "input.hydraulics.columnPortCount"
           ],
           "equation": "b = 0,5 · 2π·rc / n (regla de modelado)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -572,7 +586,7 @@
             "column.portWidth"
           ],
           "equation": "h = Qmax / (vmax · n · b)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -588,7 +602,7 @@
             "flow.peak.m3h"
           ],
           "equation": "v = Qmax / (n · b · h)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -603,7 +617,7 @@
             "input.hydraulics.weirPlateThicknessM"
           ],
           "equation": "L = 2π·(R − e/2)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -618,7 +632,7 @@
             "input.hydraulics.weirExclusionLengthM"
           ],
           "equation": "Lef = L − Lexcl",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -633,7 +647,7 @@
             "weir.length.effective"
           ],
           "equation": "CLV = Qdiario / Lef",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -648,7 +662,7 @@
             "weir.length.effective"
           ],
           "equation": "CLV = Qmax,diario / Lef",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -663,7 +677,7 @@
             "input.hydraulics.notchSpacingM"
           ],
           "equation": "n = ⌊Lef / paso⌋",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "ADOPTED",
           "status": "PASS",
           "warnings": []
@@ -680,7 +694,7 @@
             "input.hydraulics.vNotchAngleDeg"
           ],
           "equation": "h = [q / (Cd·8/15·√(2g)·tan(θ/2))]^(2/5)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -697,7 +711,7 @@
             "input.hydraulics.vNotchAngleDeg"
           ],
           "equation": "h = [q / (Cd·8/15·√(2g)·tan(θ/2))]^(2/5)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -712,7 +726,7 @@
             "weir.head.avg"
           ],
           "equation": "y = H + hmed",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -727,7 +741,7 @@
             "weir.head.peak"
           ],
           "equation": "y = H + hmax",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -741,7 +755,7 @@
             "tank.depth"
           ],
           "equation": "y = lámina a caudal medio",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -755,7 +769,7 @@
             "tank.depth"
           ],
           "equation": "y = lámina a caudal punta",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -770,7 +784,7 @@
             "input.civil.launderWidthM"
           ],
           "equation": "y₀ = √3 · (Q² / (g·b²))^(1/3), Q = Qmax/2",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -785,7 +799,7 @@
             "input.civil.launderDepthM"
           ],
           "equation": "Δ = hcanal − y₀",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -800,7 +814,7 @@
             "input.hydraulics.effluentMaxVelocityM_s"
           ],
           "equation": "menor DN con v(Qmax) ≤ vmax",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "ADOPTED",
           "status": "PASS",
           "warnings": []
@@ -815,7 +829,7 @@
             "flow.peak.m3h"
           ],
           "equation": "v = Qmax / (π·DN²/4)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -830,7 +844,7 @@
             "input.hydraulics.sludgeFlowFraction"
           ],
           "equation": "Qlodo = f · Qmed (hipótesis de prediseño)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -846,7 +860,7 @@
             "input.hydraulics.sludgeDesignVelocityM_s"
           ],
           "equation": "max(DNmín, menor DN con v ≤ v diseño)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "ADOPTED",
           "status": "PASS",
           "warnings": []
@@ -861,7 +875,7 @@
             "sludge.dn"
           ],
           "equation": "v = Qlodo / (π·DN²/4)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -876,7 +890,7 @@
             "tank.depth"
           ],
           "equation": "V = π·R²·H",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -892,7 +906,7 @@
             "input.geometry.sumpDiameterM"
           ],
           "equation": "V = 2π·s·[rs·r²/2 − r³/3]rp→rs + π·rp²·s·(rs − rp)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -907,7 +921,7 @@
             "volume.floorCone"
           ],
           "equation": "Vbruto = Vcil + Vfondo",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -923,7 +937,7 @@
             "floor.dropAtSump"
           ],
           "equation": "V = π·rc²·(H + Δy)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -939,7 +953,7 @@
             "input.hydraulics.feedwellDepthM"
           ],
           "equation": "V = π·(rpa,int² − rc²)·hpa",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -955,7 +969,7 @@
             "volume.deduction.feedwell"
           ],
           "equation": "Vef = Vbruto − Vcolumna − Vpozo (se desprecian chapas y mecanismos)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -971,7 +985,7 @@
             "column.outerRadius"
           ],
           "equation": "V = π·(rp² − rc²)·hp",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -986,7 +1000,7 @@
             "flow.avg.m3h"
           ],
           "equation": "TRH = Vef / Qmed",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1001,7 +1015,7 @@
             "flow.peak.m3h"
           ],
           "equation": "TRH = Vef / Qmax",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1016,7 +1030,7 @@
             "input.civil.minFillThicknessM"
           ],
           "equation": "y = −Δy − efill,mín",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1031,7 +1045,7 @@
             "input.civil.baseSlabThicknessM"
           ],
           "equation": "y = ylosa − elosa",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1047,7 +1061,7 @@
             "input.civil.sumpWallThicknessM"
           ],
           "equation": "y = min(yp − ep, ylosa,inf)",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1062,7 +1076,7 @@
             "input.civil.wallThicknessM"
           ],
           "equation": "r = R + em",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1076,7 +1090,7 @@
             "civil.wallOuterRadius"
           ],
           "equation": "Dext = D + 2·em",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1092,7 +1106,7 @@
             "input.civil.channelWallThicknessM"
           ],
           "equation": "r = Rext + b + ec",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1106,7 +1120,7 @@
             "civil.channelOuterRadius"
           ],
           "equation": "Dcanal = 2·r",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1121,7 +1135,7 @@
             "input.civil.slabProjectionM"
           ],
           "equation": "r = Rext + vuelo",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1136,7 +1150,7 @@
             "input.geometry.freeboardM"
           ],
           "equation": "y = H + resguardo",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1152,7 +1166,7 @@
             "inlet.dn"
           ],
           "equation": "y = min(ylosa,inf, ypoceta,inf) − recubrimiento − rext",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1167,7 +1181,7 @@
             "input.mechanical.bridgeType"
           ],
           "equation": "L = 2·rapoyo",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1183,7 +1197,7 @@
             "input.mechanical.bridgeGirderDepthM"
           ],
           "equation": "y = ycoronación + apoyo + canto",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1198,7 +1212,7 @@
             "input.mechanical.armWallClearanceM"
           ],
           "equation": "r = R − holgura",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1213,7 +1227,7 @@
             "input.mechanical.cageHalfWidthM"
           ],
           "equation": "L = rpunta − rjaula",
-          "methodVersion": "PC-ENG-1.2.0",
+          "methodVersion": "PC-ENG-1.3.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1595,6 +1609,20 @@
             "HYD-004"
           ],
           "sourceId": "METCALF-EDDY-2014",
+          "critical": false
+        },
+        {
+          "id": "HYD-NOTCH-COUNT",
+          "level": 2,
+          "status": "PASS",
+          "title": "Al menos una escotadura en V",
+          "message": "Cumple.",
+          "value": 62,
+          "limit": "≥ 1",
+          "unit": "—",
+          "componentIds": [
+            "HYD-004"
+          ],
           "critical": false
         },
         {
@@ -2219,7 +2247,7 @@
       "summary": {
         "status": "INCOMPLETE",
         "counts": {
-          "PASS": 55,
+          "PASS": 56,
           "WARNING": 3,
           "FAIL": 0,
           "NOT_EVALUATED": 16
@@ -2232,7 +2260,7 @@
             "NOT_EVALUATED": 0
           },
           "2": {
-            "PASS": 21,
+            "PASS": 22,
             "WARNING": 2,
             "FAIL": 0,
             "NOT_EVALUATED": 5
@@ -3498,6 +3526,7 @@
             "GEO-WEIR-LENGTH-POSITIVE",
             "HYD-WEIR-LOADING-ADMISSIBLE",
             "HYD-WEIR-LOADING-CRITERION",
+            "HYD-NOTCH-COUNT",
             "HYD-NOTCH-NOT-DROWNED",
             "HYD-LAUNDER-FREE-FALL"
           ],
@@ -3802,6 +3831,6 @@
       ]
     },
     "validationStatus": "INCOMPLETE",
-    "outputsHash": "c33bd5543782bba8"
+    "outputsHash": "f8bf120e2bfd7077"
   }
 }

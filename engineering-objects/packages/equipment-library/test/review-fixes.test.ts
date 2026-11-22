@@ -162,3 +162,44 @@ describe('biblioteca de variantes', () => {
     expect(lib.lineage('V')).toHaveLength(1);
   });
 });
+
+describe('segunda revisión', () => {
+  it('cargas de SST trazadas a caudal medio y punta; la SLR se reproduce desde sus entradas', () => {
+    const d = designClarifier(DEC_005_DIDACTIC);
+    expect(d.values['solids.influentLoad.peak']!.value).toBeCloseTo(270, 10);
+    for (const k of ['avg', 'peak'] as const) {
+      const slr = d.values[`loading.solids.${k}`]!;
+      expect(slr.inputs).toEqual([`solids.influentLoad.${k}`, 'tank.area']);
+      expect(slr.value).toBeCloseTo(d.values[`solids.influentLoad.${k}`]!.value / d.values['tank.area']!.value, 12);
+    }
+  });
+  it('el tramo del pozo dentro del manto se descuenta una sola vez', () => {
+    const geo = (h: number) => designClarifier({ ...DEC_005_DIDACTIC, geometry: { ...DEC_005_DIDACTIC.geometry, sludgeBlanketDepthM: h } });
+    const below = geo(2.0); // manto justo en el fondo del pozo (y = 2,0)
+    const above = geo(2.2);
+    const m = below.model;
+    // Subir el manto 0,2 m dentro del pozo solo debe quitar la corona exterior al pozo.
+    const dV = below.values['volume.effective']!.value - above.values['volume.effective']!.value;
+    expect(dV).toBeCloseTo(Math.PI * (m.R ** 2 - m.rFeedwellInner ** 2) * 0.2, 9);
+    expect(above.checks.find((c) => c.id === 'HYD-SLUDGE-BLANKET')?.status).toBe('FAIL');
+  });
+  it('número de escotaduras fijado en 0 con vertedero útil: FAIL sin excepción', () => {
+    const gross = designClarifier(DEC_005_DIDACTIC).values['weir.length.gross']!.value;
+    const parent = createBaseVariant(hyd({ weirExclusionLengthM: gross + 1 }), { createdAt: T0 });
+    expect(parent.calculatedOutputs.decisions.notchCount).toBe(0);
+    const child = createVariant(parent, { tag: 'X', hydraulics: { weirExclusionLengthM: 0 } }, { mode: 'C', allowedResize: ['tank'] });
+    const c = (id: string) => child.calculatedOutputs.checks.find((x) => x.id === id)?.status;
+    expect(c('GEO-WEIR-LENGTH-POSITIVE')).toBe('PASS');
+    expect(c('HYD-NOTCH-COUNT')).toBe('FAIL');
+    expect(c('HYD-NOTCH-NOT-DROWNED')).toBe('NOT_EVALUATED');
+    expect(c('GEO-BRIDGE-CLEARANCE')).toBe('NOT_EVALUATED');
+    expect(child.calculatedOutputs.values['weir.head.peak']).toBeUndefined();
+    expect(child.calculatedOutputs.values['level.water.avg']).toBeUndefined();
+    expect(child.validationStatus).toBe('FAILED');
+  });
+  it('los límites mecánicos de solo comprobación no exigen el grupo mechanical', () => {
+    const b = createBaseVariant(DEC_005_DIDACTIC, { createdAt: T0 });
+    expect(() => createVariant(b, { tag: 'X', mechanical: { bridgeClearanceAboveWaterMinM: 0.6 } }, { mode: 'C', allowedResize: [] })).not.toThrow();
+    expect(() => createVariant(b, { tag: 'X', mechanical: { bridgeGirderDepthM: 0.5 } }, { mode: 'C', allowedResize: [] })).toThrow(/mechanical/);
+  });
+});

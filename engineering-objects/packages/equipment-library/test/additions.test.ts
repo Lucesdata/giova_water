@@ -89,6 +89,11 @@ describe('contrato de datos de operación', () => {
     expect(r.find((x) => x.key === 'removal.tss.observed')!.observed).toBeCloseTo(40, 10);
     expect(JSON.stringify(v)).toBe(snapshot);
   });
+  it('las variables con referencia de diseño producen una lectura informativa', () => {
+    const r = readAgainstDesign(parseOperationalRecord(rec({ temperatureC: 18, sludgeWithdrawalM3h: 0.5 })), v);
+    expect(r.find((x) => x.key === 'temperatureC.vsDesign')).toMatchObject({ observed: 18, design: 15, status: 'INFORMATIVE' });
+    expect(r.find((x) => x.key === 'sludgeWithdrawalM3h.vsDesign')).toMatchObject({ observed: 0.5, design: 0.18, status: 'INFORMATIVE' });
+  });
   it('rechaza registros de otra variante', () => {
     expect(() => readAgainstDesign(parseOperationalRecord(rec({ flowLps: 1 }, { variantId: 'otra' })), v)).toThrow(/pertenece/);
   });

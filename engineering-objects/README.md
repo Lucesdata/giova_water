@@ -16,7 +16,7 @@ perimetral exterior y rasquetas de fondo (SPEC-DEC-001 + SPEC-DEC-002, v1.0).
 ```bash
 cd engineering-objects
 npm install
-npm test               # 115 pruebas (unitarias + integración + arquitectura)
+npm test               # 120 pruebas (unitarias + integración + arquitectura)
 npm run typecheck      # capas puras sin DOM/React/Three + proyecto completo
 npm run lab            # laboratorio visual (Vite, http://localhost:5173)
 npm run examples:presets   # regenera examples/output (variantes JSON + memorias)
@@ -115,7 +115,7 @@ Evaluar el equipo de 5 L/s a 10 L/s (modo B) da `FAILED` (CHS real 3,0 > 1,5 m/h
 | Advertencias presentadas | ✔ | panel de validación y memoria de cálculo |
 | Originales conservados | ✔ | variantes congeladas (`deepFreeze`) |
 | Exportar/importar configuraciones | ✔ | `exportVariant` / `importVariant` con recálculo e integridad |
-| Pruebas automatizadas | ✔ | 115 pruebas |
+| Pruebas automatizadas | ✔ | 120 pruebas |
 | Integrable sin el laboratorio | ✔ | `@eo/equipment-library` es independiente |
 | Verificaciones pendientes identificadas | ✔ | comprobaciones críticas NOT_EVALUATED |
 
@@ -151,6 +151,17 @@ se recalculan con el modelo actual y se marcan como no verificados (test en `tes
   (`inputGroups.ts`). Nuevo grupo `mechanical` para cambios mecánicos en modo C.
 - Importación: los bloqueos se validan (nombres, dominios y conjunto exacto exigido por el modo).
 - `VariantLibrary` no sustituye registros existentes ni admite una variante que sea su propio padre.
+
+## Cambios V1.3 (modelo `PC-ENG-1.3.0`): segunda revisión
+
+- Carga de SST afluente también a caudal punta (`solids.influentLoad.peak`); las SLR se calculan como
+  `M / A` desde valores trazados, reproducibles con sus entradas.
+- El tramo del pozo de alimentación que queda dentro del manto se descuenta una sola vez.
+- Con 0 escotaduras fijadas y vertedero útil: `HYD-NOTCH-COUNT` = FAIL y láminas no disponibles,
+  sin excepción. El visor no dibuja la lámina si no está calculada.
+- Lecturas de operación informativas para todas las variables con referencia de diseño.
+- Los límites mecánicos de solo comprobación (gálibo, pasarela, holguras mínimas) no exigen el grupo
+  `mechanical` en modo C.
 
 ## Límites conocidos de V1
 
