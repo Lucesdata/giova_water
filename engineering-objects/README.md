@@ -16,7 +16,7 @@ perimetral exterior y rasquetas de fondo (SPEC-DEC-001 + SPEC-DEC-002, v1.0).
 ```bash
 cd engineering-objects
 npm install
-npm test               # 97 pruebas (unitarias + integración + arquitectura)
+npm test               # 115 pruebas (unitarias + integración + arquitectura)
 npm run typecheck      # capas puras sin DOM/React/Three + proyecto completo
 npm run lab            # laboratorio visual (Vite, http://localhost:5173)
 npm run examples:presets   # regenera examples/output (variantes JSON + memorias)
@@ -115,7 +115,7 @@ Evaluar el equipo de 5 L/s a 10 L/s (modo B) da `FAILED` (CHS real 3,0 > 1,5 m/h
 | Advertencias presentadas | ✔ | panel de validación y memoria de cálculo |
 | Originales conservados | ✔ | variantes congeladas (`deepFreeze`) |
 | Exportar/importar configuraciones | ✔ | `exportVariant` / `importVariant` con recálculo e integridad |
-| Pruebas automatizadas | ✔ | 97 pruebas |
+| Pruebas automatizadas | ✔ | 115 pruebas |
 | Integrable sin el laboratorio | ✔ | `@eo/equipment-library` es independiente |
 | Verificaciones pendientes identificadas | ✔ | comprobaciones críticas NOT_EVALUATED |
 
@@ -135,6 +135,22 @@ Tras revisar una guía técnica sobre tipos de clarificadores (SOR, SLR, TRH, WL
 
 El cambio de versión del modelo es deliberado: los archivos exportados con `PC-ENG-1.0.0` se importan,
 se recalculan con el modelo actual y se marcan como no verificados (test en `tests/examples.test.ts`).
+
+## Cambios V1.2 (modelo `PC-ENG-1.2.0`): revisión del PR
+
+- El motor no lanza excepciones con dimensiones absurdas: sin corona columna–pozo o con longitud
+  de vertedero ≤ 0 se registra FAIL y los cálculos dependientes quedan no disponibles.
+- Velocidad de la conducción de lodos comprobada también con DN fijado.
+- Los `criteriaOverrides` añaden o endurecen: conservan los límites omitidos del perfil (con su
+  fuente) y se rechazan si relajan un mínimo o máximo obligatorio.
+- Los campos de hormigón solo admiten materiales de la familia hormigón.
+- Modo B: la geometría instalada (coronación del pozo y del deflector, barredor, caja de flotantes)
+  se construye con láminas de referencia bloqueadas; las láminas de operación se recalculan y se
+  comprueba que no rebasen la coronación (`HYD-SHELLS-ABOVE-WATER`).
+- Modos B y C: cualquier entrada que defina geometría instalada de un grupo bloqueado se rechaza
+  (`inputGroups.ts`). Nuevo grupo `mechanical` para cambios mecánicos en modo C.
+- Importación: los bloqueos se validan (nombres, dominios y conjunto exacto exigido por el modo).
+- `VariantLibrary` no sustituye registros existentes ni admite una variante que sea su propio padre.
 
 ## Límites conocidos de V1
 

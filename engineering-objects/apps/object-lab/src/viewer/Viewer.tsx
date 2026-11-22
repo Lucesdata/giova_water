@@ -57,7 +57,7 @@ function Dimensions({ design }: { design: ClarifierDesign }) {
 function Water({ design, plane }: { design: ClarifierDesign; plane: THREE.Plane | null }) {
   const m = design.model;
   return (
-    <mesh position={[0, m.yWaterAvg, 0]} rotation={[-Math.PI / 2, 0, 0]} renderOrder={2}>
+    <mesh position={[0, m.yWaterAvgOperating, 0]} rotation={[-Math.PI / 2, 0, 0]} renderOrder={2}>
       <circleGeometry args={[m.R - 0.01, 96]} />
       <meshStandardMaterial color="#3d6f85" transparent opacity={0.35} depthWrite={false} side={THREE.DoubleSide} clippingPlanes={plane ? [plane] : []} />
     </mesh>

@@ -2,6 +2,7 @@ import {
   cloneData,
   contentHash,
   deepFreeze,
+  stableStringify,
   type CalculationResult,
   type CheckResult,
   type EngineeringObject,
@@ -13,7 +14,8 @@ import {
 } from '@eo/engineering-core';
 import { z } from 'zod';
 import { designClarifier, type ClarifierDesign, type EngineeringComponent } from './design.js';
-import { DECISION_GROUP, ENGINEERING_MODEL_VERSION, type ResizeGroup, type SizingDecisions } from './engine.js';
+import { DECISION_GROUP, ENGINEERING_MODEL_VERSION, RESIZE_GROUPS, type ResizeGroup, type SizingDecisions } from './engine.js';
+import { blockedChanges } from './inputGroups.js';
 import { SCHEMA_VERSION, parseDesignInput, type DeepPartial, type DesignInput, type DesignInputRaw } from './schema.js';
 
 export const OBJECT_TYPE = 'primary-clarifier/circular-center-feed';
@@ -57,9 +59,15 @@ export interface VariantOptions {
   readonly variantId?: string;
 }
 
-const ALL_GROUPS: readonly ResizeGroup[] = ['tank', 'inlet', 'feedwell', 'weir', 'effluent', 'sludge'];
-/** En modo B solo pueden cambiar las condiciones de operación y los criterios de evaluación. */
-const MODE_B_ALLOWED_KEYS = new Set(['tag', 'name', 'flow', 'influent', 'designCriteria', 'criteriaOverrides', 'profileId']);
+const ALL_GROUPS = RESIZE_GROUPS;
+const DECISION_KEYS = Object.keys(DECISION_GROUP) as (keyof SizingDecisions)[];
+
+/** Decisiones que deben venir bloqueadas según el modo (contrato de una variante válida). */
+export function expectedLockKeys(mode: VariantMode, allowedResize: readonly ResizeGroup[] | null): (keyof SizingDecisions)[] {
+  if (mode === 'B') return [...DECISION_KEYS];
+  if (mode === 'C') return DECISION_KEYS.filter((k) => !(allowedResize ?? []).includes(DECISION_GROUP[k]));
+  return [];
+}
 
 function isPlainObject(v: unknown): v is Record<string, unknown> {
   return v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -119,6 +127,7 @@ function build(args: BuildArgs): { variant: ClarifierVariant; design: ClarifierD
   const outputs = cloneData(outputsOf(design));
   const outputsHash = hashOutputs(outputs);
   const variantId = args.variantId ?? `${design.input.tag}@${contentHash({ i: design.input, m: args.mode, l: args.locked, p: args.parentVariantId }).slice(0, 10)}`;
+  if (variantId === args.parentVariantId) throw new Error(`Una variante no puede ser su propia variante padre (${variantId}).`);
   const variant: ClarifierVariant = deepFreeze({
     objectId: args.objectId,
     variantId,
@@ -148,13 +157,22 @@ export function createBaseVariant(rawInput: DesignInputRaw, opts: { objectId?: s
  */
 export function createVariant(parent: ClarifierVariant, changes: DeepPartial<DesignInputRaw>, opts: VariantOptions = {}): ClarifierVariant {
   const mode = opts.mode ?? 'A';
-  if (mode === 'B') {
-    const illegal = Object.keys(changes).filter((k) => !MODE_B_ALLOWED_KEYS.has(k));
-    if (illegal.length > 0) throw new Error(`Modo B (evaluación de equipo existente): no se pueden modificar ${illegal.join(', ')}; la geometría es fija.`);
-  }
   if (mode !== 'C' && opts.allowedResize) throw new Error('allowedResize solo tiene sentido en modo C.');
   const merged = mergeInputs(cloneData(parent.designInputs) as unknown, changes);
   const input = parseDesignInput(merged);
+  if (mode === 'B' || mode === 'C') {
+    // Ninguna entrada que defina geometría instalada puede cambiar en un grupo bloqueado.
+    const allowed = new Set<ResizeGroup>(mode === 'C' ? (opts.allowedResize ?? []) : []);
+    const blocked = blockedChanges(parent.designInputs, input, allowed);
+    if (blocked.length > 0) {
+      const list = blocked.map((b) => `${b.path} (requiere ${b.groups.join(' + ')})`).join(', ');
+      throw new Error(
+        mode === 'B'
+          ? `Modo B (evaluación de equipo existente): la geometría es fija; no se puede modificar ${list}.`
+          : `Modo C: ${list} cambia geometría de un grupo no permitido.`,
+      );
+    }
+  }
 
   let locked: Partial<SizingDecisions> = {};
   const parentDecisions = parent.calculatedOutputs.decisions;
@@ -193,6 +211,24 @@ export function reproduces(v: ClarifierVariant): boolean {
 
 // ───────────────────────── Exportación / importación ─────────────────────────
 
+const dn = z.number().int().positive();
+/** Forma en tiempo de ejecución de las decisiones bloqueadas: nombres y dominios de valor. */
+const lockedDecisionsSchema = z
+  .object({
+    diameterM: z.number().finite().positive(),
+    sideWaterDepthM: z.number().finite().positive(),
+    inletDn: dn,
+    portHeightM: z.number().finite().positive(),
+    feedwellDiameterM: z.number().finite().positive(),
+    notchCount: z.number().int().nonnegative(),
+    effluentDn: dn,
+    sludgeDn: dn,
+    referenceWaterAvgY: z.number().finite(),
+    referenceWaterPeakY: z.number().finite(),
+  } satisfies Record<keyof SizingDecisions, z.ZodTypeAny>)
+  .partial()
+  .strict();
+
 const envelopeSchema = z.object({
   format: z.literal(EXPORT_FORMAT),
   formatVersion: z.literal(1),
@@ -206,8 +242,8 @@ const envelopeSchema = z.object({
       createdAt: z.string(),
       tag: z.string(),
       mode: z.enum(['BASE', 'A', 'B', 'C']),
-      lockedDecisions: z.record(z.string(), z.number()),
-      allowedResize: z.array(z.enum(['tank', 'inlet', 'feedwell', 'weir', 'effluent', 'sludge'])).nullable(),
+      lockedDecisions: lockedDecisionsSchema,
+      allowedResize: z.array(z.enum(RESIZE_GROUPS as [ResizeGroup, ...ResizeGroup[]])).nullable(),
       designInputs: z.unknown(),
       outputsHash: z.string(),
     })
@@ -246,6 +282,15 @@ export function importVariant(json: string): ImportResult {
     schemaVersion = m.to;
   }
   const input = parseDesignInput(inputs);
+  // El conjunto de bloqueos debe ser exactamente el que exige el modo: ni faltan ni sobran.
+  if ((v.mode === 'C') !== (v.allowedResize !== null)) throw new Error(`allowedResize no es coherente con el modo ${v.mode}.`);
+  const expected = expectedLockKeys(v.mode, v.allowedResize).sort();
+  const got = Object.keys(v.lockedDecisions).sort();
+  if (expected.join(',') !== got.join(',')) {
+    const missing = expected.filter((k) => !got.includes(k));
+    const extra = got.filter((k) => !(expected as string[]).includes(k));
+    throw new Error(`Bloqueos no válidos para el modo ${v.mode}${missing.length ? `; faltan: ${missing.join(', ')}` : ''}${extra.length ? `; sobran: ${extra.join(', ')}` : ''}.`);
+  }
   const { variant } = build({
     objectId: v.objectId,
     parentVariantId: v.parentVariantId,
@@ -319,7 +364,12 @@ export class VariantLibrary {
 
   add(v: ClarifierVariant): ClarifierVariant {
     const prev = this.items.get(v.variantId);
-    if (prev && prev.outputsHash !== v.outputsHash) throw new Error(`Ya existe una variante distinta con id ${v.variantId}`);
+    if (prev) {
+      // Una repetición idéntica devuelve lo ya registrado; cualquier otro registro con el mismo id se rechaza.
+      if (prev === v || stableStringify(prev) === stableStringify(v)) return prev;
+      throw new Error(`Ya existe una variante distinta con id ${v.variantId}`);
+    }
+    if (v.parentVariantId === v.variantId) throw new Error(`La variante ${v.variantId} no puede ser su propia variante padre`);
     if (v.parentVariantId && !this.items.has(v.parentVariantId)) throw new Error(`Variante padre ${v.parentVariantId} no registrada`);
     this.items.set(v.variantId, v);
     return v;

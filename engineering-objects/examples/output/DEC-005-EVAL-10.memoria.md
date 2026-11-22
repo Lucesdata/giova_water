@@ -9,13 +9,13 @@ Decantador primario 5 L/s — escenario didáctico
 | Campo | Valor |
 |---|---|
 | objectId | `primary-clarifier/circular-center-feed:DEC-005` |
-| variantId | `DEC-005-EVAL-10@6bec23316b` |
+| variantId | `DEC-005-EVAL-10@899c0ce9fc` |
 | parentVariantId | `DEC-005@1d5b1b57d1` |
 | Modo | B |
 | createdAt | 2026-11-22T00:00:00.000Z |
-| outputsHash | `791f2c008e99daac` |
+| outputsHash | `17560a00d6e30f2a` |
 | Versión de esquema | 1.0.0 |
-| Modelo de cálculo | PC-ENG-1.1.0 |
+| Modelo de cálculo | PC-ENG-1.2.0 |
 | Estado de validación | **FAILED** |
 
 ## 2. Perfil de diseño: Escenario didáctico
@@ -183,12 +183,15 @@ Comprobación matemática del motor (spec §6.2). No es un diseño. (aprobación
 | `weir.head.avg` | Carga sobre escotaduras a caudal medio | 0.0270 | m | h = [q / (Cd·8/15·√(2g)·tan(θ/2))]^(2/5) | `weir.notchCount`, `flow.avg.m3h`, `input.hydraulics.weirCd`, `input.hydraulics.vNotchAngleDeg` | CALCULATED |
 | `level.water.avg` | Cota de lámina a caudal medio | 3.027 | m | y = H + hmed | `tank.depth`, `weir.head.avg` | CALCULATED |
 | `level.water.peak` | Cota de lámina a caudal punta | 3.039 | m | y = H + hmax | `tank.depth`, `weir.head.peak` | CALCULATED |
+| `level.water.reference.avg` | Lámina media de referencia de la geometría instalada | 3.020 | m | Fijada por el equipo existente | `tank.depth` | FIXED_BY_CONSTRAINT |
+| `level.water.reference.peak` | Lámina punta de referencia de la geometría instalada | 3.030 | m | Fijada por el equipo existente | `tank.depth` | FIXED_BY_CONSTRAINT |
 | `launder.upstreamDepth` | Calado aguas arriba en el canal (cada rama, Qmax/2) | 0.0803 | m | y₀ = √3 · (Q² / (g·b²))^(1/3), Q = Qmax/2 | `flow.peak.m3h`, `input.civil.launderWidthM` | CALCULATED |
 | `launder.freeFall` | Resguardo de caída libre bajo la cresta | 0.270 | m | Δ = hcanal − y₀ | `launder.upstreamDepth`, `input.civil.launderDepthM` | CALCULATED |
 | `effluent.dn` | DN del colector de efluente | 125 | mm | DN fijado | `flow.peak.m3h`, `input.hydraulics.effluentMaxVelocityM_s` | FIXED_BY_CONSTRAINT |
 | `effluent.velocity.peak` | Velocidad en el colector de efluente a caudal punta | 2.037 | m/s | v = Qmax / (π·DN²/4) | `effluent.dn`, `flow.peak.m3h` | CALCULATED |
 | `sludge.flow` | Caudal de purga para dimensionar la conducción | 0.360 | m³/h | Qlodo = f · Qmed (hipótesis de prediseño) | `flow.avg.m3h`, `input.hydraulics.sludgeFlowFraction` | CALCULATED |
 | `sludge.dn` | DN de la conducción de lodos | 150 | mm | DN fijado | `sludge.flow`, `input.hydraulics.sludgePipeMinDn`, `input.hydraulics.sludgeDesignVelocityM_s` | FIXED_BY_CONSTRAINT |
+| `sludge.velocity` | Velocidad en la conducción de lodos | 0.00566 | m/s | v = Qlodo / (π·DN²/4) | `sludge.flow`, `sludge.dn` | CALCULATED |
 | `volume.cylinder` | Volumen cilíndrico sobre el fondo en pared | 36 | m³ | V = π·R²·H | `tank.diameter`, `tank.depth` | CALCULATED |
 | `volume.floorCone` | Volumen del fondo en pendiente (sin poceta) | 0.646 | m³ | V = 2π·s·[rs·r²/2 − r³/3]rp→rs + π·rp²·s·(rs − rp) | `input.geometry.floorSlope`, `floor.slopeStartRadius`, `input.geometry.sumpDiameterM` | CALCULATED |
 | `volume.gross` | Volumen hidráulico bruto | 36.646 | m³ | Vbruto = Vcil + Vfondo | `volume.cylinder`, `volume.floorCone` | CALCULATED |
@@ -261,9 +264,9 @@ Reglas de modelado (no son criterios de diseño):
 | Revestimiento CIV-004 poceta | 1.995 m² |
 | Revestimiento CIV-005 canal | 16.964 m² |
 | Excavación | NOT_EVALUATED |
-| Longitud de perfiles/tubos STEEL-S275JR-HDG | 35.457 m |
-| Longitud de perfiles/tubos SS-1.4301 | 38.028 m |
-| Superficie de protección anticorrosiva (acero al carbono) | 26.185 m² |
+| Longitud de perfiles/tubos STEEL-S275JR-HDG | 35.476 m |
+| Longitud de perfiles/tubos SS-1.4301 | 38.021 m |
+| Superficie de protección anticorrosiva (acero al carbono) | 26.189 m² |
 | Armaduras | NOT_EVALUATED |
 
 - Volúmenes de hormigón medidos sobre la geometría modelada (Pappus-Guldin), sin descontar pasamuros.
@@ -274,7 +277,7 @@ Reglas de modelado (no son criterios de diseño):
 
 ## 7. Validación
 
-Estado global: **FAILED** — PASS 35 · WARNING 2 · FAIL 6 · NOT_EVALUATED 29
+Estado global: **FAILED** — PASS 38 · WARNING 2 · FAIL 6 · NOT_EVALUATED 29
 
 ### Nivel 1 — Datos
 
@@ -303,8 +306,10 @@ Estado global: **FAILED** — PASS 35 · WARNING 2 · FAIL 6 · NOT_EVALUATED 29
 | NOT_EVALUATED | `HYD-WEIR-LOADING-ADMISSIBLE` | CLV punta ≤ admisible de diseño | 176.1 m³/(m·d) |  | No se ha definido carga lineal máxima de vertedero. |
 | NOT_EVALUATED | `HYD-WEIR-LOADING-CRITERION` | Carga lineal sobre vertedero a caudal punta | 176.1 m³/(m·d) |  | El perfil de diseño no define criterio para esta magnitud. |
 | PASS | `HYD-NOTCH-NOT-DROWNED` | Lámina dentro de la escotadura a caudal punta | 0.0389 m | ≤ 0.05 | Cumple. |
+| PASS | `HYD-SHELLS-ABOVE-WATER` | Pozo y deflector de flotantes por encima de la lámina en punta | 0.141 m | > 0 | Cumple. |
 | PASS | `HYD-LAUNDER-FREE-FALL` | Vertido libre al canal perimetral | 0.270 m | ≥ 0.05 | El canal no remansa el vertedero. |
 | FAIL | `HYD-EFFLUENT-VMAX` | Velocidad en el colector de efluente | 2.037 m/s | ≤ 1.5 | Supera la velocidad máxima adoptada. |
+| PASS | `HYD-SLUDGE-VELOCITY` | Velocidad de diseño en la conducción de lodos | 0.00566 m/s | ≤ 1 | Cumple. |
 | PASS | `HYD-SLUDGE-MIN-DN` | DN mínimo de la conducción de lodos | 150 mm | ≥ 150 | Cumple. |
 | NOT_EVALUATED | `HYD-SLUDGE-HYDRAULICS` | Hidráulica de purga de lodos |  |  | Pérdidas, carga disponible, bombeo o purga telescópica no evaluados en V1. El caudal de purga es una hipótesis de prediseño. |
 | NOT_EVALUATED | `HYD-SLUDGE-BLANKET` | Manto de lodos por debajo del pozo de alimentación |  |  | No se ha definido la altura de diseño del manto (geometry.sludgeBlanketDepthM): el volumen efectivo no lo descuenta. |
@@ -325,6 +330,7 @@ Estado global: **FAILED** — PASS 35 · WARNING 2 · FAIL 6 · NOT_EVALUATED 29
 | NOT_EVALUATED | `GEO-FLOOR-SLOPE-CRITERION` | Pendiente radial del fondo | 0.0833 m/m |  | El perfil de diseño no define criterio para esta magnitud. |
 | PASS | `GEO-SUMP-CLEAR-OF-COLUMN` | Poceta mayor que la columna central | 0.330 m | > 0 | Queda corona libre para el lodo. |
 | PASS | `GEO-FEEDWELL-DEPTH-LT-H` | Pozo de alimentación menos profundo que el tanque | 1 m | < 3 | Cumple. |
+| PASS | `GEO-FEEDWELL-ANNULUS` | Corona libre entre columna y pozo de alimentación | 0.424 m | > 0 | Cumple. |
 | PASS | `GEO-PORTS-INSIDE-FEEDWELL` | Ventanas contenidas en el pozo de alimentación | 0.188 m | ≤ 0.800 | Cumple. |
 | PASS | `GEO-WEIR-LENGTH-POSITIVE` | Longitud efectiva de vertedero positiva | 12.264 m | > 0 | Cumple. |
 | PASS | `GEO-EFFLUENT-FITS-LAUNDER` | Colector de efluente cabe en el canal | 0.141 m | ≤ 0.4 | El diámetro exterior cabe en la anchura del canal. |

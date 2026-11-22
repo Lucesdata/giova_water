@@ -43,6 +43,12 @@ export interface Criterion {
   readonly constraint: RangeConstraint;
   readonly sourceId: ReferenceId | string;
   readonly note?: string;
+  /** Fuentes de los límites heredados del perfil cuando un override los conserva. */
+  readonly inheritedSourceIds?: readonly string[];
+}
+
+export class CriterionOverrideError extends Error {
+  override name = 'CriterionOverrideError';
 }
 
 export type ProfileApproval = 'DIDACTIC' | 'REFERENCE_RANGES' | 'REQUIRES_PROJECT_CRITERIA';
@@ -150,6 +156,39 @@ export const PROFILES: Record<DesignInput['profileId'], DesignProfile> = {
   },
 };
 
+const fmtN = (n: number) => Number(n.toPrecision(4)).toString();
+
+/**
+ * Combina un criterio del perfil con un override. El override AÑADE o ENDURECE límites:
+ *  - los límites que el override omite se conservan del perfil, con su fuente;
+ *  - un límite duro (min/max) del perfil no puede relajarse: se rechaza;
+ *  - las bandas recomendadas (warnMin/warnMax) sí pueden redefinirse, porque no son obligatorias.
+ */
+export function mergeCriterion(key: string, base: Criterion | undefined, o: Criterion): Criterion {
+  if (!base) return o;
+  const b = base.constraint;
+  const c = o.constraint;
+  if (b.max !== undefined && c.max !== undefined && c.max > b.max) {
+    throw new CriterionOverrideError(`El criterio "${key}" relaja el máximo obligatorio del perfil (${fmtN(c.max)} > ${fmtN(b.max)}, ${base.sourceId}).`);
+  }
+  if (b.min !== undefined && c.min !== undefined && c.min < b.min) {
+    throw new CriterionOverrideError(`El criterio "${key}" relaja el mínimo obligatorio del perfil (${fmtN(c.min)} < ${fmtN(b.min)}, ${base.sourceId}).`);
+  }
+  const constraint: RangeConstraint = {
+    min: c.min ?? b.min,
+    max: c.max ?? b.max,
+    warnMin: c.warnMin ?? b.warnMin,
+    warnMax: c.warnMax ?? b.warnMax,
+  };
+  const kept = (['min', 'max', 'warnMin', 'warnMax'] as const).filter((k) => c[k] === undefined && b[k] !== undefined);
+  return {
+    constraint,
+    sourceId: o.sourceId,
+    note: kept.length > 0 ? `${o.note ?? ''} Conserva del perfil (${base.sourceId}): ${kept.map((k) => `${k} ${fmtN(b[k]!)}`).join(', ')}.`.trim() : o.note,
+    inheritedSourceIds: kept.length > 0 ? [base.sourceId, ...(base.inheritedSourceIds ?? [])] : undefined,
+  };
+}
+
 /** Criterios efectivos: perfil + overrides del usuario (con fuente obligatoria). */
 export function resolveCriteria(input: DesignInput): Partial<Record<CriterionKey, Criterion>> {
   const profile = PROFILES[input.profileId];
@@ -159,7 +198,7 @@ export function resolveCriteria(input: DesignInput): Partial<Record<CriterionKey
       throw new Error(`Criterio desconocido en criteriaOverrides: "${k}". Válidos: ${CRITERION_KEYS.join(', ')}`);
     }
     const { sourceId, note, ...constraint } = o;
-    out[k as CriterionKey] = { constraint, sourceId, note };
+    out[k as CriterionKey] = mergeCriterion(k, profile.criteria[k as CriterionKey], { constraint, sourceId, note });
   }
   return out;
 }

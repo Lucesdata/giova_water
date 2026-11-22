@@ -9,3 +9,4 @@ export * from './presets/presets.js';
 export { floorProfile } from './civil/geometry.js';
 export { bladeLayout, armAngles } from './mechanical/geometry.js';
 export * from './operations/record.js';
+export * from './definition/inputGroups.js';

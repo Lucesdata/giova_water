@@ -23,7 +23,7 @@ import { CRITERION_META, type Criterion, type CriterionKey } from './profiles.js
 import type { DesignInput } from './schema.js';
 
 /** Versión del método de cálculo. Cambia cuando cambia cualquier ecuación o regla. */
-export const ENGINEERING_MODEL_VERSION = 'PC-ENG-1.1.0';
+export const ENGINEERING_MODEL_VERSION = 'PC-ENG-1.2.0';
 
 /**
  * Decisiones de dimensionamiento: los valores que el motor ELIGE (frente a los que calcula
@@ -38,9 +38,18 @@ export interface SizingDecisions {
   readonly notchCount: number;
   readonly effluentDn: number;
   readonly sludgeDn: number;
+  /**
+   * Cotas de lámina de referencia con las que se construye la geometría instalada (coronación del
+   * pozo y del deflector, barredor, caja de flotantes). En el modo B quedan fijas aunque cambie el
+   * caudal: las láminas de operación se recalculan aparte y se comprueban contra ellas.
+   */
+  readonly referenceWaterAvgY: number;
+  readonly referenceWaterPeakY: number;
 }
 
-export type ResizeGroup = 'tank' | 'inlet' | 'feedwell' | 'weir' | 'effluent' | 'sludge';
+/** `mechanical` no tiene decisiones propias: controla qué entradas mecánicas pueden cambiar en modo C. */
+export type ResizeGroup = 'tank' | 'inlet' | 'feedwell' | 'weir' | 'effluent' | 'sludge' | 'mechanical';
+export const RESIZE_GROUPS: readonly ResizeGroup[] = ['tank', 'inlet', 'feedwell', 'weir', 'effluent', 'sludge', 'mechanical'];
 
 export const DECISION_GROUP: Record<keyof SizingDecisions, ResizeGroup> = {
   diameterM: 'tank',
@@ -51,6 +60,8 @@ export const DECISION_GROUP: Record<keyof SizingDecisions, ResizeGroup> = {
   notchCount: 'weir',
   effluentDn: 'effluent',
   sludgeDn: 'sludge',
+  referenceWaterAvgY: 'weir',
+  referenceWaterPeakY: 'weir',
 };
 
 /**
@@ -77,8 +88,12 @@ export interface ResolvedModel {
   readonly yLaunderFloor: number;
   readonly yChannelTop: number;
   readonly channelFloorThickness: number;
+  /** Láminas de referencia de la geometría instalada (= de operación salvo en modo B). */
   readonly yWaterAvg: number;
   readonly yWaterPeak: number;
+  /** Láminas calculadas con el caudal de esta variante. */
+  readonly yWaterAvgOperating: number;
+  readonly yWaterPeakOperating: number;
   readonly weirPlateThickness: number;
   readonly notchDepth: number;
   readonly notchCount: number;
@@ -203,6 +218,7 @@ export function runEngine(
       return;
     }
     sourcesUsed.add(c.sourceId);
+    for (const id of c.inheritedSourceIds ?? []) sourcesUsed.add(id);
     const ev = evaluateRange(value, c.constraint);
     const ref = getReference(c.sourceId);
     checks.add({
@@ -380,13 +396,20 @@ export function runEngine(
   const rFwOuter = dFw / 2;
   const rFwInner = rFwOuter - hy.feedwellPlateThicknessM;
   const yFwBottom = t.record('level.feedwellBottom', H - hy.feedwellDepthM, { label: 'Cota inferior del pozo de alimentación', unit: 'm', inputs: ['tank.depth', 'input.hydraulics.feedwellDepthM'], equation: 'y = H − hpa' });
-  const vFw = t.record('feedwell.downwardVelocity.peak', qPeakS / (Math.PI * (rFwInner ** 2 - rColumnOuter ** 2)), {
-    label: 'Velocidad descendente en el pozo a caudal punta',
-    unit: 'm/s',
-    inputs: ['flow.peak.m3h', 'feedwell.diameter', 'column.outerRadius'],
-    equation: 'v = Qmax / (π·(rpa,int² − rc²))',
-  });
-  criterionCheck('HYD-FEEDWELL-VELOCITY', 2, 'feedwellDownwardVelocityPeak', vFw, ['HYD-002']);
+  // La corona entre la columna y el pozo debe existir antes de usarla como área de paso o volumen.
+  const annulusOk = rFwInner > rColumnOuter;
+  simple('GEO-FEEDWELL-ANNULUS', 3, annulusOk ? 'PASS' : 'FAIL', 'Corona libre entre columna y pozo de alimentación', annulusOk ? 'Cumple.' : 'El radio interior del pozo no supera el de la columna: no hay paso de agua.', { value: rFwInner - rColumnOuter, limit: '> 0', unit: 'm', componentIds: ['HYD-001', 'HYD-002'] });
+  if (annulusOk) {
+    const vFw = t.record('feedwell.downwardVelocity.peak', qPeakS / (Math.PI * (rFwInner ** 2 - rColumnOuter ** 2)), {
+      label: 'Velocidad descendente en el pozo a caudal punta',
+      unit: 'm/s',
+      inputs: ['flow.peak.m3h', 'feedwell.diameter', 'column.outerRadius'],
+      equation: 'v = Qmax / (π·(rpa,int² − rc²))',
+    });
+    criterionCheck('HYD-FEEDWELL-VELOCITY', 2, 'feedwellDownwardVelocityPeak', vFw, ['HYD-002']);
+  } else {
+    simple('HYD-FEEDWELL-VELOCITY', 2, 'NOT_EVALUATED', CRITERION_META.feedwellDownwardVelocityPeak.label, 'No calculable: no existe corona de paso (ver GEO-FEEDWELL-ANNULUS).', { componentIds: ['HYD-002'] });
+  }
 
   // Ventanas de la columna
   const portWidth = t.record('column.portWidth', MODELLING_RULES.portWidthToPitch * ((2 * Math.PI * rColumnOuter) / hy.columnPortCount), {
@@ -410,6 +433,25 @@ export function runEngine(
   const weirLength = t.record('weir.length.gross', 2 * Math.PI * (R - hy.weirPlateThicknessM / 2), { label: 'Longitud bruta de vertedero', unit: 'm', inputs: ['tank.diameter', 'input.hydraulics.weirPlateThicknessM'], equation: 'L = 2π·(R − e/2)' });
   const weirEff = t.record('weir.length.effective', weirLength - hy.weirExclusionLengthM, { label: 'Longitud efectiva de vertedero', unit: 'm', inputs: ['weir.length.gross', 'input.hydraulics.weirExclusionLengthM'], equation: 'Lef = L − Lexcl' });
   simple('GEO-WEIR-LENGTH-POSITIVE', 3, weirEff > 0 ? 'PASS' : 'FAIL', 'Longitud efectiva de vertedero positiva', weirEff > 0 ? 'Cumple.' : 'Las exclusiones superan la longitud disponible.', { value: weirEff, limit: '> 0', unit: 'm', componentIds: ['HYD-004'] });
+  const weirOk = weirEff > 0;
+  const theta = degToRad(hy.vNotchAngleDeg);
+  let notchCount: number;
+  let yWaterAvgOp: number;
+  let yWaterPeakOp: number;
+  if (!weirOk) {
+    // Sin longitud útil no hay cargas, escotaduras ni láminas calculables: se declaran no disponibles.
+    const why = 'No calculable: la longitud efectiva de vertedero no es positiva (ver GEO-WEIR-LENGTH-POSITIVE).';
+    for (const [id, title] of [
+      ['HYD-WEIR-LOADING-ADMISSIBLE', 'CLV punta ≤ admisible de diseño'],
+      ['HYD-WEIR-LOADING-CRITERION', CRITERION_META.weirLoadingPeak.label],
+      ['HYD-NOTCH-NOT-DROWNED', 'Lámina dentro de la escotadura a caudal punta'],
+    ] as const) {
+      simple(id, 2, 'NOT_EVALUATED', title, why, { componentIds: ['HYD-004'] });
+    }
+    notchCount = fixed.notchCount ?? 0;
+    yWaterAvgOp = H;
+    yWaterPeakOp = H;
+  } else {
   const wlAvg = t.record('loading.weir.avg', qAvgD / weirEff, { label: 'Carga lineal de vertedero a caudal medio', unit: 'm3/(m.d)', inputs: ['flow.avg.m3d', 'weir.length.effective'], equation: 'CLV = Qdiario / Lef' });
   const wlPeak = t.record('loading.weir.peak', qPeakD / weirEff, { label: 'Carga lineal de vertedero a caudal punta', unit: 'm3/(m.d)', inputs: ['flow.peak.m3d', 'weir.length.effective'], equation: 'CLV = Qmax,diario / Lef' });
   void wlAvg;
@@ -422,8 +464,7 @@ export function runEngine(
   criterionCheck('HYD-WEIR-LOADING-CRITERION', 2, 'weirLoadingPeak', wlPeak, ['HYD-004']);
 
   const notchDecision = decide('notchCount', () => Math.max(1, Math.floor(weirEff / hy.notchSpacingM)));
-  const notchCount = t.record('weir.notchCount', notchDecision.value, { label: 'Número de escotaduras en V', unit: '-', inputs: ['weir.length.effective', 'input.hydraulics.notchSpacingM'], equation: notchDecision.fixed ? 'n fijado' : 'n = ⌊Lef / paso⌋', origin: notchDecision.fixed ? 'FIXED_BY_CONSTRAINT' : 'ADOPTED' });
-  const theta = degToRad(hy.vNotchAngleDeg);
+  notchCount = t.record('weir.notchCount', notchDecision.value, { label: 'Número de escotaduras en V', unit: '-', inputs: ['weir.length.effective', 'input.hydraulics.notchSpacingM'], equation: notchDecision.fixed ? 'n fijado' : 'n = ⌊Lef / paso⌋', origin: notchDecision.fixed ? 'FIXED_BY_CONSTRAINT' : 'ADOPTED' });
   sourcesUsed.add('ISO-1438-2017');
   const hPeak = t.record('weir.head.peak', vNotchHead(qPeakS / notchCount, theta, hy.weirCd), { label: 'Carga sobre escotaduras a caudal punta', unit: 'm', inputs: ['weir.notchCount', 'flow.peak.m3h', 'input.hydraulics.weirCd', 'input.hydraulics.vNotchAngleDeg'], equation: 'h = [q / (Cd·8/15·√(2g)·tan(θ/2))]^(2/5)' });
   const hAvg = t.record('weir.head.avg', vNotchHead(qAvgH / 3600 / notchCount, theta, hy.weirCd), { label: 'Carga sobre escotaduras a caudal medio', unit: 'm', inputs: ['weir.notchCount', 'flow.avg.m3h', 'input.hydraulics.weirCd', 'input.hydraulics.vNotchAngleDeg'], equation: 'h = [q / (Cd·8/15·√(2g)·tan(θ/2))]^(2/5)' });
@@ -431,8 +472,20 @@ export function runEngine(
     const ev = evaluateRange(hPeak, { max: hy.notchDepthM });
     simple('HYD-NOTCH-NOT-DROWNED', 2, ev.status, 'Lámina dentro de la escotadura a caudal punta', ev.status === 'PASS' ? 'Cumple.' : 'La carga supera la profundidad de la escotadura: el vertedero trabajaría ahogado o desbordaría la chapa.', { value: hPeak, limit: ev.limit, unit: 'm', componentIds: ['HYD-004'] });
   }
-  const yWaterAvg = t.record('level.water.avg', H + hAvg, { label: 'Cota de lámina a caudal medio', unit: 'm', inputs: ['tank.depth', 'weir.head.avg'], equation: 'y = H + hmed' });
-  const yWaterPeak = t.record('level.water.peak', H + hPeak, { label: 'Cota de lámina a caudal punta', unit: 'm', inputs: ['tank.depth', 'weir.head.peak'], equation: 'y = H + hmax' });
+  yWaterAvgOp = t.record('level.water.avg', H + hAvg, { label: 'Cota de lámina a caudal medio', unit: 'm', inputs: ['tank.depth', 'weir.head.avg'], equation: 'y = H + hmed' });
+  yWaterPeakOp = t.record('level.water.peak', H + hPeak, { label: 'Cota de lámina a caudal punta', unit: 'm', inputs: ['tank.depth', 'weir.head.peak'], equation: 'y = H + hmax' });
+  }
+  const yWaterPeak = yWaterPeakOp;
+  // Láminas de referencia de la geometría instalada (fijas en modo B; ver SizingDecisions).
+  const refAvg = decide('referenceWaterAvgY', () => yWaterAvgOp);
+  const refPeak = decide('referenceWaterPeakY', () => yWaterPeakOp);
+  const yRefAvg = t.record('level.water.reference.avg', refAvg.value, { label: 'Lámina media de referencia de la geometría instalada', unit: 'm', inputs: ['tank.depth'], equation: refAvg.fixed ? 'Fijada por el equipo existente' : 'y = lámina a caudal medio', origin: refAvg.fixed ? 'FIXED_BY_CONSTRAINT' : 'CALCULATED' });
+  const yRefPeak = t.record('level.water.reference.peak', refPeak.value, { label: 'Lámina punta de referencia de la geometría instalada', unit: 'm', inputs: ['tank.depth'], equation: refPeak.fixed ? 'Fijada por el equipo existente' : 'y = lámina a caudal punta', origin: refPeak.fixed ? 'FIXED_BY_CONSTRAINT' : 'CALCULATED' });
+  {
+    const shellTop = yRefPeak + Math.min(MODELLING_RULES.feedwellTopAboveWaterM, MODELLING_RULES.baffleTopAboveWaterM);
+    const margin = shellTop - yWaterPeakOp;
+    simple('HYD-SHELLS-ABOVE-WATER', 2, !weirOk ? 'NOT_EVALUATED' : margin > 0 ? 'PASS' : 'FAIL', 'Pozo y deflector de flotantes por encima de la lámina en punta', !weirOk ? 'Lámina en punta no calculable.' : margin > 0 ? 'Cumple.' : 'La lámina en punta rebasa la coronación instalada del pozo o del deflector.', { value: margin, limit: '> 0', unit: 'm', componentIds: ['HYD-002', 'MEC-006'] });
+  }
 
   // ───────────────────────── 7. Canal perimetral y efluente ─────────────────────────
   sourcesUsed.add('CHOW-1959');
@@ -464,6 +517,9 @@ export function runEngine(
   const sludgeDecision = decide('sludgeDn', () => sludgeSel.dn);
   const sludgeDn = t.record('sludge.dn', sludgeDecision.value, { label: 'DN de la conducción de lodos', unit: 'mm', inputs: ['sludge.flow', 'input.hydraulics.sludgePipeMinDn', 'input.hydraulics.sludgeDesignVelocityM_s'], equation: sludgeDecision.fixed ? 'DN fijado' : 'max(DNmín, menor DN con v ≤ v diseño)', origin: sludgeDecision.fixed ? 'FIXED_BY_CONSTRAINT' : 'ADOPTED' });
   {
+    const vSludge = t.record('sludge.velocity', qSludge / 3600 / circleArea(sludgeDn / 1000), { label: 'Velocidad en la conducción de lodos', unit: 'm/s', inputs: ['sludge.flow', 'sludge.dn'], equation: 'v = Qlodo / (π·DN²/4)' });
+    const evV = evaluateRange(vSludge, { max: hy.sludgeDesignVelocityM_s });
+    simple('HYD-SLUDGE-VELOCITY', 2, sludgeSel.exhausted && !sludgeDecision.fixed ? 'FAIL' : evV.status, 'Velocidad de diseño en la conducción de lodos', evV.status === 'PASS' ? 'Cumple.' : 'El DN adoptado supera la velocidad de diseño de la conducción de lodos.', { value: vSludge, limit: evV.limit, unit: 'm/s', componentIds: ['HYD-006'] });
     simple('HYD-SLUDGE-MIN-DN', 2, sludgeDn >= hy.sludgePipeMinDn ? 'PASS' : 'FAIL', 'DN mínimo de la conducción de lodos', sludgeDn >= hy.sludgePipeMinDn ? 'Cumple.' : 'Inferior al DN mínimo adoptado.', { value: sludgeDn, limit: `≥ ${hy.sludgePipeMinDn}`, unit: 'mm', componentIds: ['HYD-006'] });
     const od = sludgeDn / 1000 + 2 * hy.pipeWallThicknessM;
     simple('GEO-SLUDGE-FITS-SUMP', 3, od < g.sumpDepthM ? 'PASS' : 'FAIL', 'Conducción de lodos cabe en la altura de la poceta', od < g.sumpDepthM ? 'Cumple.' : 'El tubo no cabe en la altura de la poceta.', { value: od, limit: `< ${g.sumpDepthM}`, unit: 'm', componentIds: ['HYD-006', 'CIV-004'] });
@@ -477,8 +533,14 @@ export function runEngine(
   const vColumn = t.record('volume.deduction.column', Math.PI * rColumnOuter ** 2 * (H + sumpDrop), { label: 'Deducción: columna central', unit: 'm3', inputs: ['column.outerRadius', 'tank.depth', 'floor.dropAtSump'], equation: 'V = π·rc²·(H + Δy)' });
   const vFeedwell = t.record(
     'volume.deduction.feedwell',
-    g.excludeFeedwellFromEffectiveVolume ? Math.PI * (rFwInner ** 2 - rColumnOuter ** 2) * hy.feedwellDepthM : 0,
-    { label: 'Deducción: interior del pozo de alimentación', unit: 'm3', inputs: ['feedwell.diameter', 'column.outerRadius', 'input.hydraulics.feedwellDepthM'], equation: g.excludeFeedwellFromEffectiveVolume ? 'V = π·(rpa,int² − rc²)·hpa' : 'No se deduce (opción de entrada)' },
+    g.excludeFeedwellFromEffectiveVolume && annulusOk ? Math.PI * (rFwInner ** 2 - rColumnOuter ** 2) * hy.feedwellDepthM : 0,
+    {
+      label: 'Deducción: interior del pozo de alimentación',
+      unit: 'm3',
+      inputs: ['feedwell.diameter', 'column.outerRadius', 'input.hydraulics.feedwellDepthM'],
+      equation: !g.excludeFeedwellFromEffectiveVolume ? 'No se deduce (opción de entrada)' : annulusOk ? 'V = π·(rpa,int² − rc²)·hpa' : 'No calculable: sin corona entre columna y pozo (GEO-FEEDWELL-ANNULUS)',
+      status: g.excludeFeedwellFromEffectiveVolume && !annulusOk ? 'NOT_EVALUATED' : 'PASS',
+    },
   );
   const yBlanket = g.sludgeBlanketDepthM;
   let vBlanket = 0;
@@ -527,7 +589,7 @@ export function runEngine(
   const rSlab = t.record('civil.slabRadius', rWallOuter + civ.slabProjectionM, { label: 'Radio de la losa', unit: 'm', inputs: ['civil.wallOuterRadius', 'input.civil.slabProjectionM'], equation: 'r = Rext + vuelo' });
   const yLaunderFloor = H - civ.launderDepthM;
   const yChannelTop = t.record('level.channelTop', H + g.freeboardM, { label: 'Coronación del canal perimetral', unit: 'm', inputs: ['tank.depth', 'input.geometry.freeboardM'], equation: 'y = H + resguardo' });
-  simple('HYD-FREEBOARD-OVER-PEAK', 2, yChannelTop > yWaterPeak ? 'PASS' : 'FAIL', 'Coronación sobre la lámina en punta', yChannelTop > yWaterPeak ? 'Cumple.' : 'La lámina en punta supera la coronación.', { value: yChannelTop - yWaterPeak, limit: '> 0', unit: 'm', componentIds: ['CIV-005'] });
+  simple('HYD-FREEBOARD-OVER-PEAK', 2, !weirOk ? 'NOT_EVALUATED' : yChannelTop > yWaterPeak ? 'PASS' : 'FAIL', 'Coronación sobre la lámina en punta', yChannelTop > yWaterPeak ? 'Cumple.' : 'La lámina en punta supera la coronación.', { value: yChannelTop - yWaterPeak, limit: '> 0', unit: 'm', componentIds: ['CIV-005'] });
 
   const pipeWall = hy.pipeWallThicknessM;
   const yInletAxis = t.record('level.inletAxis', Math.min(ySlabBottom, yPitBottom) - MODELLING_RULES.buriedPipeCoverM - (dIn / 2 + pipeWall), { label: 'Cota del eje de la tubería de entrada', unit: 'm', inputs: ['level.slabBottom', 'level.pitBottom', 'inlet.dn'], equation: 'y = min(ylosa,inf, ypoceta,inf) − recubrimiento − rext' });
@@ -543,7 +605,7 @@ export function runEngine(
   {
     const clr = yGirderBottom - yWaterPeak;
     const ev = evaluateRange(clr, { min: me.bridgeClearanceAboveWaterMinM });
-    simple('GEO-BRIDGE-CLEARANCE', 3, ev.status, 'Gálibo del puente sobre la lámina en punta', ev.status === 'PASS' ? 'Cumple.' : 'Gálibo insuficiente.', { value: clr, limit: ev.limit, unit: 'm', componentIds: ['MEC-001'] });
+    simple('GEO-BRIDGE-CLEARANCE', 3, weirOk ? ev.status : 'NOT_EVALUATED', 'Gálibo del puente sobre la lámina en punta', ev.status === 'PASS' ? 'Cumple.' : 'Gálibo insuficiente.', { value: clr, limit: ev.limit, unit: 'm', componentIds: ['MEC-001'] });
   }
   criterionCheck('GEO-WALKWAY-WIDTH', 4, 'walkwayClearWidth', me.bridgeWidthM, ['MEC-001']);
 
@@ -583,6 +645,8 @@ export function runEngine(
     notchCount,
     effluentDn,
     sludgeDn,
+    referenceWaterAvgY: yRefAvg,
+    referenceWaterPeakY: yRefPeak,
   };
 
   const model: ResolvedModel = {
@@ -605,8 +669,10 @@ export function runEngine(
     yLaunderFloor,
     yChannelTop,
     channelFloorThickness: civ.channelFloorThicknessM,
-    yWaterAvg,
-    yWaterPeak,
+    yWaterAvg: yRefAvg,
+    yWaterPeak: yRefPeak,
+    yWaterAvgOperating: yWaterAvgOp,
+    yWaterPeakOperating: yWaterPeakOp,
     weirPlateThickness: hy.weirPlateThicknessM,
     notchDepth: hy.notchDepthM,
     notchCount,
@@ -622,7 +688,7 @@ export function runEngine(
     rFeedwellOuter: rFwOuter,
     rFeedwellInner: rFwInner,
     yFeedwellBottom: yFwBottom,
-    yFeedwellTop: yWaterPeak + MODELLING_RULES.feedwellTopAboveWaterM,
+    yFeedwellTop: yRefPeak + MODELLING_RULES.feedwellTopAboveWaterM,
     inletDnM: dIn,
     effluentDnM: effluentDn / 1000,
     sludgeDnM: sludgeDn / 1000,
@@ -652,7 +718,7 @@ export function runEngine(
     rBaffleInner,
     baffleThickness: hy.weirPlateThicknessM,
     yBaffleBottom: H - me.scumBaffleDepthM,
-    yBaffleTop: yWaterPeak + MODELLING_RULES.baffleTopAboveWaterM,
+    yBaffleTop: yRefPeak + MODELLING_RULES.baffleTopAboveWaterM,
     rSkimmerStart,
     rSkimmerTip,
     scumBoxLength: me.scumBoxLengthM,

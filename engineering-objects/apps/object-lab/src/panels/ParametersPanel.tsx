@@ -119,6 +119,7 @@ const RESIZE: { id: ResizeGroup; label: string }[] = [
   { id: 'weir', label: 'Vertedero' },
   { id: 'effluent', label: 'Colector de efluente' },
   { id: 'sludge', label: 'Conducción de lodos' },
+  { id: 'mechanical', label: 'Mecánica (puente, brazos, barredor)' },
 ];
 
 export interface ParametersPanelProps {

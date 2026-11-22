@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { MATERIAL_IDS, type MaterialId } from '@eo/material-library';
+import { MATERIAL_IDS, getMaterial, type MaterialId } from '@eo/material-library';
 
 /**
  * Esquema de entradas de diseño del decantador primario circular.
@@ -11,6 +11,9 @@ export const SCHEMA_VERSION = '1.0.0';
 const pos = z.number().finite().positive();
 const nonNeg = z.number().finite().nonnegative();
 const materialId = z.enum(MATERIAL_IDS as [MaterialId, ...MaterialId[]]);
+/** Material del catálogo restringido a una familia (p. ej. los elementos de hormigón solo admiten hormigón). */
+const materialOfFamily = (family: string) =>
+  materialId.refine((id) => getMaterial(id).family === family, { message: `El material debe ser de la familia "${family}"` });
 
 /** Caudal punta por factor O directo, nunca ambos (spec §4.1). */
 const peakSchema = z.discriminatedUnion('method', [
@@ -97,8 +100,8 @@ export const designInputSchema = z
       launderDepthM: pos,
       channelWallThicknessM: pos,
       channelFloorThicknessM: pos,
-      concrete: materialId,
-      fillConcrete: materialId,
+      concrete: materialOfFamily('concrete'),
+      fillConcrete: materialOfFamily('concrete'),
       /** Los espesores son datos de partida hasta que un cálculo estructural los verifique. */
       thicknessStatus: z.enum(['PRELIMINARY_UNVERIFIED', 'STRUCTURALLY_VERIFIED']),
       structuralVerificationRef: z.string().optional(),
