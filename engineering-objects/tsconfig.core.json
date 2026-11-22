@@ -1,0 +1,14 @@
+{
+  "//": "Capas de ingeniería: sin DOM, sin React, sin Three.js. Si alguien importa algo de render aquí, el typecheck falla.",
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "types": []
+  },
+  "include": [
+    "packages/engineering-core/src",
+    "packages/material-library/src",
+    "packages/geometry-engine/src",
+    "packages/equipment-library/src"
+  ]
+}

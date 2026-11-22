@@ -1,0 +1,15 @@
+{
+  "name": "@eo/three-adapter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "description": "Adaptador de descriptores geom\u00e9tricos a Three.js con gesti\u00f3n expl\u00edcita de recursos GPU.",
+  "dependencies": {
+    "@eo/geometry-engine": "0.1.0",
+    "@eo/material-library": "0.1.0",
+    "three": "0.170.0",
+    "@eo/engineering-core": "0.1.0"
+  }
+}

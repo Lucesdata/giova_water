@@ -1,0 +1,10 @@
+{
+  "name": "@eo/geometry-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "description": "Geometría paramétrica neutra (descriptores), ensamblajes y mediciones. Sin Three.js.",
+  "dependencies": { "@eo/engineering-core": "0.1.0" }
+}
