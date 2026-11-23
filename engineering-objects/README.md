@@ -166,7 +166,7 @@ se recalculan con el modelo actual y se marcan como no verificados (test en `tes
 ## Clarifloculador (segundo objeto)
 
 Tanque circular con **floculación mecánica en una cámara central** y sedimentación en la corona
-exterior (`packages/equipment-library/src/clariflocculator/`, modelo `CF-ENG-1.0.0`). Detalle de
+exterior (`packages/equipment-library/src/clariflocculator/`, modelo `CF-ENG-1.1.0`). Detalle de
 entradas, cálculo, criterios y componentes en [`specs/clariflocculator.md`](specs/clariflocculator.md).
 
 - **Motor común**: el motor del decantador se generalizó con una estrategia de zona central; el

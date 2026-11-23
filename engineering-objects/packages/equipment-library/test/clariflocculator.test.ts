@@ -199,3 +199,64 @@ describe('variantes del clarifloculador', () => {
     for (const s of ['Cámara de floculación', 'floc.G', 'ringPitchToBladeWidth', 'MEC-FLOC-DRIVE', 'TEN-STATES-WATER-2018']) expect(md).toContain(s);
   });
 });
+
+describe('correcciones de revisión (CF-ENG-1.1.0)', () => {
+  const nodesOf = (design: typeof d, componentId: string) => {
+    const out: { id: string; shape?: unknown }[] = [];
+    const walk = (n: { id: string; shape?: unknown; children?: readonly unknown[] }) => {
+      out.push(n);
+      for (const c of n.children ?? []) walk(c as typeof n);
+    };
+    const comp = design.assembly.components.find((c) => c.componentId === componentId)!;
+    walk(comp.root as never);
+    return out;
+  };
+
+  it('el tubo de giro pasa entre las vigas del puente; un puente estrecho da FAIL', () => {
+    expect(check('GEO-SLEEVE-BRIDGE')?.status).toBe('PASS');
+    const narrow = designClariflocculator({ ...CLF_010_WATER, mechanical: { ...CLF_010_WATER.mechanical, bridgeWidthM: 0.8 } });
+    expect(check('GEO-SLEEVE-BRIDGE', narrow)?.status).toBe('FAIL');
+  });
+
+  it('el accionamiento del floculador apoya sobre el tablero; si sobresale, FAIL', () => {
+    expect(check('GEO-FLOC-DRIVE-DECK')?.status).toBe('PASS');
+    const wide = designClariflocculator(withFloc({ drive: { footprintM: 0.8, heightM: 0.5 } }));
+    expect(check('GEO-FLOC-DRIVE-DECK', wide)?.status).toBe('FAIL');
+    // El motor queda dentro del ancho del tablero (eje del puente)
+    const motor = nodesOf(d, 'MEC-008').find((n) => n.id === 'MEC-008.motor') as { transform?: { position: number[] } } | undefined;
+    expect(Math.abs(motor!.transform!.position[0]!)).toBeLessThan(CLF_010_WATER.mechanical.bridgeWidthM / 2);
+  });
+
+  it('criterios del pozo de alimentación del decantador se rechazan en el clarifloculador', () => {
+    for (const k of ['feedwellDiameterRatio', 'feedwellDepth']) {
+      expect(() => designClariflocculator({ ...CLF_010_WATER, criteriaOverrides: { [k]: { min: 0.1, sourceId: 'MWH-2012', note: 'x' } } })).toThrow(/no aplica al clarifloculador/);
+    }
+  });
+
+  it('sin anillos de paletas no se generan brazos de longitud nula', () => {
+    const short = designClariflocculator(withFloc({ detentionTimeMin: 2 }));
+    expect(short.values['floc.paddle.rings']!.value).toBe(0);
+    expect(check('GEO-PADDLES-FIT', short)?.message).toMatch(/No cabe ningún anillo/);
+    expect(nodesOf(short, 'MEC-007').filter((n) => n.id.includes('.arm-'))).toHaveLength(0);
+  });
+
+  it('anillos fijados que no caben: la traza da los construidos y el FAIL lo explica', () => {
+    const fixed = designClariflocculator(CLF_010_WATER, { fixed: { paddleRings: 9 } as never });
+    const built = nodesOf(fixed, 'MEC-007').filter((n) => /\.blade-\d+$/.test(n.id)).length / CLF_010_WATER.flocculation.paddles.armCount;
+    expect(fixed.values['floc.paddle.rings']!.value).toBe(built);
+    expect(built).toBeLessThan(9);
+    const fit = check('GEO-PADDLES-FIT', fixed)!;
+    expect(fit.status).toBe('FAIL');
+    expect(fit.message).toMatch(/fijaron 9/);
+  });
+
+  it('allowedResize rechaza grupos que el equipo no tiene', () => {
+    const base = createClfBaseVariant(CLF_010_WATER, { createdAt: T0 });
+    expect(() => createClfVariant(base, { tag: 'X' }, { mode: 'C', allowedResize: ['nope' as never] })).toThrow(/no existen/);
+  });
+
+  it('las comprobaciones de criterio comunes usan las etiquetas del clarifloculador', () => {
+    const hrt = check('HYD-HRT-CRITERION')!;
+    expect(hrt.title).toMatch(/zona de sedimentación/);
+  });
+});

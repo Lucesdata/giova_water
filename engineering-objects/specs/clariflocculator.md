@@ -49,6 +49,9 @@ Los criterios de sedimentación son `designCriteria.settlingLoadingAvgM_h` (y pu
 la corona. Caudal, geometría, obra civil, hidráulica (sin `feedwell*`) y mecánica del rascador son los
 mismos bloques que en el decantador.
 
+Los criterios del pozo de alimentación del decantador (`feedwellDiameterRatio`, `feedwellDepth`) no
+aplican: el motor nunca los evalúa, así que `criteriaOverrides` los rechaza con un error explícito.
+
 ## 3. Cadena de cálculo
 
 ```
@@ -102,14 +105,17 @@ Los 17 del tanque circular (HYD-002 pasa a ser **Cámara de floculación**) más
 | MEC-007 | Agitador de paletas de floculación (tubo de giro, brazos, paletas) | rotación, 1 GDL, independiente del rascador |
 | MEC-008 | Accionamiento del floculador (anular alrededor de MEC-002) | salida giratoria |
 
-Comprobaciones geométricas propias: `GEO-SLEEVE-CAGE`, `GEO-PADDLES-WALL`, `GEO-PADDLES-SLEEVE`,
-`GEO-PADDLES-VERTICAL`, `GEO-PADDLES-FIT`, `GEO-SETTLING-ANNULUS`. Pendientes críticas propias:
+Comprobaciones geométricas propias: `GEO-SLEEVE-CAGE`, `GEO-SLEEVE-BRIDGE` (el tubo de giro pasa
+entre las vigas del puente), `GEO-FLOC-DRIVE-DECK` (el reductor anular apoya sobre el tablero),
+`GEO-PADDLES-WALL`, `GEO-PADDLES-SLEEVE`, `GEO-PADDLES-VERTICAL`, `GEO-PADDLES-FIT`,
+`GEO-SETTLING-ANNULUS`. Si no cabe ningún anillo de paletas no se generan brazos; con anillos fijados
+que no caben, la traza `floc.paddle.rings` da los construidos y `GEO-PADDLES-FIT` explica la diferencia. Pendientes críticas propias:
 `MEC-FLOC-DRIVE` (par, reductor, variador), `MEC-FLOC-STRUCTURE`.
 
 ## 7. Ejemplos (`examples/output/`)
 
 | Variante | Modo | Estado | Nota |
 |---|---|---|---|
-| CLF-010 | BASE | INCOMPLETE | 10 L/s, Fp 1,5; Vf 27 m³, D 6,7 m, G ≈ 46 s⁻¹, 3,4 rpm |
+| CLF-010 | BASE | INCOMPLETE | 10 L/s, Fp 1,5; Vf 27 m³, D 6,7 m, G ≈ 46 s⁻¹, 3,4 rpm; puente de 1,6 m para alojar tubo de giro y reductor |
 | CLF-020 | A | INCOMPLETE | 20 L/s; la jaula se agranda a 0,30 m porque los deflectores de la columna mayor no cabían en la de 0,22 m |
 | CLF-010-EVAL-15 | B | FAILED | El equipo de 10 L/s a 15 L/s da tf = 20 min < 30 min |

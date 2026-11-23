@@ -191,6 +191,10 @@ export function createVariantOf<I, Dc extends object, Dz extends VariantDesign<I
 ): EquipmentVariant<I, Dc> {
   const mode = opts.mode ?? 'A';
   if (mode !== 'C' && opts.allowedResize) throw new Error('allowedResize solo tiene sentido en modo C.');
+  const unknownGroups = (opts.allowedResize ?? []).filter((g) => !def.resizeGroups.includes(g));
+  if (unknownGroups.length > 0) {
+    throw new Error(`allowedResize contiene grupos que no existen en ${def.objectType}: ${unknownGroups.join(', ')}. Válidos: ${def.resizeGroups.join(', ')}.`);
+  }
   const merged = mergeInputs(cloneData(parent.designInputs) as unknown, changes);
   const input = def.parse(merged);
   if (mode === 'B' || mode === 'C') {

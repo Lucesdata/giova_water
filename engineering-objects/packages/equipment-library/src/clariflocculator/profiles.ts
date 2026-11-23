@@ -6,11 +6,22 @@ import type { ClfInput } from './schema.js';
 /** Criterios propios de la floculación mecánica. */
 export const CLF_OWN_CRITERION_KEYS = ['flocculationTime', 'velocityGradient', 'gtProduct', 'paddleTipSpeed', 'paddleAreaRatio'] as const;
 export type ClfOwnCriterionKey = (typeof CLF_OWN_CRITERION_KEYS)[number];
-export type ClfCriterionKey = CriterionKey | ClfOwnCriterionKey;
-export const CLF_CRITERION_KEYS: readonly ClfCriterionKey[] = [...CRITERION_KEYS, ...CLF_OWN_CRITERION_KEYS];
+/**
+ * Criterios del decantador que NO aplican al clarifloculador: su zona central es una cámara de
+ * floculación dimensionada por tiempo, no un pozo proporcional al tanque, y el motor nunca los evalúa.
+ */
+export const CLF_EXCLUDED_CRITERION_KEYS = ['feedwellDiameterRatio', 'feedwellDepth'] as const satisfies readonly CriterionKey[];
+type ExcludedKey = (typeof CLF_EXCLUDED_CRITERION_KEYS)[number];
+export type ClfCriterionKey = Exclude<CriterionKey, ExcludedKey> | ClfOwnCriterionKey;
+export const CLF_CRITERION_KEYS: readonly ClfCriterionKey[] = [
+  ...CRITERION_KEYS.filter((k): k is Exclude<CriterionKey, ExcludedKey> => !(CLF_EXCLUDED_CRITERION_KEYS as readonly string[]).includes(k)),
+  ...CLF_OWN_CRITERION_KEYS,
+];
+
+const { feedwellDiameterRatio: _fr, feedwellDepth: _fd, ...COMMON_META } = CRITERION_META;
 
 export const CLF_CRITERION_META: Record<ClfCriterionKey, { label: string; unit: UnitId }> = {
-  ...CRITERION_META,
+  ...COMMON_META,
   surfaceLoadingAvg: { label: 'Carga superficial sobre la zona de sedimentación a caudal medio', unit: 'm3/(m2.h)' },
   surfaceLoadingPeak: { label: 'Carga superficial sobre la zona de sedimentación a caudal punta', unit: 'm3/(m2.h)' },
   hrtAvg: { label: 'Tiempo de retención en la zona de sedimentación a caudal medio', unit: 'h' },
@@ -73,6 +84,9 @@ export function resolveClfCriteria(input: ClfInput): Partial<Record<ClfCriterion
   const profile = CLF_PROFILES[input.profileId];
   const out: Partial<Record<ClfCriterionKey, Criterion>> = { ...profile.criteria };
   for (const [k, o] of Object.entries(input.criteriaOverrides)) {
+    if ((CLF_EXCLUDED_CRITERION_KEYS as readonly string[]).includes(k)) {
+      throw new Error(`El criterio "${k}" no aplica al clarifloculador (la zona central es una cámara de floculación): use flocculationTime, velocityGradient, etc.`);
+    }
     if (!(CLF_CRITERION_KEYS as readonly string[]).includes(k)) {
       throw new Error(`Criterio desconocido en criteriaOverrides: "${k}". Válidos: ${CLF_CRITERION_KEYS.join(', ')}`);
     }
@@ -85,6 +99,9 @@ export function resolveClfCriteria(input: ClfInput): Partial<Record<ClfCriterion
 /** Subconjunto con clave del motor circular común. */
 export function engineCriteriaOf(criteria: Partial<Record<ClfCriterionKey, Criterion>>): Partial<Record<CriterionKey, Criterion>> {
   const out: Partial<Record<CriterionKey, Criterion>> = {};
-  for (const k of CRITERION_KEYS) if (criteria[k]) out[k] = criteria[k];
+  for (const k of CLF_CRITERION_KEYS) {
+    const c = criteria[k];
+    if (c && (CRITERION_KEYS as readonly string[]).includes(k)) out[k as CriterionKey] = c;
+  }
   return out;
 }
