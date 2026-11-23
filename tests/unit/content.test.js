@@ -130,8 +130,8 @@ describe('laboratorio de objetos de ingeniería', () => {
 describe('estructura de la página', () => {
   it('secciones en el orden pedido y con numeración consecutiva', async () => {
     const { SECTIONS } = await import('../../src/data/sections.js');
-    expect(SECTIONS.map((x) => x.id)).toEqual(['inicio', 'proyectos', 'sobre', 'gemelos', 'objetos', 'faq', 'contacto']);
-    expect(SECTIONS.map((x) => x.n)).toEqual(['00', '01', '02', '03', '04', '05', '06']);
+    expect(SECTIONS.map((x) => x.id)).toEqual(['inicio', 'proyectos', 'sobre', 'gemelos', 'objetos', 'watertracking', 'faq', 'contacto']);
+    expect(SECTIONS.map((x) => x.n)).toEqual(['00', '01', '02', '03', '04', '05', '06', '07']);
     for (const lang of LANGS) for (const { id } of SECTIONS) {
       expect(dictionary[lang].nav.items[id], `${lang} nav.items.${id}`).toBeTruthy();
     }

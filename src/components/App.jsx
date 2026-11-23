@@ -12,6 +12,7 @@ import ProjectModal from './ProjectModal.jsx';
 import DigitalTwins from './DigitalTwins.jsx';
 import EngineeringObjects from './EngineeringObjects.jsx';
 import { Contact, Footer } from './Contact.jsx';
+import WaterTracking from './WaterTracking.jsx';
 import Faq from './Faq.jsx';
 import { ScrollBackground } from './ScrollBackground.jsx';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
@@ -191,6 +192,7 @@ export default function App() {
         <About />
         <DigitalTwins />
         <EngineeringObjects />
+        <WaterTracking />
         <Faq />
         <Contact />
         <Footer />
