@@ -57,6 +57,7 @@ function StageCard({ i, spec, row, cfg, eff, copy, W, onChange }) {
               <input id={`${nameId}-size`} type="number" inputMode="decimal" min={spec.size.min} max={spec.size.max} value={cfg[sizeKey]}
                      onChange={(e) => onChange({ [sizeKey]: e.target.value })}
                      onBlur={() => onChange({ [sizeKey]: eff[sizeKey] })} />
+              {Number(cfg[sizeKey]) !== eff[sizeKey] && <span className="mono" role="note" style={{ fontSize: 12, color: 'var(--warn)' }}>{W.effective}: {eff[sizeKey]}</span>}
             </div>
           )}
           {spec.dose && (
@@ -65,6 +66,7 @@ function StageCard({ i, spec, row, cfg, eff, copy, W, onChange }) {
               <input id={`${nameId}-dose`} type="number" inputMode="decimal" step="0.1" min={spec.dose.min} max={spec.dose.max} value={cfg.dose}
                      onChange={(e) => onChange({ dose: e.target.value })}
                      onBlur={() => onChange({ dose: eff.dose })} />
+              {Number(cfg.dose) !== eff.dose && <span className="mono" role="note" style={{ fontSize: 12, color: 'var(--warn)' }}>{W.effective}: {eff.dose}</span>}
             </div>
           )}
           {spec.metric && (

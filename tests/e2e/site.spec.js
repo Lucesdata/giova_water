@@ -1000,6 +1000,7 @@ test.describe('watertracking', () => {
     await page.goto('/#watertracking');
     const dose = page.locator('#wt-disinfection-dose');
     await dose.fill('0');
+    await expect(page.locator('#watertracking [role=note]')).toContainText('Valor usado en el cálculo: 0.1');
     await dose.blur();
     await expect(dose).toHaveValue('0.1');
   });

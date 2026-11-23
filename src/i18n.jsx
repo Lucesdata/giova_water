@@ -443,7 +443,7 @@ const dict = {
       disclaimer: 'Cálculo de orden de magnitud en tu navegador; no usar para dimensionamiento.',
       flow: 'Caudal de diseño', inletTurbidity: 'Turbidez de entrada',
       trainLabel: 'Etapas del tren de tratamiento',
-      turbidity: 'Turbidez', typical: 'Rango típico',
+      effective: 'Valor usado en el cálculo', turbidity: 'Turbidez', typical: 'Rango típico',
       status: { off: 'OMITIDA', ok: 'SIN ALERTA', warn: 'REVISAR' },
       side: { low: 'bajo', high: 'alto' },
       stages: {
@@ -910,7 +910,7 @@ const dict = {
       disclaimer: 'Order-of-magnitude calculation in your browser; not for sizing.',
       flow: 'Design flow', inletTurbidity: 'Inlet turbidity',
       trainLabel: 'Treatment train stages',
-      turbidity: 'Turbidity', typical: 'Typical range',
+      effective: 'Value used in the calculation', turbidity: 'Turbidity', typical: 'Typical range',
       status: { off: 'SKIPPED', ok: 'NO ALERT', warn: 'REVIEW' },
       side: { low: 'low', high: 'high' },
       stages: {
@@ -1377,7 +1377,7 @@ const dict = {
       disclaimer: 'Calcul d’ordre de grandeur dans votre navigateur ; à ne pas utiliser pour le dimensionnement.',
       flow: 'Débit de conception', inletTurbidity: 'Turbidité d’entrée',
       trainLabel: 'Étapes de la filière de traitement',
-      turbidity: 'Turbidité', typical: 'Plage typique',
+      effective: 'Valeur utilisée dans le calcul', turbidity: 'Turbidité', typical: 'Plage typique',
       status: { off: 'IGNORÉE', ok: 'SANS ALERTE', warn: 'À VÉRIFIER' },
       side: { low: 'bas', high: 'élevé' },
       stages: {
