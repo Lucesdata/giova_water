@@ -13,11 +13,22 @@ import {
   type RevolveShape,
 } from '@eo/geometry-engine';
 import type { ResolvedModel } from '../primary-clarifier/definition/engine.js';
+import { MECH_RULES, driveSupportRadius } from '../primary-clarifier/mechanical/geometry.js';
 import type { PaddleLayout } from './strategy.js';
 import type { ClfInput } from './schema.js';
 
 /** Desfase angular de los brazos del agitador respecto a los del rascador (solo representación). */
 const PADDLE_PHASE = Math.PI / 8;
+/** Radio de la envolvente del motor del floculador (representación). */
+const FLOC_MOTOR_RADIUS = 0.12;
+/** El motor se sitúa a lo largo del eje del puente (+Z), dentro del tablero en ambos tipos de puente. */
+const FLOC_MOTOR_THETA = -Math.PI / 2;
+
+/** Radios del reductor anular del floculador (alrededor del accionamiento del rascador). */
+export function flocDriveRadii(m: ResolvedModel, clf: ClfInput): { inner: number; outer: number } {
+  const inner = m.driveFootprint / 2 + 0.05;
+  return { inner, outer: inner + clf.flocculation.drive.footprintM / 2 };
+}
 
 export function paddleAngles(l: PaddleLayout): number[] {
   return Array.from({ length: l.armCount }, (_, k) => PADDLE_PHASE + (k * 2 * Math.PI) / l.armCount);
@@ -36,9 +47,11 @@ export function buildFlocculator(m: ResolvedModel, l: PaddleLayout, clf: ClfInpu
   const children: GeometryNode[] = [
     node('MEC-007.sleeve', 'Tubo de giro del agitador', mat, ring(l.rSleeveInner, l.rSleeveOuter, yBottom, m.yDeck, 48), { moving: true }),
   ];
-  const rOuterEdge = l.ringRadii.length > 0 ? l.ringRadii[0]! + l.bladeWidth / 2 : l.rSleeveOuter;
+  // Sin anillos de paletas no hay brazos: se omiten (evita vigas de longitud nula).
+  const rOuterEdge = l.ringRadii.length > 0 ? l.ringRadii[0]! + l.bladeWidth / 2 : null;
   paddleAngles(l).forEach((th, k) => {
-    for (const [lvl, y] of [
+    if (rOuterEdge !== null && rOuterEdge > l.rSleeveOuter)
+      for (const [lvl, y] of [
       ['top', yTop + 0.04],
       ['bottom', yBottom - 0.04],
     ] as const) {
@@ -57,14 +70,14 @@ export function buildFlocculator(m: ResolvedModel, l: PaddleLayout, clf: ClfInpu
     { id: 'MEC-007.top', componentId: 'MEC-007', position: [0, m.yDeck, 0], matesWith: 'MEC-008.output', description: 'Unión del tubo de giro al accionamiento del floculador' },
   ]);
 
-  const rDriveIn = m.driveFootprint / 2 + 0.05;
+  const { inner: rDriveIn, outer: rDriveOut } = flocDriveRadii(m, clf);
   const drive = component(
     'MEC-008',
     node('MEC-008', 'Accionamiento del floculador', 'NONE', undefined, {
       children: [
-        node('MEC-008.gearbox', 'Reductor anular (envolvente)', clf.mechanical.materials.mechanism, ring(rDriveIn, rDriveIn + clf.flocculation.drive.footprintM / 2, m.yDeck, m.yDeck + clf.flocculation.drive.heightM, 48), { section: 'representational' }),
-        node('MEC-008.motor', 'Motor (envolvente)', clf.mechanical.materials.mechanism, cylinder(0.12, 0.35, 24), {
-          transform: { position: polar(rDriveIn + clf.flocculation.drive.footprintM / 2 + 0.12, Math.PI, m.yDeck + clf.flocculation.drive.heightM / 2), rotationY: 0 },
+        node('MEC-008.gearbox', 'Reductor anular (envolvente)', clf.mechanical.materials.mechanism, ring(rDriveIn, rDriveOut, m.yDeck, m.yDeck + clf.flocculation.drive.heightM, 48), { section: 'representational' }),
+        node('MEC-008.motor', 'Motor (envolvente)', clf.mechanical.materials.mechanism, cylinder(FLOC_MOTOR_RADIUS, 0.35, 24), {
+          transform: { position: polar(rDriveOut + FLOC_MOTOR_RADIUS, FLOC_MOTOR_THETA, m.yDeck + clf.flocculation.drive.heightM / 2), rotationY: 0 },
           section: 'representational',
         }),
       ],
@@ -87,6 +100,22 @@ export function flocculatorGeometryChecks(m: ResolvedModel, l: PaddleLayout, clf
   {
     const ev = evaluateRange(sleeveIn - cageCorner, { min: pd.sleeveClearanceM * (1 - 1e-9) });
     checks.add({ id: 'GEO-SLEEVE-CAGE', level: 3, status: ev.status, title: 'Holgura tubo del agitador – jaula del rascador', message: ev.status === 'PASS' ? 'El tubo de giro no toca la jaula giratoria.' : 'El tubo del agitador interfiere con la jaula del rascador.', value: sleeveIn - cageCorner, limit: ev.limit, unit: 'm', componentIds: ['MEC-007', 'MEC-003'] });
+  }
+  // El tubo de giro sube hasta el tablero: debe pasar entre las vigas principales del puente.
+  {
+    const girderInner = m.bridgeWidth / 2 - MECH_RULES.girderWidth / 2;
+    const sleeveOut = l.rSleeveOuter;
+    const ev = evaluateRange(girderInner - sleeveOut, { min: pd.sleeveClearanceM - 1e-6 });
+    checks.add({ id: 'GEO-SLEEVE-BRIDGE', level: 3, status: ev.status, title: 'Holgura tubo del agitador – vigas del puente', message: ev.status === 'PASS' ? 'El tubo de giro pasa entre las vigas principales del puente.' : 'El tubo de giro interfiere con las vigas principales del puente: ensanchar el puente o reducir la jaula.', value: girderInner - sleeveOut, limit: ev.limit, unit: 'm', componentIds: ['MEC-007', 'MEC-001'] });
+  }
+  // El reductor anular del floculador debe apoyar entero sobre el tablero (o la plataforma de la columna
+  // en puente radial, donde el tablero no cubre z < 0). Ver driveSupportRadius.
+  {
+    const { outer } = flocDriveRadii(m, clf);
+    const margin = driveSupportRadius(m) - outer;
+    const where = m.bridgeType === 'radial' ? 'el tablero y la plataforma de la columna central' : 'el tablero del puente';
+    const ev = evaluateRange(margin, { min: -1e-9 });
+    checks.add({ id: 'GEO-FLOC-DRIVE-DECK', level: 3, status: ev.status, title: 'Accionamiento del floculador apoyado sobre el puente', message: ev.status === 'PASS' ? `El reductor anular apoya sobre ${where}.` : `El reductor anular del floculador sobresale de ${where}: ensanchar el puente o reducir su envolvente.`, value: margin, limit: ev.limit, unit: 'm', componentIds: ['MEC-008', 'MEC-001'] });
   }
   // Punto más exterior de las paletas: esquina de la chapa (canto exterior y medio espesor tangencial).
   let maxR = 0;

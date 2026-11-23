@@ -54,7 +54,8 @@ export const CLF_010_WATER: ClfInputRaw = {
   },
   civil: base.civil,
   hydraulics,
-  mechanical: base.mechanical,
+  // Tablero de 1,6 m: el tubo de giro del agitador pasa entre las vigas y el reductor anular apoya sobre él.
+  mechanical: { ...base.mechanical, bridgeWidthM: 1.6 },
   site: { groundLevelM: 3.7, excavationWorkingSpaceM: 0.5 },
   meshResolution: { circularSegments: 96 },
 };

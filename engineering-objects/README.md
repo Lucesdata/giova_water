@@ -163,15 +163,25 @@ se recalculan con el modelo actual y se marcan como no verificados (test en `tes
 - Los límites mecánicos de solo comprobación (gálibo, pasarela, holguras mínimas) no exigen el grupo
   `mechanical` en modo C.
 
+## Cambios V1.4 (modelo `PC-ENG-1.4.0`): apoyo del accionamiento
+
+- Nueva comprobación `GEO-DRIVE-DECK`: la envolvente del accionamiento central debe apoyar entera
+  sobre el puente.
+- En puente radial el tablero acaba en el eje (z ≥ 0); el accionamiento apoya además en una
+  plataforma circular de radio b/2 sobre la columna central (`MEC-001.drive-platform`). Regla de
+  modelado común a ambos tipos de puente: una envolvente centrada de radio r apoya si r ≤ b/2.
+- Los ejemplos `DEC-*` se regeneran solo por la nueva comprobación (todos PASS); dimensiones y
+  estados no cambian.
+
 ## Clarifloculador (segundo objeto)
 
 Tanque circular con **floculación mecánica en una cámara central** y sedimentación en la corona
-exterior (`packages/equipment-library/src/clariflocculator/`, modelo `CF-ENG-1.0.0`). Detalle de
+exterior (`packages/equipment-library/src/clariflocculator/`, modelo `CF-ENG-1.1.0`). Detalle de
 entradas, cálculo, criterios y componentes en [`specs/clariflocculator.md`](specs/clariflocculator.md).
 
 - **Motor común**: el motor del decantador se generalizó con una estrategia de zona central; el
   clarifloculador solo aporta su cámara (V = Q·t), su diámetro por superficie anular y el agitador
-  (P = G²·μ·V; P = Σ ½·CD·ρ·A·(k·ω·r)³). El decantador no cambia ni un bit (los ejemplos lo prueban).
+  (P = G²·μ·V; P = Σ ½·CD·ρ·A·(k·ω·r)³). La refactorización no cambió ni un bit el decantador (los ejemplos lo prueban).
 - **Variantes comunes**: `src/shared/variants.ts` (modos A/B/C, exportación/importación verificada)
   parametrizado por `EquipmentDefinition`; el decantador conserva su API.
 - **Componentes**: los 17 comunes (HYD-002 = cámara de floculación) + MEC-007 agitador + MEC-008

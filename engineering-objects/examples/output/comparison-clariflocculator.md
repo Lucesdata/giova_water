@@ -10,7 +10,7 @@
 | Gradiente de velocidad G suministrado | 1/s | 46.169 | 43.094 | 46.169 |
 | Producto Gt al caudal de diseño | - | 83104.267 | 77569.831 | 55402.845 |
 | Velocidad de giro del agitador | rpm | 3.36 | 2.316 | 3.36 |
-| Anillos de paletas por brazo | - | 1 | 2 | 1 |
+| Anillos de paletas por brazo (construidos) | - | 1 | 2 | 1 |
 | Potencia útil entregada por las paletas | W | 75.221 | 131.072 | 75.221 |
 | Superficie de sedimentación requerida (gobierna caudal medio) | m2 | 24 | 48 | 36 |
 | Diámetro interior hidráulico adoptado | m | 6.7 | 9.5 | 6.7 |

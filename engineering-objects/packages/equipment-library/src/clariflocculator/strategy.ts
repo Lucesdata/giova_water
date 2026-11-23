@@ -15,7 +15,7 @@ import type { Criterion } from '../primary-clarifier/definition/profiles.js';
 import { CLF_CRITERION_META, type ClfCriterionKey } from './profiles.js';
 import type { ClfInput } from './schema.js';
 
-export const CLF_MODEL_VERSION = 'CF-ENG-1.0.0';
+export const CLF_MODEL_VERSION = 'CF-ENG-1.1.0';
 
 /** Reglas de modelado del agitador (no son criterios de diseño). */
 export const FLOC_RULES = {
@@ -286,8 +286,28 @@ export function createClfStrategy(clf: ClfInput, criteria: Partial<Record<ClfCri
     }
     const radii = feasible.slice(0, n);
     rings = n;
-    simple('GEO-PADDLES-FIT', 3, radii.length === n && n >= 1 ? 'PASS' : 'FAIL', 'Las paletas caben entre el tubo de giro y la pared', radii.length === n && n >= 1 ? `${n} anillo(s) de ${pd.armCount} paletas.` : `Solo caben ${feasible.length} anillo(s) (máx. ${pd.maxRings}) entre r = ${rMinEdge.toFixed(2)} m y r = ${rTipEdge.toFixed(2)} m.`, { value: feasible.length, limit: `≥ ${Math.max(n, 1)}`, componentIds: ['MEC-007'] });
-    t.record('floc.paddle.rings', n, { label: 'Anillos de paletas por brazo', unit: '-', inputs: ['floc.power.required', 'floc.paddle.angularSpeed'], equation: fixedRings !== undefined ? 'n fijado' : 'menor n con Σ ½·CD·ρ·A·(k·ω·rj)³·narm ≥ P', origin: fixedRings !== undefined ? 'FIXED_BY_CONSTRAINT' : 'ADOPTED' });
+    const fits = radii.length === n && n >= 1;
+    simple(
+      'GEO-PADDLES-FIT',
+      3,
+      fits ? 'PASS' : 'FAIL',
+      'Las paletas caben entre el tubo de giro y la pared',
+      fits
+        ? `${n} anillo(s) de ${pd.armCount} paletas.`
+        : feasible.length === 0
+          ? `No cabe ningún anillo de paletas entre el tubo de giro (r = ${rMinEdge.toFixed(2)} m) y la pared (r = ${rTipEdge.toFixed(2)} m).`
+          : `Se ${fixedRings !== undefined ? 'fijaron' : 'requieren'} ${n} anillo(s) pero solo caben ${feasible.length} (máx. ${pd.maxRings}) entre r = ${rMinEdge.toFixed(2)} m y r = ${rTipEdge.toFixed(2)} m; se construyen ${radii.length}.`,
+      { value: feasible.length, limit: `≥ ${Math.max(n, 1)}`, componentIds: ['MEC-007'] },
+    );
+    // La traza refleja los anillos CONSTRUIDOS; la decisión conserva el valor fijado para reproducir la variante.
+    t.record('floc.paddle.rings', radii.length, {
+      label: 'Anillos de paletas por brazo (construidos)',
+      unit: '-',
+      inputs: ['floc.power.required', 'floc.paddle.angularSpeed'],
+      equation: fixedRings !== undefined ? 'n = min(n fijado, n que cabe)' : 'menor n con Σ ½·CD·ρ·A·(k·ω·rj)³·narm ≥ P',
+      origin: fixedRings !== undefined ? 'FIXED_BY_CONSTRAINT' : 'ADOPTED',
+      warnings: radii.length < n ? [`Se ${fixedRings !== undefined ? 'fijaron' : 'requieren'} ${n} anillos; solo caben ${radii.length}.`] : [],
+    });
     const totalArea = t.record('floc.paddle.area', bladeArea * pd.armCount * radii.length, { label: 'Área total de paletas', unit: 'm2', inputs: ['floc.paddle.rings', 'input.flocculation.paddles.bladeWidthM', 'input.flocculation.paddles.bladeHeightRatio', 'input.flocculation.paddles.armCount'], equation: 'Ap = narm · nanillos · b · hp' });
     const pDel = t.record('floc.power.delivered', radii.reduce((s, r) => s + ringPower(r), 0), { label: 'Potencia útil entregada por las paletas', unit: 'W', inputs: ['floc.paddle.rings', 'floc.paddle.angularSpeed', 'water.density', 'input.flocculation.paddles.dragCoefficient', 'input.flocculation.paddles.relativeVelocityFactor'], equation: 'P = Σ narm · ½·CD·ρ·b·hp·(k·ω·rj)³' });
     {
@@ -320,7 +340,7 @@ export function createClfStrategy(clf: ClfInput, criteria: Partial<Record<ClfCri
   };
 
   return {
-    strategy: { modelVersion: CLF_MODEL_VERSION, sizeSurface, sizeChamber },
+    strategy: { modelVersion: CLF_MODEL_VERSION, criterionMeta: CLF_CRITERION_META, sizeSurface, sizeChamber },
     layout: () => {
       if (!layout) throw new Error('El agitador aún no se ha dimensionado');
       return layout;

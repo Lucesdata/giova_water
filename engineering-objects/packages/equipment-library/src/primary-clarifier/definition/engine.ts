@@ -17,13 +17,14 @@ import {
   unitLabel,
   vNotchHead,
   type CheckStatus,
+  type UnitId,
   type ValidationLevel,
 } from '@eo/engineering-core';
 import { CRITERION_META, type Criterion, type CriterionKey } from './profiles.js';
 import type { DesignInput } from './schema.js';
 
 /** Versión del método de cálculo. Cambia cuando cambia cualquier ecuación o regla. */
-export const ENGINEERING_MODEL_VERSION = 'PC-ENG-1.3.0';
+export const ENGINEERING_MODEL_VERSION = 'PC-ENG-1.4.0';
 
 /**
  * Decisiones de dimensionamiento: los valores que el motor ELIGE (frente a los que calcula
@@ -221,6 +222,8 @@ export interface ChamberResult {
 export interface CentralZoneStrategy {
   /** Versión del método que se registra en cada valor trazado (por defecto, la del decantador primario). */
   readonly modelVersion?: string;
+  /** Etiquetas y unidades propias de los criterios comunes (p. ej. «zona de sedimentación»). */
+  readonly criterionMeta?: Partial<Record<CriterionKey, { readonly label: string; readonly unit: UnitId }>>;
   sizeSurface(ctx: EngineContext): SurfaceResult;
   sizeChamber(ctx: EngineContext, D: number, H: number): ChamberResult;
 }
@@ -253,9 +256,10 @@ export function runEngine(
   const crit = input.designCriteria;
 
   /** Comprueba un valor frente al criterio del perfil; sin criterio → NOT_EVALUATED. */
+  const metaOf = (key: CriterionKey) => strategy.criterionMeta?.[key] ?? CRITERION_META[key];
   const criterionCheck = (id: string, level: ValidationLevel, key: CriterionKey, value: number, componentIds: string[] = []) => {
     const c = criteria[key];
-    const meta = CRITERION_META[key];
+    const meta = metaOf(key);
     if (!c) {
       checks.add({
         id,
@@ -360,7 +364,7 @@ export function runEngine(
     const slrPeak = t.record('loading.solids.peak', mPeak / area, { label: 'Carga de sólidos superficial a caudal punta', unit: 'kg/(m2.d)', inputs: ['solids.influentLoad.peak', loadingAreaKey], equation: 'SLR = Mmax / A' });
     criterionCheck('HYD-SLR-CRITERION', 2, 'solidsLoadingPeak', slrPeak, ['CIV-002']);
   } else {
-    simple('HYD-SLR-CRITERION', 2, 'NOT_EVALUATED', CRITERION_META.solidsLoadingPeak.label, 'Faltan los SST de entrada (influent.tssMgL): no se calcula la carga de sólidos.', {});
+    simple('HYD-SLR-CRITERION', 2, 'NOT_EVALUATED', metaOf('solidsLoadingPeak').label, 'Faltan los SST de entrada (influent.tssMgL): no se calcula la carga de sólidos.', {});
   }
 
   // ───────────────────────── 3. Profundidad y fondo ─────────────────────────
@@ -399,7 +403,7 @@ export function runEngine(
     });
     criterionCheck('HYD-FEEDWELL-VELOCITY', 2, 'feedwellDownwardVelocityPeak', vFw, ['HYD-002']);
   } else {
-    simple('HYD-FEEDWELL-VELOCITY', 2, 'NOT_EVALUATED', CRITERION_META.feedwellDownwardVelocityPeak.label, 'No calculable: no existe corona de paso (ver GEO-FEEDWELL-ANNULUS).', { componentIds: ['HYD-002'] });
+    simple('HYD-FEEDWELL-VELOCITY', 2, 'NOT_EVALUATED', metaOf('feedwellDownwardVelocityPeak').label, 'No calculable: no existe corona de paso (ver GEO-FEEDWELL-ANNULUS).', { componentIds: ['HYD-002'] });
   }
 
   // Ventanas de la columna
@@ -436,7 +440,7 @@ export function runEngine(
     const why = 'No calculable: la longitud efectiva de vertedero no es positiva (ver GEO-WEIR-LENGTH-POSITIVE).';
     for (const [id, title] of [
       ['HYD-WEIR-LOADING-ADMISSIBLE', 'CLV punta ≤ admisible de diseño'],
-      ['HYD-WEIR-LOADING-CRITERION', CRITERION_META.weirLoadingPeak.label],
+      ['HYD-WEIR-LOADING-CRITERION', metaOf('weirLoadingPeak').label],
       ['HYD-NOTCH-NOT-DROWNED', 'Lámina dentro de la escotadura a caudal punta'],
       ['HYD-NOTCH-COUNT', 'Al menos una escotadura en V'],
     ] as const) {

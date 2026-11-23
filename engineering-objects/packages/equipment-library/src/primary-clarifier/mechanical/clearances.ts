@@ -3,7 +3,7 @@ import { checkConnections, shapeVolume, walk, type Assembly, type RevolveShape, 
 import { floorElevation, type ResolvedModel } from '../definition/engine.js';
 import type { DesignInput } from '../definition/schema.js';
 import { deflectorLayout } from '../hydraulics/geometry.js';
-import { armTopChordY, bladeLayout } from './geometry.js';
+import { armTopChordY, bladeLayout, driveSupportRadius } from './geometry.js';
 
 /**
  * Nivel 3 — Geometría: comprobaciones sobre la geometría realmente generada
@@ -132,6 +132,25 @@ export function geometryChecks(m: ResolvedModel, input: DesignInput, assembly: A
       limit: ev.limit,
       unit: 'm',
       componentIds: ['HYD-003', 'MEC-003'],
+    });
+  }
+
+  // Accionamiento central apoyado entero sobre el tablero (o la plataforma de la columna en puente radial).
+  {
+    const support = driveSupportRadius(m);
+    const margin = support - m.driveFootprint / 2;
+    const ev = evaluateRange(margin, { min: -1e-9 });
+    const where = m.bridgeType === 'radial' ? 'el tablero y la plataforma de la columna central' : 'el tablero del puente';
+    checks.add({
+      id: 'GEO-DRIVE-DECK',
+      level: 3,
+      status: ev.status,
+      title: 'Accionamiento central apoyado sobre el puente',
+      message: ev.status === 'PASS' ? `La envolvente del accionamiento apoya sobre ${where}.` : `La envolvente del accionamiento sobresale de ${where}: ensanchar el puente o reducir la envolvente.`,
+      value: margin,
+      limit: ev.limit,
+      unit: 'm',
+      componentIds: ['MEC-002', 'MEC-001'],
     });
   }
 

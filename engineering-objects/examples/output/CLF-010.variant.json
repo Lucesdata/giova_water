@@ -3,10 +3,10 @@
   "formatVersion": 1,
   "variant": {
     "objectId": "clariflocculator/circular-center-feed:CLF-010",
-    "variantId": "CLF-010@5c26de7437",
+    "variantId": "CLF-010@5f8c2b3de5",
     "parentVariantId": null,
     "schemaVersion": "1.0.0",
-    "engineeringModelVersion": "CF-ENG-1.0.0",
+    "engineeringModelVersion": "CF-ENG-1.1.0",
     "createdAt": "2026-11-22T00:00:00.000Z",
     "tag": "CLF-010",
     "mode": "BASE",
@@ -111,7 +111,7 @@
       },
       "mechanical": {
         "bridgeType": "full-span",
-        "bridgeWidthM": 0.8,
+        "bridgeWidthM": 1.6,
         "bridgeGirderDepthM": 0.3,
         "bridgeBearingHeightM": 0.1,
         "bridgeClearanceAboveWaterMinM": 0.3,
@@ -159,7 +159,7 @@
             "input.flow.averageLps"
           ],
           "equation": "Qmed (dato)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "INPUT",
           "status": "PASS",
           "warnings": []
@@ -173,7 +173,7 @@
             "flow.avg.Ls"
           ],
           "equation": "Q[m³/h] = 3,6 · Q[L/s]",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -187,7 +187,7 @@
             "flow.avg.m3h"
           ],
           "equation": "Q[m³/d] = 24 · Q[m³/h]",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -202,7 +202,7 @@
             "input.flow.peak.factor"
           ],
           "equation": "Qmax = Fp · Qmed",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -216,7 +216,7 @@
             "flow.peak.Ls"
           ],
           "equation": "Q[m³/h] = 3,6 · Q[L/s]",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -230,7 +230,7 @@
             "flow.peak.m3h"
           ],
           "equation": "Q[m³/d] = 24 · Q[m³/h]",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -245,7 +245,7 @@
             "input.flocculation.detentionTimeMin"
           ],
           "equation": "Vf = Qmax · tf",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -260,7 +260,7 @@
             "input.hydraulics.inletMaxVelocityM_s"
           ],
           "equation": "menor DN (ISO 6708) con v(Qmax) ≤ vmax",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "ADOPTED",
           "status": "PASS",
           "warnings": []
@@ -275,7 +275,7 @@
             "flow.peak.m3h"
           ],
           "equation": "v = Qmax / (π·DN²/4)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -290,7 +290,7 @@
             "flow.avg.m3h"
           ],
           "equation": "v = Qmed / (π·DN²/4)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -305,7 +305,7 @@
             "input.hydraulics.columnWallThicknessM"
           ],
           "equation": "rc = DN/2 + e",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -320,7 +320,7 @@
             "input.flocculation.chamberDepthM"
           ],
           "equation": "Af = Vf / hf",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -335,7 +335,7 @@
             "column.outerRadius"
           ],
           "equation": "Df,int = √(4·(Af + π·rc²)/π)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -351,7 +351,7 @@
             "input.flocculation.chamberWallThicknessM"
           ],
           "equation": "Df = max(Df,int, Df,int,mín) + 2·e",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -366,7 +366,7 @@
             "input.designCriteria.settlingLoadingAvgM_h"
           ],
           "equation": "As = Qmed / CHSmed",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -380,7 +380,7 @@
             "area.required.avg"
           ],
           "equation": "As = max(As,med, As,max)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -395,7 +395,7 @@
             "feedwell.diameter"
           ],
           "equation": "D = √(4·(As + π·Df²/4)/π)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -411,7 +411,7 @@
             "input.geometry.minDiameterM"
           ],
           "equation": "D = ⌈max(Dteórico, Dmín) / paso⌉ · paso",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "ADOPTED",
           "status": "PASS",
           "warnings": []
@@ -425,7 +425,7 @@
             "tank.diameter"
           ],
           "equation": "A = π·D²/4",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -440,7 +440,7 @@
             "feedwell.diameter"
           ],
           "equation": "As = π·(D² − Df²)/4",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -455,7 +455,7 @@
             "settling.area"
           ],
           "equation": "CHS = Qmed / As",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -470,7 +470,7 @@
             "settling.area"
           ],
           "equation": "CHS = Qmax / As",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -485,7 +485,7 @@
             "input.influent.tssMgL"
           ],
           "equation": "Mmed[kg/d] = Qmed[m³/d] · SST[mg/L] / 1000",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -500,7 +500,7 @@
             "input.influent.tssMgL"
           ],
           "equation": "Mmax[kg/d] = Qmax[m³/d] · SST[mg/L] / 1000 (SST de entrada supuestos constantes)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -515,7 +515,7 @@
             "settling.area"
           ],
           "equation": "SLR = Mmed / A",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -530,7 +530,7 @@
             "settling.area"
           ],
           "equation": "SLR = Mmax / A",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -544,7 +544,7 @@
             "input.geometry.sideWaterDepthM"
           ],
           "equation": "H (dato)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "INPUT",
           "status": "PASS",
           "warnings": []
@@ -559,7 +559,7 @@
             "input.geometry.slopeStartRadiusM"
           ],
           "equation": "rs = D/2",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -575,7 +575,7 @@
             "input.geometry.sumpDiameterM"
           ],
           "equation": "Δy = s · (rs − rp)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -590,7 +590,7 @@
             "input.geometry.sumpDepthM"
           ],
           "equation": "y = −Δy − hp",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -607,7 +607,7 @@
             "input.flocculation.chamberWallThicknessM"
           ],
           "equation": "Vf = π·(rf,int² − rc²)·hf",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -622,7 +622,7 @@
             "flow.peak.m3h"
           ],
           "equation": "tf = Vf / Qdiseño",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -637,7 +637,7 @@
             "flow.peak.m3h"
           ],
           "equation": "tf = Vf / Qmax",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -651,7 +651,7 @@
             "input.flocculation.designTemperatureC"
           ],
           "equation": "μ(T) interpolada en tabla (CRC Handbook)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -665,7 +665,7 @@
             "input.flocculation.designTemperatureC"
           ],
           "equation": "ρ(T) interpolada en tabla (CRC Handbook)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -681,7 +681,7 @@
             "floc.volume"
           ],
           "equation": "P = G²·μ·Vf",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -697,7 +697,7 @@
             "input.flocculation.paddles.wallClearanceM"
           ],
           "equation": "ω = vpunta / rpunta",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -711,14 +711,14 @@
             "floc.paddle.angularSpeed"
           ],
           "equation": "N = 60·ω/(2π)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
         },
         "floc.paddle.rings": {
           "key": "floc.paddle.rings",
-          "label": "Anillos de paletas por brazo",
+          "label": "Anillos de paletas por brazo (construidos)",
           "value": 1,
           "unit": "-",
           "inputs": [
@@ -726,7 +726,7 @@
             "floc.paddle.angularSpeed"
           ],
           "equation": "menor n con Σ ½·CD·ρ·A·(k·ω·rj)³·narm ≥ P",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "ADOPTED",
           "status": "PASS",
           "warnings": []
@@ -743,7 +743,7 @@
             "input.flocculation.paddles.armCount"
           ],
           "equation": "Ap = narm · nanillos · b · hp",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -761,7 +761,7 @@
             "input.flocculation.paddles.relativeVelocityFactor"
           ],
           "equation": "P = Σ narm · ½·CD·ρ·b·hp·(k·ω·rj)³",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -777,7 +777,7 @@
             "floc.volume"
           ],
           "equation": "G = √(P / (μ·Vf))",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -792,7 +792,7 @@
             "floc.time.design"
           ],
           "equation": "Gt = G · tf",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -807,7 +807,7 @@
             "feedwell.diameter"
           ],
           "equation": "Ap / (2·rf,int · hp)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -822,7 +822,7 @@
             "input.flocculation.chamberDepthM"
           ],
           "equation": "y = H − hpa",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -838,7 +838,7 @@
             "column.outerRadius"
           ],
           "equation": "v = Qmax / (π·(rpa,int² − rc²))",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -853,7 +853,7 @@
             "input.hydraulics.columnPortCount"
           ],
           "equation": "b = 0,5 · 2π·rc / n (regla de modelado)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -869,7 +869,7 @@
             "column.portWidth"
           ],
           "equation": "h = Qmax / (vmax · n · b)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -885,7 +885,7 @@
             "flow.peak.m3h"
           ],
           "equation": "v = Qmax / (n · b · h)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -900,7 +900,7 @@
             "input.hydraulics.weirPlateThicknessM"
           ],
           "equation": "L = 2π·(R − e/2)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -915,7 +915,7 @@
             "input.hydraulics.weirExclusionLengthM"
           ],
           "equation": "Lef = L − Lexcl",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -930,7 +930,7 @@
             "weir.length.effective"
           ],
           "equation": "CLV = Qdiario / Lef",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -945,7 +945,7 @@
             "weir.length.effective"
           ],
           "equation": "CLV = Qmax,diario / Lef",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -960,7 +960,7 @@
             "input.hydraulics.notchSpacingM"
           ],
           "equation": "n = ⌊Lef / paso⌋",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "ADOPTED",
           "status": "PASS",
           "warnings": []
@@ -977,7 +977,7 @@
             "input.hydraulics.vNotchAngleDeg"
           ],
           "equation": "h = [q / (Cd·8/15·√(2g)·tan(θ/2))]^(2/5)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -994,7 +994,7 @@
             "input.hydraulics.vNotchAngleDeg"
           ],
           "equation": "h = [q / (Cd·8/15·√(2g)·tan(θ/2))]^(2/5)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1009,7 +1009,7 @@
             "weir.head.avg"
           ],
           "equation": "y = H + hmed",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1024,7 +1024,7 @@
             "weir.head.peak"
           ],
           "equation": "y = H + hmax",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1038,7 +1038,7 @@
             "tank.depth"
           ],
           "equation": "y = lámina a caudal medio",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1052,7 +1052,7 @@
             "tank.depth"
           ],
           "equation": "y = lámina a caudal punta",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1067,7 +1067,7 @@
             "input.civil.launderWidthM"
           ],
           "equation": "y₀ = √3 · (Q² / (g·b²))^(1/3), Q = Qmax/2",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1082,7 +1082,7 @@
             "input.civil.launderDepthM"
           ],
           "equation": "Δ = hcanal − y₀",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1097,7 +1097,7 @@
             "input.hydraulics.effluentMaxVelocityM_s"
           ],
           "equation": "menor DN con v(Qmax) ≤ vmax",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "ADOPTED",
           "status": "PASS",
           "warnings": []
@@ -1112,7 +1112,7 @@
             "flow.peak.m3h"
           ],
           "equation": "v = Qmax / (π·DN²/4)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1127,7 +1127,7 @@
             "input.hydraulics.sludgeFlowFraction"
           ],
           "equation": "Qlodo = f · Qmed (hipótesis de prediseño)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1143,7 +1143,7 @@
             "input.hydraulics.sludgeDesignVelocityM_s"
           ],
           "equation": "max(DNmín, menor DN con v ≤ v diseño)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "ADOPTED",
           "status": "PASS",
           "warnings": []
@@ -1158,7 +1158,7 @@
             "sludge.dn"
           ],
           "equation": "v = Qlodo / (π·DN²/4)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1173,7 +1173,7 @@
             "tank.depth"
           ],
           "equation": "V = π·R²·H",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1189,7 +1189,7 @@
             "input.geometry.sumpDiameterM"
           ],
           "equation": "V = 2π·s·[rs·r²/2 − r³/3]rp→rs + π·rp²·s·(rs − rp)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1204,7 +1204,7 @@
             "volume.floorCone"
           ],
           "equation": "Vbruto = Vcil + Vfondo",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1220,7 +1220,7 @@
             "floor.dropAtSump"
           ],
           "equation": "V = π·rc²·(H + Δy)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1236,7 +1236,7 @@
             "input.flocculation.chamberDepthM"
           ],
           "equation": "V = π·(rpa,int² − rc²)·hpa",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1252,7 +1252,7 @@
             "volume.deduction.feedwell"
           ],
           "equation": "Vef = Vbruto − Vcolumna − Vpozo (se desprecian chapas y mecanismos)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1268,7 +1268,7 @@
             "column.outerRadius"
           ],
           "equation": "V = π·(rp² − rc²)·hp",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1283,7 +1283,7 @@
             "flow.avg.m3h"
           ],
           "equation": "TRH = Vef / Qmed",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1298,7 +1298,7 @@
             "flow.peak.m3h"
           ],
           "equation": "TRH = Vef / Qmax",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1313,7 +1313,7 @@
             "input.civil.minFillThicknessM"
           ],
           "equation": "y = −Δy − efill,mín",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1328,7 +1328,7 @@
             "input.civil.baseSlabThicknessM"
           ],
           "equation": "y = ylosa − elosa",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1344,7 +1344,7 @@
             "input.civil.sumpWallThicknessM"
           ],
           "equation": "y = min(yp − ep, ylosa,inf)",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1359,7 +1359,7 @@
             "input.civil.wallThicknessM"
           ],
           "equation": "r = R + em",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1373,7 +1373,7 @@
             "civil.wallOuterRadius"
           ],
           "equation": "Dext = D + 2·em",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1389,7 +1389,7 @@
             "input.civil.channelWallThicknessM"
           ],
           "equation": "r = Rext + b + ec",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1403,7 +1403,7 @@
             "civil.channelOuterRadius"
           ],
           "equation": "Dcanal = 2·r",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1418,7 +1418,7 @@
             "input.civil.slabProjectionM"
           ],
           "equation": "r = Rext + vuelo",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1433,7 +1433,7 @@
             "input.geometry.freeboardM"
           ],
           "equation": "y = H + resguardo",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1449,7 +1449,7 @@
             "inlet.dn"
           ],
           "equation": "y = min(ylosa,inf, ypoceta,inf) − recubrimiento − rext",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1464,7 +1464,7 @@
             "input.mechanical.bridgeType"
           ],
           "equation": "L = 2·rapoyo",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1480,7 +1480,7 @@
             "input.mechanical.bridgeGirderDepthM"
           ],
           "equation": "y = ycoronación + apoyo + canto",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1495,7 +1495,7 @@
             "input.mechanical.armWallClearanceM"
           ],
           "equation": "r = R − holgura",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -1510,7 +1510,7 @@
             "input.mechanical.cageHalfWidthM"
           ],
           "equation": "L = rpunta − rjaula",
-          "methodVersion": "CF-ENG-1.0.0",
+          "methodVersion": "CF-ENG-1.1.0",
           "origin": "CALCULATED",
           "status": "PASS",
           "warnings": []
@@ -2157,7 +2157,7 @@
           "id": "HYD-HRT-CRITERION",
           "level": 2,
           "status": "NOT_EVALUATED",
-          "title": "Tiempo de retención hidráulico a caudal medio",
+          "title": "Tiempo de retención en la zona de sedimentación a caudal medio",
           "message": "El perfil de diseño no define criterio para esta magnitud.",
           "value": 2.7670714849177642,
           "unit": "h",
@@ -2208,7 +2208,7 @@
           "status": "PASS",
           "title": "Anchura libre de pasarela",
           "message": "Cumple el criterio (EN ISO 14122-2 — Seguridad de las máquinas. Medios de acceso permanentes. Plataformas y pasarelas).",
-          "value": 0.8,
+          "value": 1.6,
           "limit": "≥ 0.6; recomendado 0.8…—",
           "unit": "m",
           "componentIds": [
@@ -2390,6 +2390,21 @@
           "critical": false
         },
         {
+          "id": "GEO-DRIVE-DECK",
+          "level": 3,
+          "status": "PASS",
+          "title": "Accionamiento central apoyado sobre el puente",
+          "message": "La envolvente del accionamiento apoya sobre el tablero del puente.",
+          "value": 0.4,
+          "limit": "≥ -1e-9",
+          "unit": "m",
+          "componentIds": [
+            "MEC-002",
+            "MEC-001"
+          ],
+          "critical": false
+        },
+        {
           "id": "GEO-BAFFLE-ARMS",
           "level": 3,
           "status": "PASS",
@@ -2446,6 +2461,36 @@
           "componentIds": [
             "MEC-007",
             "MEC-003"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-SLEEVE-BRIDGE",
+          "level": 3,
+          "status": "PASS",
+          "title": "Holgura tubo del agitador – vigas del puente",
+          "message": "El tubo de giro pasa entre las vigas principales del puente.",
+          "value": 0.3328730162779191,
+          "limit": "≥ 0.05",
+          "unit": "m",
+          "componentIds": [
+            "MEC-007",
+            "MEC-001"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-FLOC-DRIVE-DECK",
+          "level": 3,
+          "status": "PASS",
+          "title": "Accionamiento del floculador apoyado sobre el puente",
+          "message": "El reductor anular apoya sobre el tablero del puente.",
+          "value": 0.10000000000000009,
+          "limit": "≥ -1e-9",
+          "unit": "m",
+          "componentIds": [
+            "MEC-008",
+            "MEC-001"
           ],
           "critical": false
         },
@@ -2693,7 +2738,7 @@
       "summary": {
         "status": "INCOMPLETE",
         "counts": {
-          "PASS": 61,
+          "PASS": 64,
           "WARNING": 1,
           "FAIL": 0,
           "NOT_EVALUATED": 26
@@ -2712,7 +2757,7 @@
             "NOT_EVALUATED": 12
           },
           "3": {
-            "PASS": 32,
+            "PASS": 35,
             "WARNING": 0,
             "FAIL": 0,
             "NOT_EVALUATED": 3
@@ -3188,8 +3233,8 @@
                 "label": "Tablero (chapa antideslizante)",
                 "materialId": "STEEL-S275JR-HDG",
                 "section": "representational",
-                "volumeM3": 0.26559999999999995,
-                "outerSurfaceM2": 14.008,
+                "volumeM3": 0.5311999999999999,
+                "outerSurfaceM2": 27.352,
                 "massKg": null
               },
               {
@@ -3197,9 +3242,9 @@
                 "label": "Travesaño de cuelgue",
                 "materialId": "STEEL-S275JR-HDG",
                 "section": "representational",
-                "volumeM3": 0.00512,
-                "lengthM": 0.8,
-                "outerSurfaceM2": 0.256,
+                "volumeM3": 0.01024,
+                "lengthM": 1.6,
+                "outerSurfaceM2": 0.512,
                 "massKg": null
               },
               {
@@ -3207,9 +3252,9 @@
                 "label": "Travesaño de cuelgue",
                 "materialId": "STEEL-S275JR-HDG",
                 "section": "representational",
-                "volumeM3": 0.00512,
-                "lengthM": 0.8,
-                "outerSurfaceM2": 0.256,
+                "volumeM3": 0.01024,
+                "lengthM": 1.6,
+                "outerSurfaceM2": 0.512,
                 "massKg": null
               }
             ],
@@ -3926,10 +3971,10 @@
           }
         ],
         "metalLengthByMaterialM": {
-          "STEEL-S275JR-HDG": 51.04891305215714,
+          "STEEL-S275JR-HDG": 52.64891305215715,
           "SS-1.4301": 60.65290453672545
         },
-        "corrosionProtectionM2": 43.338686369953635,
+        "corrosionProtectionM2": 57.194686369953644,
         "rebar": "NOT_EVALUATED",
         "notes": [
           "Volúmenes de hormigón medidos sobre la geometría modelada (Pappus-Guldin), sin descontar pasamuros.",
@@ -4319,6 +4364,9 @@
           "checkIds": [
             "GEO-BRIDGE-CLEARANCE",
             "GEO-WALKWAY-WIDTH",
+            "GEO-DRIVE-DECK",
+            "GEO-SLEEVE-BRIDGE",
+            "GEO-FLOC-DRIVE-DECK",
             "MEC-BRIDGE-STRUCTURE",
             "MEC-FABRICATION"
           ],
@@ -4331,7 +4379,7 @@
           "assemblyConstraints": [
             "Apoya en la coronación de CIV-005 (y en HYD-001 si es radial)."
           ],
-          "geometryHash": "6e5eb6571b08037e"
+          "geometryHash": "807d81f23e63c0c7"
         },
         {
           "id": "MEC-002",
@@ -4358,6 +4406,7 @@
             "note": "Solo el eje de salida gira; la carcasa es fija."
           },
           "checkIds": [
+            "GEO-DRIVE-DECK",
             "MEC-DRIVE-TORQUE",
             "MEC-FABRICATION"
           ],
@@ -4570,6 +4619,7 @@
             "HYD-FLOC-TIP-SPEED",
             "HYD-FLOC-PADDLE-AREA",
             "GEO-SLEEVE-CAGE",
+            "GEO-SLEEVE-BRIDGE",
             "GEO-PADDLES-WALL",
             "GEO-PADDLES-SLEEVE",
             "GEO-PADDLES-VERTICAL",
@@ -4613,6 +4663,7 @@
             "note": "Solo la salida gira; la carcasa es fija."
           },
           "checkIds": [
+            "GEO-FLOC-DRIVE-DECK",
             "MEC-FLOC-DRIVE"
           ],
           "dependsOn": [
@@ -4622,11 +4673,11 @@
           "assemblyConstraints": [
             "Apoya en el tablero de MEC-001, alrededor de MEC-002."
           ],
-          "geometryHash": "1bc936d20dc40d14"
+          "geometryHash": "31ad55371fe2b4e4"
         }
       ]
     },
     "validationStatus": "INCOMPLETE",
-    "outputsHash": "32b55189d294ea10"
+    "outputsHash": "51591c7dfeb3aa86"
   }
 }

@@ -17,6 +17,16 @@ export const MECH_RULES = {
   skimmerArmAboveWater: 0.15,
 } as const;
 
+/**
+ * Radio de apoyo del accionamiento central. En puente de vano completo, el tablero cubre |x| ≤ b/2
+ * en toda la luz; en puente radial el tablero acaba en el eje (z ≥ 0) y el accionamiento apoya en una
+ * plataforma circular de radio b/2 sobre la columna central (MEC-001.drive-platform). En ambos casos
+ * una envolvente centrada de radio r apoya entera si r ≤ b/2 (regla de modelado).
+ */
+export function driveSupportRadius(m: Pick<ResolvedModel, 'bridgeWidth'>): number {
+  return m.bridgeWidth / 2;
+}
+
 export function armAngles(m: ResolvedModel): number[] {
   return Array.from({ length: m.armCount }, (_, k) => MECH_RULES.armPhase + (k * 2 * Math.PI) / m.armCount);
 }
@@ -102,6 +112,15 @@ export function buildMechanical(m: ResolvedModel, input: DesignInput): Component
       ...rep,
     }),
   );
+  if (m.bridgeType === 'radial') {
+    // Plataforma del accionamiento sobre la columna central: completa el apoyo en z < 0, donde no hay tablero.
+    bridgeChildren.push(
+      node('MEC-001.drive-platform', 'Plataforma del accionamiento sobre la columna central', mats.bridge, cylinder(driveSupportRadius(m), MECH_RULES.deckThickness, 48), {
+        transform: { position: [0, m.yDeck - MECH_RULES.deckThickness / 2, 0], rotationY: 0 },
+        ...rep,
+      }),
+    );
+  }
   const bridgeConn: ConnectionPoint[] = [
     { id: 'MEC-001.drive-seat', componentId: 'MEC-001', position: [0, m.yDeck, 0], matesWith: 'MEC-002.base', description: 'Asiento del accionamiento' },
     { id: 'MEC-001.bearing-0', componentId: 'MEC-001', position: [0, m.yBridgeBearing, m.rBearing], matesWith: 'CIV-005.bearing-0', description: 'Apoyo exterior +Z' },
