@@ -108,11 +108,30 @@ describe('proyectos', () => {
   });
 });
 
+describe('laboratorio de objetos de ingeniería', () => {
+  it.each(LANGS)('%s: dos equipos con enlace al laboratorio, imagen publicada y aviso de que no es un diseño aprobado', (lang) => {
+    const o = dictionary[lang].objects;
+    expect(o.equipment.map((e) => e.id)).toEqual(['primary-clarifier', 'clariflocculator']);
+    for (const e of o.equipment) {
+      expect(fs.existsSync(path.join(ROOT, 'public', e.img)), e.img).toBe(true);
+      expect(e.imgAlt.length).toBeGreaterThan(20);
+      expect(e.metrics).toHaveLength(4);
+    }
+    expect(o.features).toHaveLength(4);
+    expect(o.note).toMatch(/aprobad|approved|approuvée/);
+  });
+  it('el laboratorio está publicado como página estática', () => {
+    const html = fs.readFileSync(path.join(ROOT, 'public/engineering-objects/index.html'), 'utf8');
+    expect(html).toMatch(/<title>Object Lab/);
+    expect(html).toMatch(/src="\.\/assets\/index-[\w-]+\.js"/);
+  });
+});
+
 describe('estructura de la página', () => {
   it('secciones en el orden pedido y con numeración consecutiva', async () => {
     const { SECTIONS } = await import('../../src/data/sections.js');
-    expect(SECTIONS.map((x) => x.id)).toEqual(['inicio', 'proyectos', 'sobre', 'gemelos', 'faq', 'contacto']);
-    expect(SECTIONS.map((x) => x.n)).toEqual(['00', '01', '02', '03', '04', '05']);
+    expect(SECTIONS.map((x) => x.id)).toEqual(['inicio', 'proyectos', 'sobre', 'gemelos', 'objetos', 'faq', 'contacto']);
+    expect(SECTIONS.map((x) => x.n)).toEqual(['00', '01', '02', '03', '04', '05', '06']);
     for (const lang of LANGS) for (const { id } of SECTIONS) {
       expect(dictionary[lang].nav.items[id], `${lang} nav.items.${id}`).toBeTruthy();
     }

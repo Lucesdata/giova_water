@@ -14,6 +14,7 @@
     "test:watch": "vitest",
     "lab": "npm run dev -w @eo/object-lab",
     "lab:build": "npm run build -w @eo/object-lab",
+    "lab:publish": "npm run build -w @eo/object-lab -- --outDir ../../../public/engineering-objects --emptyOutDir --sourcemap false",
     "examples:presets": "vite-node examples/generate-presets.ts",
     "check": "npm run typecheck && npm run test"
   },
