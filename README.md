@@ -87,9 +87,10 @@ giova_water/
 | 01 | `proyectos` | `Projects` + `ProjectModal` | Tres destacados (Montebello, PTAPs rurales UAESP, La Vorágine), «Ver todos los proyectos» (7) y filtros con contadores. |
 | 02 | `sobre` | `About` | Perfil con credenciales, trayectoria desplegable (más reciente primero) y competencias ↔ proyectos con el nombre de cada uno. |
 | 03 | `gemelos` | `DigitalTwins` | Demo con datos simulados: escenarios, pausa y restablecer. |
-| 04 | `watertracking` | `WaterTracking` + `lib/plantModel.js` | Modelador del tren de tratamiento: etapas, caudal, turbidez, tiempos de retención, cargas y CT; resultado orientativo, no para dimensionamiento. Se guarda solo en `localStorage`. |
-| 05 | `faq` | `Faq` | Preguntas frecuentes. |
-| 06 | `contacto` | `Contact` | Formulario que prepara un email, tarjeta de contacto y pie. |
+| 04 | `objetos` | `EngineeringObjects` | Laboratorio 3D de objetos de ingeniería (`engineering-objects/`), publicado en `/engineering-objects/`. |
+| 05 | `watertracking` | `WaterTracking` + `lib/plantModel.js` | Modelador del tren de tratamiento: etapas, caudal, turbidez, tiempos de retención, cargas y CT; resultado orientativo, no para dimensionamiento. Se guarda solo en `localStorage`. |
+| 06 | `faq` | `Faq` | Preguntas frecuentes. |
+| 07 | `contacto` | `Contact` | Formulario que prepara un email, tarjeta de contacto y pie. |
 
 Cada proyecto tiene una URL estable `/#proyecto/<slug>` (los slugs están en `src/data/projects.js` y no se renombran). Es una ruta por fragmento: no necesita reescrituras en el servidor y abre la ficha correcta al cargarla directamente.
 

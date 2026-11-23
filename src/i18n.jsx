@@ -74,7 +74,7 @@ const dict = {
       banner: { available: 'Consultar disponibilidad', location: 'Sant Feliu de Llobregat' },
       items: {
         inicio: 'Inicio', proyectos: 'Proyectos', sobre: 'Perfil',
-        gemelos: 'Demo', watertracking: 'WaterTracking', faq: 'Preguntas', contacto: 'Contacto',
+        gemelos: 'Demo', objetos: 'Laboratorio', watertracking: 'WaterTracking', faq: 'Preguntas', contacto: 'Contacto',
       },
       aria: {
         main: 'Principal', openMenu: 'Abrir menú', closeMenu: 'Cerrar menú',
@@ -393,6 +393,48 @@ const dict = {
       ],
       featurePrefix: 'IDEA',
     },
+    objects: {
+      kicker: 'Objetos de ingeniería', title: 'laboratorio_3d',
+      h2a: 'Equipos que se calculan,', h2b: 'no que se dibujan',
+      badge: 'Laboratorio interactivo',
+      stack: 'TypeScript · Three.js · React Three Fiber · 153 pruebas automáticas',
+      intro: 'Cada equipo es un objeto paramétrico: a partir del caudal y de los criterios de diseño se calcula, se genera su geometría 3D y se verifica. Cada cifra conserva su ecuación, sus entradas y su origen, y las comprobaciones pendientes se muestran en lugar de ocultarse. Abre el laboratorio, cambia el caudal y mira cómo se recalcula todo el equipo.',
+      open: 'Abrir en el laboratorio 3D',
+      equipment: [
+        {
+          id: 'primary-clarifier', tag: 'DEC-005 · escenario didáctico', name: 'Decantador primario circular',
+          summary: 'Alimentación central, puente con rascador de fondo y barredor de flotantes, vertedero de escotaduras en V y canal perimetral. 17 componentes generados desde el cálculo.',
+          img: '/assets/eo-dec.jpg', imgAlt: 'Vista 3D en sección del decantador primario: tanque, pozo de alimentación, rascador y puente, con cotas de diámetro y profundidad',
+          metrics: [
+            { label: 'Caudal medio / punta', value: '5 / 12,5 L/s' },
+            { label: 'Diámetro × profundidad', value: '3,91 × 3,00 m' },
+            { label: 'Carga superficial', value: '1,5 m³/(m²·h)' },
+            { label: 'Comprobaciones', value: '76 en 4 niveles' },
+          ],
+        },
+        {
+          id: 'clariflocculator', tag: 'CLF-010 · potabilización', name: 'Clarifloculador',
+          summary: 'Floculación mecánica con agitador de paletas en una cámara central y sedimentación en la corona exterior. La cámara se dimensiona por tiempo de floculación y las paletas por la potencia que exige el gradiente G.',
+          img: '/assets/eo-clf.jpg', imgAlt: 'Vista 3D en sección del clarifloculador: cámara de floculación con agitador de paletas, corona de sedimentación y puente',
+          metrics: [
+            { label: 'Caudal medio / punta', value: '10 / 15 L/s' },
+            { label: 'Volumen de floculación', value: '27 m³ · 30 min' },
+            { label: 'Gradiente G · giro', value: '46 s⁻¹ · 3,4 rpm' },
+            { label: 'Comprobaciones', value: '91 en 4 niveles' },
+          ],
+        },
+      ],
+      featuresLabel: 'Qué hay detrás',
+      features: [
+        { t: 'Cálculo trazable', d: 'Cada valor guarda su ecuación, las magnitudes de las que depende, su unidad y si es calculado, adoptado o dato. La memoria de cálculo se genera desde esa traza.' },
+        { t: 'Geometría desde el cálculo', d: 'El modelo 3D no se dibuja: se construye con las dimensiones calculadas, y las holguras entre piezas se comprueban sobre la geometría generada.' },
+        { t: 'Validación en cuatro niveles', d: 'Datos, hidráulica, geometría y constructibilidad. Cada comprobación cumple, avisa, falla o queda sin evaluar, y su fuente se cita.' },
+        { t: 'Variantes reproducibles', d: 'Nuevo diseño, evaluación de un equipo existente con su geometría fija o redimensionado parcial. Cada variante se exporta en JSON y se recalcula y verifica al importarla.' },
+      ],
+      note: 'Herramienta en desarrollo, no un diseño aprobado: los rangos de bibliografía están marcados para verificar contra la edición citada, y la estructura y la mecánica (espesores, accionamientos) quedan explícitamente sin evaluar.',
+      cta: 'Abrir el laboratorio',
+      desktopHint: 'Pensado para pantalla de escritorio',
+    },
     watertracking: {
       kicker: 'Modelador', title: 'watertracking',
       h2a: 'Modela tu', h2b: 'planta',
@@ -499,7 +541,7 @@ const dict = {
       banner: { available: 'Ask about availability', location: 'Sant Feliu de Llobregat' },
       items: {
         inicio: 'Home', proyectos: 'Projects', sobre: 'Profile',
-        gemelos: 'Demo', watertracking: 'WaterTracking', faq: 'FAQ', contacto: 'Contact',
+        gemelos: 'Demo', objetos: 'Lab', watertracking: 'WaterTracking', faq: 'FAQ', contacto: 'Contact',
       },
       aria: {
         main: 'Main', openMenu: 'Open menu', closeMenu: 'Close menu',
@@ -818,6 +860,48 @@ const dict = {
       ],
       featurePrefix: 'IDEA',
     },
+    objects: {
+      kicker: 'Engineering objects', title: '3d_lab',
+      h2a: 'Equipment that is calculated,', h2b: 'not drawn',
+      badge: 'Interactive lab',
+      stack: 'TypeScript · Three.js · React Three Fiber · 153 automated tests',
+      intro: 'Each piece of equipment is a parametric object: from the flow and the design criteria it is calculated, its 3D geometry is generated and it is verified. Every figure keeps its equation, its inputs and its origin, and pending checks are shown rather than hidden. Open the lab, change the flow and watch the whole unit recalculate.',
+      open: 'Open in the 3D lab',
+      equipment: [
+        {
+          id: 'primary-clarifier', tag: 'DEC-005 · teaching scenario', name: 'Circular primary clarifier',
+          summary: 'Centre feed, bridge with bottom scraper and scum skimmer, V-notch weir and peripheral launder. 17 components generated from the calculation.',
+          img: '/assets/eo-dec.jpg', imgAlt: '3D section view of the primary clarifier: tank, feedwell, scraper and bridge, with diameter and depth dimensions',
+          metrics: [
+            { label: 'Average / peak flow', value: '5 / 12.5 L/s' },
+            { label: 'Diameter × depth', value: '3.91 × 3.00 m' },
+            { label: 'Surface loading', value: '1.5 m³/(m²·h)' },
+            { label: 'Checks', value: '76 on 4 levels' },
+          ],
+        },
+        {
+          id: 'clariflocculator', tag: 'CLF-010 · drinking water', name: 'Clariflocculator',
+          summary: 'Mechanical flocculation with a paddle stirrer in a central chamber and settling in the outer annulus. The chamber is sized by flocculation time and the paddles by the power the velocity gradient G requires.',
+          img: '/assets/eo-clf.jpg', imgAlt: '3D section view of the clariflocculator: flocculation chamber with paddle stirrer, settling annulus and bridge',
+          metrics: [
+            { label: 'Average / peak flow', value: '10 / 15 L/s' },
+            { label: 'Flocculation volume', value: '27 m³ · 30 min' },
+            { label: 'Gradient G · speed', value: '46 s⁻¹ · 3.4 rpm' },
+            { label: 'Checks', value: '91 on 4 levels' },
+          ],
+        },
+      ],
+      featuresLabel: 'What is behind it',
+      features: [
+        { t: 'Traceable calculation', d: 'Every value keeps its equation, the quantities it depends on, its unit and whether it is calculated, adopted or an input. The design report is generated from that trace.' },
+        { t: 'Geometry from the calculation', d: 'The 3D model is not drawn: it is built from the calculated dimensions, and clearances between parts are checked on the generated geometry.' },
+        { t: 'Four-level validation', d: 'Data, hydraulics, geometry and buildability. Each check passes, warns, fails or stays not evaluated, and its source is cited.' },
+        { t: 'Reproducible variants', d: 'New design, evaluation of an existing unit with its geometry fixed, or partial resizing. Each variant exports to JSON and is recalculated and verified on import.' },
+      ],
+      note: 'A tool in development, not an approved design: literature ranges are flagged for checking against the cited edition, and structure and mechanics (thicknesses, drives) are explicitly left not evaluated.',
+      cta: 'Open the lab',
+      desktopHint: 'Designed for a desktop screen',
+    },
     watertracking: {
       kicker: 'Modeller', title: 'watertracking',
       h2a: 'Model your', h2b: 'plant',
@@ -924,7 +1008,7 @@ const dict = {
       banner: { available: 'Me consulter sur ma disponibilité', location: 'Sant Feliu de Llobregat' },
       items: {
         inicio: 'Accueil', proyectos: 'Projets', sobre: 'Profil',
-        gemelos: 'Démo', watertracking: 'WaterTracking', faq: 'FAQ', contacto: 'Contact',
+        gemelos: 'Démo', objetos: 'Labo', watertracking: 'WaterTracking', faq: 'FAQ', contacto: 'Contact',
       },
       aria: {
         main: 'Principale', openMenu: 'Ouvrir le menu', closeMenu: 'Fermer le menu',
@@ -1242,6 +1326,48 @@ const dict = {
         { k: '03', t: 'Un langage pour décider', d: 'Il présente les données clairement à ceux qui ne sont pas techniciens et doivent trancher.' },
       ],
       featurePrefix: 'IDÉE',
+    },
+    objects: {
+      kicker: "Objets d'ingénierie", title: 'labo_3d',
+      h2a: 'Des équipements calculés,', h2b: 'pas dessinés',
+      badge: 'Laboratoire interactif',
+      stack: 'TypeScript · Three.js · React Three Fiber · 153 tests automatisés',
+      intro: "Chaque équipement est un objet paramétrique : à partir du débit et des critères de conception, il est calculé, sa géométrie 3D est générée et il est vérifié. Chaque valeur conserve son équation, ses entrées et son origine, et les vérifications en attente sont affichées au lieu d'être cachées. Ouvrez le laboratoire, changez le débit et regardez tout l'équipement se recalculer.",
+      open: 'Ouvrir dans le labo 3D',
+      equipment: [
+        {
+          id: 'primary-clarifier', tag: 'DEC-005 · scénario pédagogique', name: 'Décanteur primaire circulaire',
+          summary: "Alimentation centrale, pont avec racleur de fond et écumeur, déversoir à encoches en V et goulotte périphérique. 17 composants générés à partir du calcul.",
+          img: '/assets/eo-dec.jpg', imgAlt: "Vue 3D en coupe du décanteur primaire : bassin, puits d'alimentation, racleur et pont, avec cotes de diamètre et de profondeur",
+          metrics: [
+            { label: 'Débit moyen / de pointe', value: '5 / 12,5 L/s' },
+            { label: 'Diamètre × profondeur', value: '3,91 × 3,00 m' },
+            { label: 'Charge superficielle', value: '1,5 m³/(m²·h)' },
+            { label: 'Vérifications', value: '76 sur 4 niveaux' },
+          ],
+        },
+        {
+          id: 'clariflocculator', tag: 'CLF-010 · eau potable', name: 'Clarifloculateur',
+          summary: "Floculation mécanique par agitateur à palettes dans une chambre centrale et décantation dans la couronne extérieure. La chambre est dimensionnée par le temps de floculation et les palettes par la puissance qu'exige le gradient G.",
+          img: '/assets/eo-clf.jpg', imgAlt: 'Vue 3D en coupe du clarifloculateur : chambre de floculation avec agitateur à palettes, couronne de décantation et pont',
+          metrics: [
+            { label: 'Débit moyen / de pointe', value: '10 / 15 L/s' },
+            { label: 'Volume de floculation', value: '27 m³ · 30 min' },
+            { label: 'Gradient G · rotation', value: '46 s⁻¹ · 3,4 tr/min' },
+            { label: 'Vérifications', value: '91 sur 4 niveaux' },
+          ],
+        },
+      ],
+      featuresLabel: 'Ce qu’il y a derrière',
+      features: [
+        { t: 'Calcul traçable', d: "Chaque valeur garde son équation, les grandeurs dont elle dépend, son unité et si elle est calculée, adoptée ou donnée. La note de calcul est générée à partir de cette trace." },
+        { t: 'Géométrie issue du calcul', d: "Le modèle 3D n'est pas dessiné : il est construit avec les dimensions calculées, et les jeux entre pièces sont vérifiés sur la géométrie générée." },
+        { t: 'Validation sur quatre niveaux', d: 'Données, hydraulique, géométrie et constructibilité. Chaque vérification est conforme, en alerte, non conforme ou non évaluée, et sa source est citée.' },
+        { t: 'Variantes reproductibles', d: "Nouvelle conception, évaluation d'un équipement existant à géométrie fixe ou redimensionnement partiel. Chaque variante s'exporte en JSON et est recalculée et vérifiée à l'import." },
+      ],
+      note: "Outil en développement, pas une conception approuvée : les plages de la bibliographie sont signalées pour vérification contre l'édition citée, et la structure et la mécanique (épaisseurs, entraînements) restent explicitement non évaluées.",
+      cta: 'Ouvrir le laboratoire',
+      desktopHint: 'Conçu pour un écran de bureau',
     },
     watertracking: {
       kicker: 'Modélisation', title: 'watertracking',

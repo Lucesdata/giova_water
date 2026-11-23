@@ -1,0 +1,27 @@
+{
+  "name": "engineering-objects",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Objetos de ingeniería paramétricos, reutilizables y verificables. Primer objeto: decantador primario circular (SPEC-DEC-001/002).",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.core.json && tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lab": "npm run dev -w @eo/object-lab",
+    "lab:build": "npm run build -w @eo/object-lab",
+    "lab:publish": "npm run build -w @eo/object-lab -- --outDir ../../../public/engineering-objects --emptyOutDir --sourcemap false",
+    "examples:presets": "vite-node examples/generate-presets.ts",
+    "check": "npm run typecheck && npm run test"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "5.6.3",
+    "vite-node": "2.1.8",
+    "vitest": "2.1.8"
+  }
+}

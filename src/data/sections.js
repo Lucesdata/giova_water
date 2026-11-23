@@ -6,9 +6,10 @@ export const SECTIONS = [
   { id: 'proyectos', n: '01' },
   { id: 'sobre', n: '02' },
   { id: 'gemelos', n: '03' },
-  { id: 'watertracking', n: '04' },
-  { id: 'faq', n: '05' },
-  { id: 'contacto', n: '06' },
+  { id: 'objetos', n: '04' },
+  { id: 'watertracking', n: '05' },
+  { id: 'faq', n: '06' },
+  { id: 'contacto', n: '07' },
 ];
 
 export const SECTION_IDS = SECTIONS.map((s) => s.id);

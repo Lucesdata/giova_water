@@ -1,0 +1,475 @@
+# Memoria de cálculo preliminar — CLF-010-EVAL-15
+
+Clarifloculador 10 L/s — potabilización (rangos de referencia)
+
+> **Documento generado automáticamente. No es un proyecto aprobado.** Las verificaciones estructurales y mecánicas pendientes se enumeran en la sección 7.
+
+## 1. Identificación
+
+| Campo | Valor |
+|---|---|
+| objectId | `clariflocculator/circular-center-feed:CLF-010` |
+| variantId | `CLF-010-EVAL-15@f6aa4aff25` |
+| parentVariantId | `CLF-010@5f8c2b3de5` |
+| Modo | B |
+| createdAt | 2026-11-22T00:00:00.000Z |
+| outputsHash | `83e3711f002eda47` |
+| Versión de esquema | 1.0.0 |
+| Modelo de cálculo | CF-ENG-1.1.0 |
+| Estado de validación | **FAILED** |
+
+## 2. Perfil de diseño: Potabilización: rangos de referencia
+
+Agua coagulada en potabilización, con rangos de bibliografía y normas de referencia. (aprobación: REFERENCE_RANGES).
+
+- La carga superficial se evalúa sobre la corona de sedimentación (superficie total menos la cámara de floculación).
+- El tiempo de floculación mínimo y la velocidad periférica de las paletas se tratan como límites duros (Ten States, agua).
+- G y Gt se tratan como bandas recomendadas (WARNING fuera de ellas).
+- Todos los valores de bibliografía están marcados TO_VERIFY hasta contrastarlos con la edición citada.
+
+| Criterio | Restricción | Fuente | Nota |
+|---|---|---|---|
+| surfaceLoadingAvg | recomendado 1…2.400 | ONTARIO-DWS-2008 | Sedimentación convencional 1,0–2,4 m/h |
+| flocculationTime | mín 30 | TEN-STATES-WATER-2018 | Detención mínima de 30 min |
+| paddleTipSpeed | mín 0.150; máx 0.910 | TEN-STATES-WATER-2018 | 0,5–3,0 ft/s |
+| velocityGradient | recomendado 10…75 | MWH-2012 | Rango típico de floculación |
+| gtProduct | recomendado 10000…100000 | MWH-2012 | Rango típico de Gt |
+| walkwayClearWidth | mín 0.600; recomendado 0.800…— | EN-ISO-14122-2-2016 |  |
+
+## 3. Datos de entrada
+
+```json
+{
+  "tag": "CLF-010-EVAL-15",
+  "name": "Clarifloculador 10 L/s — potabilización (rangos de referencia)",
+  "profileId": "water-reference",
+  "flow": {
+    "averageLps": 15,
+    "peak": {
+      "method": "factor",
+      "factor": 1.5
+    }
+  },
+  "influent": {
+    "tssMgL": 60,
+    "turbidityNtu": 40,
+    "temperatureC": 15
+  },
+  "designCriteria": {
+    "settlingLoadingAvgM_h": 1.5,
+    "hrtTargetMinH": 1.5
+  },
+  "criteriaOverrides": {},
+  "flocculation": {
+    "designFlow": "peak",
+    "detentionTimeMin": 30,
+    "chamberDepthM": 2.5,
+    "chamberWallThicknessM": 0.008,
+    "chamberMinInnerDiameterM": 0,
+    "velocityGradientS": 40,
+    "designTemperatureC": 10,
+    "paddles": {
+      "tipSpeedM_s": 0.6,
+      "relativeVelocityFactor": 0.75,
+      "dragCoefficient": 1.8,
+      "armCount": 4,
+      "bladeWidthM": 0.15,
+      "bladeHeightRatio": 0.7,
+      "wallClearanceM": 0.15,
+      "sleeveClearanceM": 0.05,
+      "sleeveWallThicknessM": 0.006,
+      "bladeThicknessM": 0.008,
+      "maxRings": 6
+    },
+    "drive": {
+      "footprintM": 0.5,
+      "heightM": 0.5
+    },
+    "materials": {
+      "chamber": "SS-1.4301",
+      "paddles": "SS-1.4301"
+    }
+  },
+  "geometry": {
+    "sideWaterDepthM": 3.5,
+    "diameterRoundingStepM": 0.1,
+    "minDiameterM": 0,
+    "freeboardM": 0.5,
+    "floorSlope": 0.08333333333333333,
+    "sumpDiameterM": 0.8,
+    "sumpDepthM": 0.6
+  },
+  "civil": {
+    "wallThicknessM": 0.3,
+    "baseSlabThicknessM": 0.35,
+    "slabProjectionM": 0.3,
+    "minFillThicknessM": 0.1,
+    "sumpWallThicknessM": 0.25,
+    "launderWidthM": 0.4,
+    "launderDepthM": 0.35,
+    "channelWallThicknessM": 0.2,
+    "channelFloorThicknessM": 0.2,
+    "concrete": "CONC-C30/37-XC4-XA1",
+    "fillConcrete": "CONC-C20/25-FILL",
+    "thicknessStatus": "PRELIMINARY_UNVERIFIED"
+  },
+  "hydraulics": {
+    "inletMaxVelocityM_s": 1.5,
+    "inletMinVelocityM_s": 0.5,
+    "portMaxVelocityM_s": 0.3,
+    "columnPortCount": 4,
+    "columnWallThicknessM": 0.008,
+    "effluentMaxVelocityM_s": 1.5,
+    "sludgePipeMinDn": 150,
+    "sludgeDesignVelocityM_s": 1,
+    "sludgeFlowFraction": 0.01,
+    "pipeWallThicknessM": 0.008,
+    "vNotchAngleDeg": 90,
+    "notchSpacingM": 0.2,
+    "notchDepthM": 0.05,
+    "weirCd": 0.58,
+    "weirPlateThicknessM": 0.005,
+    "weirExclusionLengthM": 0,
+    "launderFreeFallMinM": 0.05,
+    "materials": {
+      "plates": "SS-1.4301",
+      "pipes": "PE-HD-PE100"
+    }
+  },
+  "mechanical": {
+    "bridgeType": "full-span",
+    "bridgeWidthM": 1.6,
+    "bridgeGirderDepthM": 0.3,
+    "bridgeBearingHeightM": 0.1,
+    "bridgeClearanceAboveWaterMinM": 0.3,
+    "armCount": 2,
+    "armTrussDepthM": 0.4,
+    "armWallClearanceM": 0.05,
+    "bladeHeightM": 0.3,
+    "bladeFloorClearanceM": 0.03,
+    "bladeLengthM": 0.6,
+    "bladeAngleDeg": 30,
+    "cageHalfWidthM": 0.22,
+    "cageColumnClearanceM": 0.05,
+    "feedwellArmClearanceMinM": 0.3,
+    "skimmerClearanceM": 0.1,
+    "scumBaffleOffsetM": 0.3,
+    "scumBaffleDepthM": 0.3,
+    "scumBoxLengthM": 0.3,
+    "scumBoxWidthM": 0.4,
+    "walkwayClearWidthMinM": 0.6,
+    "driveFootprintM": 0.8,
+    "driveHeightM": 0.7,
+    "materials": {
+      "bridge": "STEEL-S275JR-HDG",
+      "mechanism": "STEEL-S275JR-HDG",
+      "submerged": "SS-1.4301",
+      "wipers": "EPDM-WIPER"
+    }
+  },
+  "site": {
+    "groundLevelM": 3.7,
+    "excavationWorkingSpaceM": 0.5
+  },
+  "meshResolution": {
+    "circularSegments": 96
+  }
+}
+```
+
+## 4. Cálculos (trazabilidad)
+
+| Clave | Magnitud | Valor | Unidad | Ecuación / regla | Depende de | Origen |
+|---|---|---:|---|---|---|---|
+| `flow.avg.Ls` | Caudal medio | 15 | L/s | Qmed (dato) | `input.flow.averageLps` | INPUT |
+| `flow.avg.m3h` | Caudal medio | 54 | m³/h | Q[m³/h] = 3,6 · Q[L/s] | `flow.avg.Ls` | CALCULATED |
+| `flow.avg.m3d` | Caudal medio diario | 1296 | m³/d | Q[m³/d] = 24 · Q[m³/h] | `flow.avg.m3h` | CALCULATED |
+| `flow.peak.Ls` | Caudal punta | 22.500 | L/s | Qmax = Fp · Qmed | `flow.avg.Ls`, `input.flow.peak.factor` | CALCULATED |
+| `flow.peak.m3h` | Caudal punta | 81 | m³/h | Q[m³/h] = 3,6 · Q[L/s] | `flow.peak.Ls` | CALCULATED |
+| `flow.peak.m3d` | Caudal punta en base diaria | 1944 | m³/d | Q[m³/d] = 24 · Q[m³/h] | `flow.peak.m3h` | CALCULATED |
+| `floc.volume.required` | Volumen de floculación requerido | 40.500 | m³ | Vf = Qmax · tf | `flow.peak.m3h`, `input.flocculation.detentionTimeMin` | CALCULATED |
+| `inlet.dn` | DN de la tubería de entrada | 125 | mm | DN fijado | `flow.peak.m3h`, `input.hydraulics.inletMaxVelocityM_s` | FIXED_BY_CONSTRAINT |
+| `inlet.velocity.peak` | Velocidad en la entrada a caudal punta | 1.833 | m/s | v = Qmax / (π·DN²/4) | `inlet.dn`, `flow.peak.m3h` | CALCULATED |
+| `inlet.velocity.avg` | Velocidad en la entrada a caudal medio | 1.222 | m/s | v = Qmed / (π·DN²/4) | `inlet.dn`, `flow.avg.m3h` | CALCULATED |
+| `column.outerRadius` | Radio exterior de la columna central | 0.0705 | m | rc = DN/2 + e | `inlet.dn`, `input.hydraulics.columnWallThicknessM` | CALCULATED |
+| `floc.area.net` | Superficie neta de la cámara de floculación | 16.200 | m² | Af = Vf / hf | `floc.volume.required`, `input.flocculation.chamberDepthM` | CALCULATED |
+| `floc.chamber.innerDiameter.required` | Diámetro interior requerido de la cámara | 4.544 | m | Df,int = √(4·(Af + π·rc²)/π) | `floc.area.net`, `column.outerRadius` | CALCULATED |
+| `feedwell.diameter` | Diámetro exterior de la cámara de floculación | 3.727 | m | Df fijado | `floc.chamber.innerDiameter.required`, `input.flocculation.chamberMinInnerDiameterM`, `input.flocculation.chamberWallThicknessM` | FIXED_BY_CONSTRAINT |
+| `area.required.avg` | Superficie de sedimentación requerida a caudal medio | 36 | m² | As = Qmed / CHSmed | `flow.avg.m3h`, `input.designCriteria.settlingLoadingAvgM_h` | CALCULATED |
+| `area.required` | Superficie de sedimentación requerida (gobierna caudal medio) | 36 | m² | As = max(As,med, As,max) | `area.required.avg` | CALCULATED |
+| `tank.diameter.theoretical` | Diámetro hidráulico teórico (corona + cámara) | 7.728 | m | D = √(4·(As + π·Df²/4)/π) | `area.required`, `feedwell.diameter` | CALCULATED |
+| `tank.diameter` | Diámetro interior hidráulico adoptado | 6.700 | m | D fijado por la geometría existente / restricción | `tank.diameter.theoretical`, `input.geometry.diameterRoundingStepM`, `input.geometry.minDiameterM` | FIXED_BY_CONSTRAINT |
+| `tank.area` | Superficie libre total | 35.257 | m² | A = π·D²/4 | `tank.diameter` | CALCULATED |
+| `settling.area` | Superficie de sedimentación (corona) | 24.347 | m² | As = π·(D² − Df²)/4 | `tank.area`, `feedwell.diameter` | CALCULATED |
+| `loading.surface.avg` | Carga superficial real en la corona a caudal medio | 2.218 | m³/(m²·h) | CHS = Qmed / As | `flow.avg.m3h`, `settling.area` | CALCULATED |
+| `loading.surface.peak` | Carga superficial real en la corona a caudal punta | 3.327 | m³/(m²·h) | CHS = Qmax / As | `flow.peak.m3h`, `settling.area` | CALCULATED |
+| `solids.influentLoad.avg` | Carga de SST afluente a caudal medio | 77.760 | kg/d | Mmed[kg/d] = Qmed[m³/d] · SST[mg/L] / 1000 | `flow.avg.m3d`, `input.influent.tssMgL` | CALCULATED |
+| `solids.influentLoad.peak` | Carga de SST afluente a caudal punta | 116.6 | kg/d | Mmax[kg/d] = Qmax[m³/d] · SST[mg/L] / 1000 (SST de entrada supuestos constantes) | `flow.peak.m3d`, `input.influent.tssMgL` | CALCULATED |
+| `loading.solids.avg` | Carga de sólidos superficial a caudal medio | 3.194 | kg/(m²·d) | SLR = Mmed / A | `solids.influentLoad.avg`, `settling.area` | CALCULATED |
+| `loading.solids.peak` | Carga de sólidos superficial a caudal punta | 4.791 | kg/(m²·d) | SLR = Mmax / A | `solids.influentLoad.peak`, `settling.area` | CALCULATED |
+| `tank.depth` | Profundidad útil en pared (fondo → cresta) | 3.500 | m | H fijada por la geometría existente | `input.geometry.sideWaterDepthM` | FIXED_BY_CONSTRAINT |
+| `floor.slopeStartRadius` | Radio de comienzo de la pendiente | 3.350 | m | rs = D/2 | `tank.diameter`, `input.geometry.slopeStartRadiusM` | CALCULATED |
+| `floor.dropAtSump` | Descenso del fondo hasta el borde de la poceta | 0.246 | m | Δy = s · (rs − rp) | `floor.slopeStartRadius`, `input.geometry.floorSlope`, `input.geometry.sumpDiameterM` | CALCULATED |
+| `level.sumpBottom` | Cota del fondo de la poceta | -0.846 | m | y = −Δy − hp | `floor.dropAtSump`, `input.geometry.sumpDepthM` | CALCULATED |
+| `floc.volume` | Volumen útil de floculación | 27.000 | m³ | Vf = π·(rf,int² − rc²)·hf | `feedwell.diameter`, `column.outerRadius`, `input.flocculation.chamberDepthM`, `input.flocculation.chamberWallThicknessM` | CALCULATED |
+| `floc.time.design` | Tiempo de floculación al caudal de diseño | 20 | min | tf = Vf / Qdiseño | `floc.volume`, `flow.peak.m3h` | CALCULATED |
+| `floc.time.peak` | Tiempo de floculación a caudal punta | 20 | min | tf = Vf / Qmax | `floc.volume`, `flow.peak.m3h` | CALCULATED |
+| `water.viscosity` | Viscosidad dinámica del agua a la temperatura de diseño | 0.00131 | Pa·s | μ(T) interpolada en tabla (CRC Handbook) | `input.flocculation.designTemperatureC` | CALCULATED |
+| `water.density` | Densidad del agua a la temperatura de diseño | 999.7 | kg/m³ | ρ(T) interpolada en tabla (CRC Handbook) | `input.flocculation.designTemperatureC` | CALCULATED |
+| `floc.power.required` | Potencia útil requerida para el G de diseño | 56.462 | W | P = G²·μ·Vf | `input.flocculation.velocityGradientS`, `water.viscosity`, `floc.volume` | CALCULATED |
+| `floc.paddle.angularSpeed` | Velocidad angular del agitador | 0.352 | rad/s | ω = vpunta / rpunta | `input.flocculation.paddles.tipSpeedM_s`, `feedwell.diameter`, `input.flocculation.paddles.wallClearanceM` | CALCULATED |
+| `floc.paddle.rpm` | Velocidad de giro del agitador | 3.360 | rpm | N = 60·ω/(2π) | `floc.paddle.angularSpeed` | CALCULATED |
+| `floc.paddle.rings` | Anillos de paletas por brazo (construidos) | 1 | — | n = min(n fijado, n que cabe) | `floc.power.required`, `floc.paddle.angularSpeed` | FIXED_BY_CONSTRAINT |
+| `floc.paddle.area` | Área total de paletas | 1.050 | m² | Ap = narm · nanillos · b · hp | `floc.paddle.rings`, `input.flocculation.paddles.bladeWidthM`, `input.flocculation.paddles.bladeHeightRatio`, `input.flocculation.paddles.armCount` | CALCULATED |
+| `floc.power.delivered` | Potencia útil entregada por las paletas | 75.221 | W | P = Σ narm · ½·CD·ρ·b·hp·(k·ω·rj)³ | `floc.paddle.rings`, `floc.paddle.angularSpeed`, `water.density`, `input.flocculation.paddles.dragCoefficient`, `input.flocculation.paddles.relativeVelocityFactor` | CALCULATED |
+| `floc.G` | Gradiente de velocidad G suministrado | 46.169 | s⁻¹ | G = √(P / (μ·Vf)) | `floc.power.delivered`, `water.viscosity`, `floc.volume` | CALCULATED |
+| `floc.Gt` | Producto Gt al caudal de diseño | 55402.8 | — | Gt = G · tf | `floc.G`, `floc.time.design` | CALCULATED |
+| `floc.paddle.areaRatio` | Área de paletas / sección vertical de la cámara | 0.162 | — | Ap / (2·rf,int · hp) | `floc.paddle.area`, `feedwell.diameter` | CALCULATED |
+| `level.feedwellBottom` | Cota inferior de la cámara de floculación | 1 | m | y = H − hpa | `tank.depth`, `input.flocculation.chamberDepthM` | CALCULATED |
+| `feedwell.downwardVelocity.peak` | Velocidad descendente en la cámara a caudal punta | 0.00208 | m/s | v = Qmax / (π·(rpa,int² − rc²)) | `flow.peak.m3h`, `feedwell.diameter`, `column.outerRadius` | CALCULATED |
+| `column.portWidth` | Anchura de ventana de la columna | 0.0554 | m | b = 0,5 · 2π·rc / n (regla de modelado) | `column.outerRadius`, `input.hydraulics.columnPortCount` | CALCULATED |
+| `column.portHeight` | Altura de ventana de la columna | 0.226 | m | h fijada | `flow.peak.m3h`, `input.hydraulics.portMaxVelocityM_s`, `column.portWidth` | FIXED_BY_CONSTRAINT |
+| `column.portVelocity.peak` | Velocidad en ventanas a caudal punta | 0.450 | m/s | v = Qmax / (n · b · h) | `column.portHeight`, `column.portWidth`, `flow.peak.m3h` | CALCULATED |
+| `weir.length.gross` | Longitud bruta de vertedero | 21.033 | m | L = 2π·(R − e/2) | `tank.diameter`, `input.hydraulics.weirPlateThicknessM` | CALCULATED |
+| `weir.length.effective` | Longitud efectiva de vertedero | 21.033 | m | Lef = L − Lexcl | `weir.length.gross`, `input.hydraulics.weirExclusionLengthM` | CALCULATED |
+| `loading.weir.avg` | Carga lineal de vertedero a caudal medio | 61.618 | m³/(m·d) | CLV = Qdiario / Lef | `flow.avg.m3d`, `weir.length.effective` | CALCULATED |
+| `loading.weir.peak` | Carga lineal de vertedero a caudal punta | 92.426 | m³/(m·d) | CLV = Qmax,diario / Lef | `flow.peak.m3d`, `weir.length.effective` | CALCULATED |
+| `weir.notchCount` | Número de escotaduras en V | 105 | — | n fijado | `weir.length.effective`, `input.hydraulics.notchSpacingM` | FIXED_BY_CONSTRAINT |
+| `weir.head.peak` | Carga sobre escotaduras a caudal punta | 0.0300 | m | h = [q / (Cd·8/15·√(2g)·tan(θ/2))]^(2/5) | `weir.notchCount`, `flow.peak.m3h`, `input.hydraulics.weirCd`, `input.hydraulics.vNotchAngleDeg` | CALCULATED |
+| `weir.head.avg` | Carga sobre escotaduras a caudal medio | 0.0255 | m | h = [q / (Cd·8/15·√(2g)·tan(θ/2))]^(2/5) | `weir.notchCount`, `flow.avg.m3h`, `input.hydraulics.weirCd`, `input.hydraulics.vNotchAngleDeg` | CALCULATED |
+| `level.water.avg` | Cota de lámina a caudal medio | 3.526 | m | y = H + hmed | `tank.depth`, `weir.head.avg` | CALCULATED |
+| `level.water.peak` | Cota de lámina a caudal punta | 3.530 | m | y = H + hmax | `tank.depth`, `weir.head.peak` | CALCULATED |
+| `level.water.reference.avg` | Lámina media de referencia de la geometría instalada | 3.522 | m | Fijada por el equipo existente | `tank.depth` | FIXED_BY_CONSTRAINT |
+| `level.water.reference.peak` | Lámina punta de referencia de la geometría instalada | 3.526 | m | Fijada por el equipo existente | `tank.depth` | FIXED_BY_CONSTRAINT |
+| `launder.upstreamDepth` | Calado aguas arriba en el canal (cada rama, Qmax/2) | 0.0748 | m | y₀ = √3 · (Q² / (g·b²))^(1/3), Q = Qmax/2 | `flow.peak.m3h`, `input.civil.launderWidthM` | CALCULATED |
+| `launder.freeFall` | Resguardo de caída libre bajo la cresta | 0.275 | m | Δ = hcanal − y₀ | `launder.upstreamDepth`, `input.civil.launderDepthM` | CALCULATED |
+| `effluent.dn` | DN del colector de efluente | 125 | mm | DN fijado | `flow.peak.m3h`, `input.hydraulics.effluentMaxVelocityM_s` | FIXED_BY_CONSTRAINT |
+| `effluent.velocity.peak` | Velocidad en el colector de efluente a caudal punta | 1.833 | m/s | v = Qmax / (π·DN²/4) | `effluent.dn`, `flow.peak.m3h` | CALCULATED |
+| `sludge.flow` | Caudal de purga para dimensionar la conducción | 0.540 | m³/h | Qlodo = f · Qmed (hipótesis de prediseño) | `flow.avg.m3h`, `input.hydraulics.sludgeFlowFraction` | CALCULATED |
+| `sludge.dn` | DN de la conducción de lodos | 150 | mm | DN fijado | `sludge.flow`, `input.hydraulics.sludgePipeMinDn`, `input.hydraulics.sludgeDesignVelocityM_s` | FIXED_BY_CONSTRAINT |
+| `sludge.velocity` | Velocidad en la conducción de lodos | 0.00849 | m/s | v = Qlodo / (π·DN²/4) | `sludge.flow`, `sludge.dn` | CALCULATED |
+| `volume.cylinder` | Volumen cilíndrico sobre el fondo en pared | 123.4 | m³ | V = π·R²·H | `tank.diameter`, `tank.depth` | CALCULATED |
+| `volume.floorCone` | Volumen del fondo en pendiente (sin poceta) | 3.275 | m³ | V = 2π·s·[rs·r²/2 − r³/3]rp→rs + π·rp²·s·(rs − rp) | `input.geometry.floorSlope`, `floor.slopeStartRadius`, `input.geometry.sumpDiameterM` | CALCULATED |
+| `volume.gross` | Volumen hidráulico bruto | 126.7 | m³ | Vbruto = Vcil + Vfondo | `volume.cylinder`, `volume.floorCone` | CALCULATED |
+| `volume.deduction.column` | Deducción: columna central | 0.0585 | m³ | V = π·rc²·(H + Δy) | `column.outerRadius`, `tank.depth`, `floor.dropAtSump` | CALCULATED |
+| `volume.deduction.feedwell` | Deducción: interior de la cámara de floculación | 27.000 | m³ | V = π·(rpa,int² − rc²)·hpa | `feedwell.diameter`, `column.outerRadius`, `input.flocculation.chamberDepthM` | CALCULATED |
+| `volume.effective` | Volumen efectivo de sedimentación | 99.615 | m³ | Vef = Vbruto − Vcolumna − Vpozo (se desprecian chapas y mecanismos) | `volume.gross`, `volume.deduction.column`, `volume.deduction.feedwell` | CALCULATED |
+| `volume.sump` | Volumen de la poceta (almacenamiento de lodo, no efectivo) | 0.292 | m³ | V = π·(rp² − rc²)·hp | `input.geometry.sumpDiameterM`, `input.geometry.sumpDepthM`, `column.outerRadius` | CALCULATED |
+| `hrt.avg` | TRH a caudal medio | 1.845 | h | TRH = Vef / Qmed | `volume.effective`, `flow.avg.m3h` | CALCULATED |
+| `hrt.peak` | TRH a caudal punta | 1.230 | h | TRH = Vef / Qmax | `volume.effective`, `flow.peak.m3h` | CALCULATED |
+| `level.slabTop` | Cota superior de la losa | -0.346 | m | y = −Δy − efill,mín | `floor.dropAtSump`, `input.civil.minFillThicknessM` | CALCULATED |
+| `level.slabBottom` | Cota inferior de la losa | -0.696 | m | y = ylosa − elosa | `level.slabTop`, `input.civil.baseSlabThicknessM` | CALCULATED |
+| `level.pitBottom` | Cota inferior del bloque de la poceta | -1.096 | m | y = min(yp − ep, ylosa,inf) | `level.sumpBottom`, `level.slabBottom`, `input.civil.sumpWallThicknessM` | CALCULATED |
+| `civil.wallOuterRadius` | Radio exterior del muro | 3.650 | m | r = R + em | `tank.diameter`, `input.civil.wallThicknessM` | CALCULATED |
+| `civil.structuralOuterDiameter` | Diámetro exterior estructural | 7.300 | m | Dext = D + 2·em | `civil.wallOuterRadius` | CALCULATED |
+| `civil.channelOuterRadius` | Radio exterior del canal perimetral | 4.250 | m | r = Rext + b + ec | `civil.wallOuterRadius`, `input.civil.launderWidthM`, `input.civil.channelWallThicknessM` | CALCULATED |
+| `civil.channelOuterDiameter` | Diámetro exterior del canal de recogida | 8.500 | m | Dcanal = 2·r | `civil.channelOuterRadius` | CALCULATED |
+| `civil.slabRadius` | Radio de la losa | 3.950 | m | r = Rext + vuelo | `civil.wallOuterRadius`, `input.civil.slabProjectionM` | CALCULATED |
+| `level.channelTop` | Coronación del canal perimetral | 4 | m | y = H + resguardo | `tank.depth`, `input.geometry.freeboardM` | CALCULATED |
+| `level.inletAxis` | Cota del eje de la tubería de entrada | -1.466 | m | y = min(ylosa,inf, ypoceta,inf) − recubrimiento − rext | `level.slabBottom`, `level.pitBottom`, `inlet.dn` | CALCULATED |
+| `bridge.span` | Luz del puente (vano completo) | 8.300 | m | L = 2·rapoyo | `civil.channelOuterRadius`, `input.mechanical.bridgeType` | CALCULATED |
+| `level.bridgeDeck` | Cota del tablero del puente | 4.400 | m | y = ycoronación + apoyo + canto | `level.channelTop`, `input.mechanical.bridgeBearingHeightM`, `input.mechanical.bridgeGirderDepthM` | CALCULATED |
+| `arm.tipRadius` | Radio de punta de los brazos | 3.300 | m | r = R − holgura | `tank.diameter`, `input.mechanical.armWallClearanceM` | CALCULATED |
+| `arm.length` | Longitud de brazo portarrasquetas (en planta) | 3.080 | m | L = rpunta − rjaula | `arm.tipRadius`, `input.mechanical.cageHalfWidthM` | CALCULATED |
+
+Reglas de modelado (no son criterios de diseño):
+
+- `portWidthToPitch` = 0.5
+- `portMarginInFeedwellM` = 0.1
+- `feedwellTopAboveWaterM` = 0.15
+- `baffleTopAboveWaterM` = 0.15
+- `buriedPipeCoverM` = 0.3
+- `cageMemberM` = 0.08
+- `bladeThicknessM` = 0.006
+- `effluentDropM` = 0.6
+- `ringPitchToBladeWidth` = 2
+
+## 5. Inventario de componentes
+
+| ID | Componente | Disciplina | Materiales | Masa | Movimiento | Conexiones |
+|---|---|---|---|---|---|---|
+| CIV-001 | Losa de cimentación | civil | Hormigón armado HA-30, estructura estanca en contacto con agua residual | 41728.2 kg (estimada) | fixed | 0 |
+| CIV-002 | Muro circular | civil | Hormigón armado HA-30, estructura estanca en contacto con agua residual | 63430.7 kg (estimada) | fixed | 1 |
+| CIV-003 | Fondo con pendiente | civil | Hormigón en masa para formación de pendientes | 21281.7 kg (estimada) | fixed | 0 |
+| CIV-004 | Poceta central de lodos | civil | Hormigón armado HA-30, estructura estanca en contacto con agua residual | 1860.4 kg (estimada) | fixed | 1 |
+| CIV-005 | Canal perimetral | civil | Hormigón armado HA-30, estructura estanca en contacto con agua residual | 18527.5 kg (estimada) | fixed | 3 |
+| HYD-001 | Tubería de entrada y columna central | hydraulic | Polietileno de alta densidad PE100; Acero inoxidable austenítico X5CrNi18-10 (AISI 304) | 160.2 kg (estimada) | fixed | 3 |
+| HYD-002 | Cámara de floculación | hydraulic | Acero inoxidable austenítico X5CrNi18-10 (AISI 304); Acero estructural S275JR galvanizado en caliente | PARTIAL | fixed | 3 |
+| HYD-003 | Deflectores de entrada a la cámara | hydraulic | Acero inoxidable austenítico X5CrNi18-10 (AISI 304) | 4.4 kg (estimada) | fixed | 0 |
+| HYD-004 | Vertedero de salida | hydraulic | Acero inoxidable austenítico X5CrNi18-10 (AISI 304) | 182.8 kg (estimada) | fixed | 1 |
+| HYD-005 | Colector de efluente | hydraulic | Polietileno de alta densidad PE100 | 8 kg (estimada) | fixed | 2 |
+| HYD-006 | Conducción de lodos | hydraulic | Polietileno de alta densidad PE100 | 19.2 kg (estimada) | fixed | 2 |
+| MEC-001 | Puente de soporte | mechanical | Acero estructural S275JR galvanizado en caliente | NOT_EVALUATED | fixed | 5 |
+| MEC-002 | Accionamiento mecánico | mechanical | Acero estructural S275JR galvanizado en caliente | NOT_EVALUATED | rotation (1 GDL, eje Y) | 2 |
+| MEC-003 | Mecanismo giratorio | mechanical | Acero inoxidable austenítico X5CrNi18-10 (AISI 304) | NOT_EVALUATED | rotation (1 GDL, eje Y) | 3 |
+| MEC-004 | Brazos portarrasquetas | mechanical | Acero inoxidable austenítico X5CrNi18-10 (AISI 304) | NOT_EVALUATED | rotation (1 GDL, eje Y) | 5 |
+| MEC-005 | Paletas de barrido | mechanical | Acero inoxidable austenítico X5CrNi18-10 (AISI 304) | 119.8 kg (estimada) | rotation (1 GDL, eje Y) | 2 |
+| MEC-006 | Sistema de retirada de flotantes | mechanical | Banda de barrido EPDM; Acero inoxidable austenítico X5CrNi18-10 (AISI 304) | PARTIAL | rotation (1 GDL, eje Y) | 1 |
+| MEC-007 | Agitador de paletas de floculación | mechanical | Acero inoxidable austenítico X5CrNi18-10 (AISI 304) | PARTIAL | rotation (1 GDL, eje Y) | 1 |
+| MEC-008 | Accionamiento del floculador | mechanical | Acero estructural S275JR galvanizado en caliente | NOT_EVALUATED | rotation (1 GDL, eje Y) | 2 |
+
+## 6. Mediciones
+
+| Partida | Cantidad |
+|---|---:|
+| Hormigón estructural CIV-001 | 16.691 m³ |
+| Hormigón estructural CIV-002 | 25.372 m³ |
+| Hormigón estructural CIV-004 | 0.744 m³ |
+| Hormigón estructural CIV-005 | 7.411 m³ |
+| **Hormigón estructural total** | **50.219 m³** |
+| Hormigón de formación de pendiente | 8.867 m³ |
+| Revestimiento CIV-002 cara interior | 73.670 m² |
+| Revestimiento CIV-003 fondo | 34.874 m² |
+| Revestimiento CIV-004 poceta | 1.995 m² |
+| Revestimiento CIV-005 canal | 26.609 m² |
+| Excavación | 275.1 m³ |
+| Longitud de perfiles/tubos STEEL-S275JR-HDG | 52.649 m |
+| Longitud de perfiles/tubos SS-1.4301 | 60.653 m |
+| Superficie de protección anticorrosiva (acero al carbono) | 57.195 m² |
+| Armaduras | NOT_EVALUATED |
+
+- Volúmenes de hormigón medidos sobre la geometría modelada (Pappus-Guldin), sin descontar pasamuros.
+- Las piezas de sección representativa (celosías, vigas del puente, jaula) solo aportan longitud: su masa queda NOT_EVALUATED.
+- La superficie de protección anticorrosiva incluye solo acero estructural no inoxidable.
+- Armaduras: no se miden sin diseño estructural.
+- Excavación de paredes verticales con sobreancho de trabajo; sin taludes ni entibación.
+
+## 7. Validación
+
+Estado global: **FAILED** — PASS 57 · WARNING 1 · FAIL 8 · NOT_EVALUATED 26
+
+### Nivel 1 — Datos
+
+| Estado | ID | Comprobación | Valor | Límite | Mensaje |
+|---|---|---|---:|---|---|
+| PASS | `DATA-SCHEMA` | Esquema de entradas |  |  | Entradas válidas (esquema 1.0.0). |
+| PASS | `DATA-PEAK-GE-AVG` | Caudal punta ≥ caudal medio | 22.500 L/s | ≥ 15 | Coherente. |
+
+### Nivel 2 — Hidráulica
+
+| Estado | ID | Comprobación | Valor | Límite | Mensaje |
+|---|---|---|---:|---|---|
+| FAIL | `HYD-INLET-VMAX` | Velocidad máxima en la entrada | 1.833 m/s | ≤ 1.5 | La velocidad a caudal punta supera el máximo adoptado. |
+| PASS | `HYD-INLET-VMIN` | Velocidad mínima en la entrada (autolimpieza) | 1.222 m/s | recomendado 0.5…— | Cumple. |
+| FAIL | `HYD-DIAMETER-GE-REQUIRED` | Diámetro adoptado ≥ requerido | 6.700 m | ≥ 7.728 | El diámetro fijado (6.70 m) no proporciona la superficie requerida; no se corrige automáticamente. |
+| FAIL | `HYD-CHS-AVG-ADMISSIBLE` | CHS media ≤ admisible de diseño | 2.218 m³/(m²·h) | ≤ 1.5 | La corona de sedimentación no cumple la carga superficial admisible adoptada. |
+| NOT_EVALUATED | `HYD-CHS-PEAK-ADMISSIBLE` | CHS punta ≤ admisible de diseño | 3.327 m³/(m²·h) |  | No se ha definido carga superficial admisible a caudal punta. |
+| PASS | `HYD-CHS-AVG-CRITERION` | Carga superficial sobre la zona de sedimentación a caudal medio | 2.218 m³/(m²·h) | recomendado 1…2.4 | Cumple el criterio (Design Guidelines for Drinking-Water Systems (Ontario Ministry of the Environment) — Sedimentación convencional 1,0–2,4 m/h). |
+| NOT_EVALUATED | `HYD-CHS-PEAK-CRITERION` | Carga superficial sobre la zona de sedimentación a caudal punta | 3.327 m³/(m²·h) |  | El perfil de diseño no define criterio para esta magnitud. |
+| NOT_EVALUATED | `HYD-SLR-CRITERION` | Carga de sólidos superficial a caudal punta | 4.791 kg/(m²·d) |  | El perfil de diseño no define criterio para esta magnitud. |
+| NOT_EVALUATED | `HYD-DEPTH-CRITERION` | Profundidad útil en pared | 3.500 m |  | El perfil de diseño no define criterio para esta magnitud. |
+| FAIL | `HYD-FLOC-TIME-TARGET` | Tiempo de floculación ≥ objetivo de diseño | 20 min | ≥ 30 | La cámara no proporciona el tiempo de floculación adoptado: no se agranda automáticamente. |
+| FAIL | `HYD-FLOC-TIME-CRITERION` | Tiempo de floculación al caudal de diseño | 20 min | ≥ 30 | Incumple el criterio (Recommended Standards for Water Works (Ten States Standards) — Detención mínima de 30 min). |
+| PASS | `HYD-FLOC-POWER` | Potencia de paletas ≥ potencia requerida | 75.221 W | ≥ 56.5 | Las paletas entregan la potencia necesaria para el G de diseño. |
+| PASS | `HYD-FLOC-G-CRITERION` | Gradiente de velocidad G suministrado | 46.169 s⁻¹ | recomendado 10…75 | Cumple el criterio (MWH — Water Treatment: Principles and Design — Rango típico de floculación). |
+| PASS | `HYD-FLOC-GT-CRITERION` | Producto Gt | 55402.8 — | recomendado 10000…100000 | Cumple el criterio (MWH — Water Treatment: Principles and Design — Rango típico de Gt). |
+| PASS | `HYD-FLOC-TIP-SPEED` | Velocidad periférica de las paletas | 0.600 m/s | ≥ 0.15; ≤ 0.91 | Cumple el criterio (Recommended Standards for Water Works (Ten States Standards) — 0,5–3,0 ft/s). |
+| NOT_EVALUATED | `HYD-FLOC-PADDLE-AREA` | Área de paletas / sección vertical de la cámara | 0.162 — |  | El perfil de diseño no define criterio para esta magnitud. |
+| NOT_EVALUATED | `HYD-FEEDWELL-VELOCITY` | Velocidad descendente en la cámara de floculación a caudal punta | 0.00208 m/s |  | El perfil de diseño no define criterio para esta magnitud. |
+| FAIL | `HYD-PORT-VELOCITY` | Velocidad de salida por las ventanas | 0.450 m/s | ≤ 0.3 | La velocidad en las ventanas supera el máximo adoptado. |
+| NOT_EVALUATED | `HYD-WEIR-LOADING-ADMISSIBLE` | CLV punta ≤ admisible de diseño | 92.426 m³/(m·d) |  | No se ha definido carga lineal máxima de vertedero. |
+| NOT_EVALUATED | `HYD-WEIR-LOADING-CRITERION` | Carga lineal sobre vertedero a caudal punta | 92.426 m³/(m·d) |  | El perfil de diseño no define criterio para esta magnitud. |
+| PASS | `HYD-NOTCH-COUNT` | Al menos una escotadura en V | 105 — | ≥ 1 | Cumple. |
+| PASS | `HYD-NOTCH-NOT-DROWNED` | Lámina dentro de la escotadura a caudal punta | 0.0300 m | ≤ 0.05 | Cumple. |
+| PASS | `HYD-SHELLS-ABOVE-WATER` | Cámara y deflector de flotantes por encima de la lámina en punta | 0.146 m | > 0 | Cumple. |
+| PASS | `HYD-LAUNDER-FREE-FALL` | Vertido libre al canal perimetral | 0.275 m | ≥ 0.05 | El canal no remansa el vertedero. |
+| FAIL | `HYD-EFFLUENT-VMAX` | Velocidad en el colector de efluente | 1.833 m/s | ≤ 1.5 | Supera la velocidad máxima adoptada. |
+| PASS | `HYD-SLUDGE-VELOCITY` | Velocidad de diseño en la conducción de lodos | 0.00849 m/s | ≤ 1 | Cumple. |
+| PASS | `HYD-SLUDGE-MIN-DN` | DN mínimo de la conducción de lodos | 150 mm | ≥ 150 | Cumple. |
+| NOT_EVALUATED | `HYD-SLUDGE-HYDRAULICS` | Hidráulica de purga de lodos |  |  | Pérdidas, carga disponible, bombeo o purga telescópica no evaluados en V1. El caudal de purga es una hipótesis de prediseño. |
+| NOT_EVALUATED | `HYD-SLUDGE-BLANKET` | Manto de lodos por debajo de la cámara de floculación |  |  | No se ha definido la altura de diseño del manto (geometry.sludgeBlanketDepthM): el volumen efectivo no lo descuenta. |
+| PASS | `HYD-EFFECTIVE-VOLUME-POSITIVE` | Volumen efectivo positivo | 99.615 m³ | > 0 | Cumple. |
+| PASS | `HYD-HRT-TARGET` | TRH ≥ objetivo de diseño | 1.845 h | ≥ 1.5 | Cumple. |
+| NOT_EVALUATED | `HYD-HRT-CRITERION` | Tiempo de retención en la zona de sedimentación a caudal medio | 1.845 h |  | El perfil de diseño no define criterio para esta magnitud. |
+| NOT_EVALUATED | `HYD-REMOVAL-EFFICIENCY` | Eficiencia de eliminación de SST y DBO₅ |  |  | V1 conserva la calidad del agua como dato técnico pero no calcula rendimientos (spec §4.1). |
+| PASS | `HYD-FREEBOARD-OVER-PEAK` | Coronación sobre la lámina en punta | 0.470 m | > 0 | Cumple. |
+| FAIL | `MODE-B-CAPACITY` | Capacidad del equipo existente |  |  | La geometría existente no admite las nuevas condiciones: HYD-INLET-VMAX, HYD-DIAMETER-GE-REQUIRED, HYD-CHS-AVG-ADMISSIBLE, HYD-FLOC-TIME-TARGET, HYD-FLOC-TIME-CRITERION, HYD-PORT-VELOCITY, HYD-EFFLUENT-VMAX. |
+
+### Nivel 3 — Geometría
+
+| Estado | ID | Comprobación | Valor | Límite | Mensaje |
+|---|---|---|---:|---|---|
+| PASS | `GEO-SUMP-CLEAR-OF-COLUMN` | Poceta mayor que la columna central | 0.330 m | > 0 | Queda corona libre para el lodo. |
+| NOT_EVALUATED | `HYD-DIAMETER-RANGE` | Diámetro interior | 6.700 m |  | El perfil de diseño no define criterio para esta magnitud. |
+| PASS | `GEO-SETTLING-ANNULUS` | Corona de sedimentación alrededor de la cámara | 24.347 m² | > 0 | Cumple. |
+| PASS | `GEO-SLOPE-START-INSIDE` | Comienzo de pendiente dentro del tanque | 3.350 m | ≤ 3.350 | rs ≤ R. |
+| PASS | `GEO-SUMP-INSIDE-SLOPE` | Poceta dentro de la zona en pendiente | 0.400 m | < 3.350 | rp < rs. |
+| NOT_EVALUATED | `GEO-FLOOR-SLOPE-CRITERION` | Pendiente radial del fondo | 0.0833 m/m |  | El perfil de diseño no define criterio para esta magnitud. |
+| PASS | `GEO-CHAMBER-DEPTH-LT-H` | Cámara de floculación menos profunda que el tanque | 2.500 m | < 3.5 | Cumple. |
+| PASS | `GEO-PADDLES-FIT` | Las paletas caben entre el tubo de giro y la pared | 4 | ≥ 1 | 1 anillo(s) de 4 paletas. |
+| PASS | `GEO-FEEDWELL-ANNULUS` | Corona libre entre columna y cámara de floculación | 1.785 m | > 0 | Cumple. |
+| PASS | `GEO-PORTS-INSIDE-FEEDWELL` | Ventanas contenidas en la cámara de floculación | 0.226 m | ≤ 2.300 | Cumple. |
+| PASS | `GEO-WEIR-LENGTH-POSITIVE` | Longitud efectiva de vertedero positiva | 21.033 m | > 0 | Cumple. |
+| PASS | `GEO-EFFLUENT-FITS-LAUNDER` | Colector de efluente cabe en el canal | 0.141 m | ≤ 0.4 | El diámetro exterior cabe en la anchura del canal. |
+| PASS | `GEO-SLUDGE-FITS-SUMP` | Conducción de lodos cabe en la altura de la poceta | 0.166 m | < 0.6 | Cumple. |
+| PASS | `GEO-BRIDGE-CLEARANCE` | Gálibo del puente sobre la lámina en punta | 0.570 m | ≥ 0.3 | Cumple. |
+| PASS | `GEO-CAGE-COLUMN` | Holgura jaula giratoria – columna | 0.109 m | ≥ 0.05 | Cumple. |
+| PASS | `GEO-CAGE-FEEDWELL` | Holgura jaula giratoria – cámara de floculación | 1.504 m | ≥ 0.05 | Cumple. |
+| PASS | `GEO-FEEDWELL-ARMS` | Holgura cámara de floculación – brazos | 0.394 m | ≥ 0.3 | Cumple. |
+| PASS | `GEO-SKIMMER-LENGTH` | Espacio para el barredor de flotantes | 0.982 m | > 0 | Cumple. |
+| PASS | `GEO-SKIMMER-REACHES-BOX` | El barredor alcanza la caja de flotantes |  |  | Cumple. |
+| PASS | `GEO-FLOOR-CONTINUITY` | Continuidad del fondo | 8.33e-9 m |  | El fondo es continuo y la geometría sigue la ley de pendiente. |
+| PASS | `GEO-VOLUME-CONSISTENCY` | Volumen geométrico = volumen calculado | 126.7 m³ |  | La geometría generada encierra 126.673 m³, igual al volumen bruto calculado. |
+| PASS | `GEO-DIAMETER-CONSISTENCY` | Diámetro modelado = diámetro calculado | 6.700 m |  | Se compara la cara interior del muro generado con el diámetro hidráulico adoptado. |
+| PASS | `GEO-BLADE-FLOOR` | Holgura paletas – fondo | 0.0300 m | ≥ 0.03 | 7 paletas por brazo; holgura mínima medida a lo largo de cada paleta. |
+| PASS | `GEO-BLADE-WALL` | Holgura paletas – muro | 0.0500 m | ≥ 0.05 | Distancia del punto más exterior de las paletas a la cara interior del muro. |
+| PASS | `GEO-BLADE-SUMP-COVERAGE` | Las paletas barren hasta la poceta | 0.220 m | ≤ 0.400 | La paleta interior alcanza la poceta. |
+| PASS | `GEO-DEFLECTOR-CAGE` | Holgura deflectores – jaula giratoria | 0.0711 m | ≥ 0.05 | Los deflectores fijos quedan dentro de la jaula. |
+| PASS | `GEO-DRIVE-DECK` | Accionamiento central apoyado sobre el puente | 0.400 m | ≥ -1e-9 | La envolvente del accionamiento apoya sobre el tablero del puente. |
+| PASS | `GEO-BAFFLE-ARMS` | Holgura deflector de flotantes – brazos | 2.495 m | ≥ 0.3 | Cumple. |
+| PASS | `GEO-CONNECTIONS` | Componentes correctamente conectados | 0 |  | 16 conexiones coincidentes. |
+| PASS | `GEO-AXIS-ALIGNMENT` | Alineación con el eje del tanque |  |  | Todos los sólidos de revolución son coaxiales. |
+| NOT_EVALUATED | `GEO-SKIMMER-BEACH` | Interacción barredor – playa de flotantes |  |  | Contacto funcional previsto (labio flexible sobre la rampa). Geometría de rampa y labio a definir con el fabricante. |
+| PASS | `GEO-SLEEVE-CAGE` | Holgura tubo del agitador – jaula del rascador | 0.0500 m | ≥ 0.05 | El tubo de giro no toca la jaula giratoria. |
+| PASS | `GEO-SLEEVE-BRIDGE` | Holgura tubo del agitador – vigas del puente | 0.333 m | ≥ 0.05 | El tubo de giro pasa entre las vigas principales del puente. |
+| PASS | `GEO-FLOC-DRIVE-DECK` | Accionamiento del floculador apoyado sobre el puente | 0.100 m | ≥ -1e-9 | El reductor anular apoya sobre el tablero del puente. |
+| PASS | `GEO-PADDLES-WALL` | Holgura paletas – pared de la cámara | 0.150 m | ≥ 0.15 | Distancia del punto más exterior de las paletas a la cara interior de la cámara. |
+| PASS | `GEO-PADDLES-SLEEVE` | Holgura paletas – tubo de giro | 1.148 m | ≥ 0.05 | Separación entre el canto interior de las paletas y el tubo de giro. |
+| PASS | `GEO-PADDLES-VERTICAL` | Agitador sumergido y dentro de la cámara | 0.305 m | > 0 | Paletas y brazos quedan entre el fondo de la cámara y la cresta del vertedero. |
+| PASS | `GEO-COMPONENT-INVENTORY` | Inventario de componentes completo |  |  | 19 componentes generados. |
+
+### Nivel 4 — Ingeniería constructiva
+
+| Estado | ID | Comprobación | Valor | Límite | Mensaje |
+|---|---|---|---:|---|---|
+| PASS | `GEO-WALKWAY-WIDTH` | Anchura libre de pasarela | 1.600 m | ≥ 0.6; recomendado 0.8…— | Cumple el criterio (EN ISO 14122-2 — Seguridad de las máquinas. Medios de acceso permanentes. Plataformas y pasarelas). |
+| NOT_EVALUATED (crítica) | `STR-THICKNESS` | Espesores estructurales |  |  | Espesores preliminares NO verificados (muro 0.3 m, losa 0.35 m, canal 0.2 m, poceta 0.25 m). Requiere cálculo según EN 1992-1-1 / EN 1992-3: presión hidrostática, estado vacío con empuje del terreno, nivel freático, cargas de equipos y puente, fisuración y estanqueidad. |
+| NOT_EVALUATED (crítica) | `STR-CRACKING-WATERTIGHTNESS` | Fisuración y estanqueidad (EN 1992-3) |  |  | Método no implementado en V1. |
+| NOT_EVALUATED (crítica) | `STR-GEOTECHNICS` | Cimentación y geotecnia |  |  | Sin datos geotécnicos: capacidad portante, asientos y empujes no evaluados. |
+| NOT_EVALUATED (crítica) | `STR-FLOTATION` | Flotación con tanque vacío |  |  | Falta el nivel freático (site.groundwaterLevelM). |
+| NOT_EVALUATED | `STR-REBAR` | Cuantías de armadura |  |  | No se miden armaduras sin diseño estructural (spec §7.4). |
+| NOT_EVALUATED (crítica) | `MEC-BRIDGE-STRUCTURE` | Resistencia y flecha del puente |  |  | Puente full-span de 8.30 m de luz: perfiles, cargas de mantenimiento y apoyos sin dimensionar. El tipo de apoyo no se infiere del diámetro. |
+| NOT_EVALUATED (crítica) | `MEC-DRIVE-TORQUE` | Par y potencia del accionamiento |  |  | Representación paramétrica sin selección comercial. Par, potencia y limitador de par se calcularán en fase posterior. |
+| NOT_EVALUATED (crítica) | `MEC-ARMS-STRUCTURE` | Resistencia de jaula, brazos y paletas |  |  | Secciones representativas; sin cálculo de esfuerzos de barrido. |
+| NOT_EVALUATED (crítica) | `MEC-FABRICATION` | Equipo mecánico apto para fabricación |  |  | El equipo mecánico NO está dimensionado para fabricación. |
+| PASS | `MAT-SUBMERGED-COMPATIBILITY` | Material de piezas sumergidas |  |  | Acero inoxidable austenítico X5CrNi18-10 (AISI 304): compatible con inmersión en agua residual urbana (confirmar agresividad real). |
+| PASS | `MAT-CONCRETE-EXPOSURE` | Clase de exposición del hormigón |  |  | El hormigón declara exposición química (XA). Confirmar la clase con análisis del agua y del terreno. |
+| PASS | `SITE-EXCAVATION` | Implantación y excavación |  |  | Excavación estimada 275.1 m³. |
+| NOT_EVALUATED (crítica) | `MEC-FLOC-DRIVE` | Par, potencia y regulación del accionamiento del floculador |  |  | Representación paramétrica. Potencia útil al agua 75 W; faltan rendimientos, par de arranque, reductor, variador de velocidad y selección comercial. |
+| NOT_EVALUATED (crítica) | `MEC-FLOC-STRUCTURE` | Resistencia de paletas, brazos y tubo de giro |  |  | Secciones representativas; sin cálculo de esfuerzos hidrodinámicos ni fatiga. |
+| PASS | `DOC-PROFILE` | Perfil de diseño: Potabilización: rangos de referencia |  |  | Agua coagulada en potabilización, con rangos de bibliografía y normas de referencia. |
+| WARNING | `DOC-SOURCES` | Verificación de fuentes |  |  | Fuentes pendientes de contrastar con su edición: ISO-6708-1995, ISO-1438-2017, CHOW-1959, EN-ISO-14122-2-2016, ONTARIO-DWS-2008, TEN-STATES-WATER-2018, CRC-HANDBOOK, MWH-2012. |
+
+### Verificaciones críticas pendientes
+
+- **Espesores estructurales** (`STR-THICKNESS`): Espesores preliminares NO verificados (muro 0.3 m, losa 0.35 m, canal 0.2 m, poceta 0.25 m). Requiere cálculo según EN 1992-1-1 / EN 1992-3: presión hidrostática, estado vacío con empuje del terreno, nivel freático, cargas de equipos y puente, fisuración y estanqueidad.
+- **Fisuración y estanqueidad (EN 1992-3)** (`STR-CRACKING-WATERTIGHTNESS`): Método no implementado en V1.
+- **Cimentación y geotecnia** (`STR-GEOTECHNICS`): Sin datos geotécnicos: capacidad portante, asientos y empujes no evaluados.
+- **Flotación con tanque vacío** (`STR-FLOTATION`): Falta el nivel freático (site.groundwaterLevelM).
+- **Resistencia y flecha del puente** (`MEC-BRIDGE-STRUCTURE`): Puente full-span de 8.30 m de luz: perfiles, cargas de mantenimiento y apoyos sin dimensionar. El tipo de apoyo no se infiere del diámetro.
+- **Par y potencia del accionamiento** (`MEC-DRIVE-TORQUE`): Representación paramétrica sin selección comercial. Par, potencia y limitador de par se calcularán en fase posterior.
+- **Resistencia de jaula, brazos y paletas** (`MEC-ARMS-STRUCTURE`): Secciones representativas; sin cálculo de esfuerzos de barrido.
+- **Equipo mecánico apto para fabricación** (`MEC-FABRICATION`): El equipo mecánico NO está dimensionado para fabricación.
+- **Par, potencia y regulación del accionamiento del floculador** (`MEC-FLOC-DRIVE`): Representación paramétrica. Potencia útil al agua 75 W; faltan rendimientos, par de arranque, reductor, variador de velocidad y selección comercial.
+- **Resistencia de paletas, brazos y tubo de giro** (`MEC-FLOC-STRUCTURE`): Secciones representativas; sin cálculo de esfuerzos hidrodinámicos ni fatiga.
+
+## 8. Fuentes
+
+- **ISO-6708-1995** — ISO 6708 — Componentes de tuberías. Definición y selección de DN, 1995. Ámbito: Serie de diámetros nominales. El DN no es el diámetro interior: se usa como aproximación de prediseño. _Verificación: TO_VERIFY._
+- **ISO-1438-2017** — ISO 1438 — Hydrometry: Open channel flow measurement using thin-plate weirs, 2017, Vertedero triangular de pared delgada (fórmula de Kindsvater-Shen). Ámbito: Ecuación de descarga de escotaduras en V. _Verificación: TO_VERIFY._
+- **CHOW-1959** — V. T. Chow — Open-Channel Hydraulics, McGraw-Hill, 1959, Canal con caída libre: calado aguas arriba ≈ √3·yc para canal horizontal con aporte lateral uniforme. Ámbito: Prediseño del canal perimetral de recogida. _Verificación: TO_VERIFY._
+- **EN-ISO-14122-2-2016** — EN ISO 14122-2 — Seguridad de las máquinas. Medios de acceso permanentes. Plataformas y pasarelas, 2016, Anchura libre mínima de pasarela. Ámbito: Geometría mínima de pasarelas de mantenimiento. _Verificación: TO_VERIFY._
+- **ONTARIO-DWS-2008** — Design Guidelines for Drinking-Water Systems (Ontario Ministry of the Environment), 2008, §5.5 (sedimentación convencional: carga superficial 1,0–2,4 m/h). Ámbito: Agua potable. Rango indicativo citado también en guías técnicas secundarias; no es un límite universal. _Verificación: TO_VERIFY._
+- **TEN-STATES-WATER-2018** — Recommended Standards for Water Works (Ten States Standards), Edición 2018, Great Lakes–Upper Mississippi River Board, §4.2 (floculación: tiempo de detención y velocidad periférica de las paletas). Ámbito: Norma de referencia en EE. UU. para potabilización; útil como contraste, no obligatoria en la UE. _Verificación: TO_VERIFY._
+- **CRC-HANDBOOK** — CRC Handbook of Chemistry and Physics — Viscosity and density of liquid water, 97.ª ed., 2016, Tablas de propiedades del agua de 0 a 40 °C. Ámbito: Viscosidad dinámica y densidad del agua pura a presión atmosférica. _Verificación: TO_VERIFY._
+- **MWH-2012** — MWH — Water Treatment: Principles and Design, 3.ª ed., Wiley, 2012, Cap. 9 (floculación: gradiente de velocidad G, producto Gt, potencia de paletas P = ½·CD·ρ·A·v³). Ámbito: Rangos típicos y ecuaciones de floculación mecánica. _Verificación: TO_VERIFY._
