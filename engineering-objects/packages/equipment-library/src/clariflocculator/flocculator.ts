@@ -13,7 +13,7 @@ import {
   type RevolveShape,
 } from '@eo/geometry-engine';
 import type { ResolvedModel } from '../primary-clarifier/definition/engine.js';
-import { MECH_RULES } from '../primary-clarifier/mechanical/geometry.js';
+import { MECH_RULES, driveSupportRadius } from '../primary-clarifier/mechanical/geometry.js';
 import type { PaddleLayout } from './strategy.js';
 import type { ClfInput } from './schema.js';
 
@@ -108,12 +108,14 @@ export function flocculatorGeometryChecks(m: ResolvedModel, l: PaddleLayout, clf
     const ev = evaluateRange(girderInner - sleeveOut, { min: pd.sleeveClearanceM - 1e-6 });
     checks.add({ id: 'GEO-SLEEVE-BRIDGE', level: 3, status: ev.status, title: 'Holgura tubo del agitador – vigas del puente', message: ev.status === 'PASS' ? 'El tubo de giro pasa entre las vigas principales del puente.' : 'El tubo de giro interfiere con las vigas principales del puente: ensanchar el puente o reducir la jaula.', value: girderInner - sleeveOut, limit: ev.limit, unit: 'm', componentIds: ['MEC-007', 'MEC-001'] });
   }
-  // El accionamiento del floculador (reductor y motor) debe apoyar sobre el tablero.
+  // El reductor anular del floculador debe apoyar entero sobre el tablero (o la plataforma de la columna
+  // en puente radial, donde el tablero no cubre z < 0). Ver driveSupportRadius.
   {
     const { outer } = flocDriveRadii(m, clf);
-    const halfDeck = m.bridgeWidth / 2;
-    const ev = evaluateRange(halfDeck - outer, { min: -1e-9 });
-    checks.add({ id: 'GEO-FLOC-DRIVE-DECK', level: 3, status: ev.status, title: 'Accionamiento del floculador dentro del tablero', message: ev.status === 'PASS' ? 'El reductor anular apoya sobre el tablero del puente.' : 'El reductor anular del floculador sobresale del tablero: ensanchar el puente o reducir su envolvente.', value: halfDeck - outer, limit: ev.limit, unit: 'm', componentIds: ['MEC-008', 'MEC-001'] });
+    const margin = driveSupportRadius(m) - outer;
+    const where = m.bridgeType === 'radial' ? 'el tablero y la plataforma de la columna central' : 'el tablero del puente';
+    const ev = evaluateRange(margin, { min: -1e-9 });
+    checks.add({ id: 'GEO-FLOC-DRIVE-DECK', level: 3, status: ev.status, title: 'Accionamiento del floculador apoyado sobre el puente', message: ev.status === 'PASS' ? `El reductor anular apoya sobre ${where}.` : `El reductor anular del floculador sobresale de ${where}: ensanchar el puente o reducir su envolvente.`, value: margin, limit: ev.limit, unit: 'm', componentIds: ['MEC-008', 'MEC-001'] });
   }
   // Punto más exterior de las paletas: esquina de la chapa (canto exterior y medio espesor tangencial).
   let maxR = 0;

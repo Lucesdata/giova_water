@@ -24,7 +24,7 @@ import { CRITERION_META, type Criterion, type CriterionKey } from './profiles.js
 import type { DesignInput } from './schema.js';
 
 /** Versión del método de cálculo. Cambia cuando cambia cualquier ecuación o regla. */
-export const ENGINEERING_MODEL_VERSION = 'PC-ENG-1.3.0';
+export const ENGINEERING_MODEL_VERSION = 'PC-ENG-1.4.0';
 
 /**
  * Decisiones de dimensionamiento: los valores que el motor ELIGE (frente a los que calcula

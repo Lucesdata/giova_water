@@ -13,9 +13,9 @@ Decantador primario 5 L/s — prediseño conceptual
 | parentVariantId | — |
 | Modo | BASE |
 | createdAt | 2026-11-22T00:00:00.000Z |
-| outputsHash | `f8bf120e2bfd7077` |
+| outputsHash | `5a4b641474d9eb1d` |
 | Versión de esquema | 1.0.0 |
-| Modelo de cálculo | PC-ENG-1.3.0 |
+| Modelo de cálculo | PC-ENG-1.4.0 |
 | Estado de validación | **INCOMPLETE** |
 
 ## 2. Perfil de diseño: Prediseño conceptual
@@ -295,7 +295,7 @@ Reglas de modelado (no son criterios de diseño):
 
 ## 7. Validación
 
-Estado global: **INCOMPLETE** — PASS 56 · WARNING 3 · FAIL 0 · NOT_EVALUATED 16
+Estado global: **INCOMPLETE** — PASS 57 · WARNING 3 · FAIL 0 · NOT_EVALUATED 16
 
 ### Nivel 1 — Datos
 
@@ -366,6 +366,7 @@ Estado global: **INCOMPLETE** — PASS 56 · WARNING 3 · FAIL 0 · NOT_EVALUATE
 | PASS | `GEO-BLADE-WALL` | Holgura paletas – muro | 0.0500 m | ≥ 0.05 | Distancia del punto más exterior de las paletas a la cara interior del muro. |
 | PASS | `GEO-BLADE-SUMP-COVERAGE` | Las paletas barren hasta la poceta | 0.220 m | ≤ 0.400 | La paleta interior alcanza la poceta. |
 | PASS | `GEO-DEFLECTOR-CAGE` | Holgura deflectores – jaula giratoria | 0.0711 m | ≥ 0.05 | Los deflectores fijos quedan dentro de la jaula. |
+| PASS | `GEO-DRIVE-DECK` | Accionamiento central apoyado sobre el puente | 0 m | ≥ -1e-9 | La envolvente del accionamiento apoya sobre el tablero del puente. |
 | PASS | `GEO-BAFFLE-ARMS` | Holgura deflector de flotantes – brazos | 1.995 m | ≥ 0.3 | Cumple. |
 | PASS | `GEO-CONNECTIONS` | Componentes correctamente conectados | 0 |  | 15 conexiones coincidentes. |
 | PASS | `GEO-AXIS-ALIGNMENT` | Alineación con el eje del tanque |  |  | Todos los sólidos de revolución son coaxiales. |

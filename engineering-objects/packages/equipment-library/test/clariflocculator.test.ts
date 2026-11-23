@@ -227,6 +227,27 @@ describe('correcciones de revisión (CF-ENG-1.1.0)', () => {
     expect(Math.abs(motor!.transform!.position[0]!)).toBeLessThan(CLF_010_WATER.mechanical.bridgeWidthM / 2);
   });
 
+  it('puente radial: el accionamiento apoya en la plataforma de la columna; si la excede, FAIL', () => {
+    const radialMech = { ...CLF_010_WATER.mechanical, bridgeType: 'radial' as const };
+    const radial = designClariflocculator({ ...CLF_010_WATER, mechanical: radialMech });
+    expect(nodesOf(radial, 'MEC-001').some((n) => n.id === 'MEC-001.drive-platform')).toBe(true);
+    expect(nodesOf(d, 'MEC-001').some((n) => n.id === 'MEC-001.drive-platform')).toBe(false);
+    expect(check('GEO-FLOC-DRIVE-DECK', radial)?.status).toBe('PASS');
+    expect(check('GEO-FLOC-DRIVE-DECK', radial)?.message).toMatch(/plataforma de la columna/);
+    const tooBig = designClariflocculator({ ...withFloc({ drive: { footprintM: 0.8, heightM: 0.5 } }), mechanical: radialMech });
+    expect(check('GEO-FLOC-DRIVE-DECK', tooBig)?.status).toBe('FAIL');
+    // El motor del floculador queda sobre el tablero (z > 0) también en puente radial
+    const motor = nodesOf(radial, 'MEC-008').find((n) => n.id === 'MEC-008.motor') as { transform?: { position: number[] } } | undefined;
+    expect(motor!.transform!.position[2]!).toBeGreaterThan(0);
+  });
+
+  it('accionamiento del rascador: GEO-DRIVE-DECK con ambos tipos de puente', () => {
+    expect(check('GEO-DRIVE-DECK')?.status).toBe('PASS');
+    const wideDrive = { ...CLF_010_WATER.mechanical, driveFootprintM: 2.0 };
+    expect(check('GEO-DRIVE-DECK', designClariflocculator({ ...CLF_010_WATER, mechanical: wideDrive }))?.status).toBe('FAIL');
+    expect(check('GEO-DRIVE-DECK', designClariflocculator({ ...CLF_010_WATER, mechanical: { ...wideDrive, bridgeType: 'radial' } }))?.status).toBe('FAIL');
+  });
+
   it('criterios del pozo de alimentación del decantador se rechazan en el clarifloculador', () => {
     for (const k of ['feedwellDiameterRatio', 'feedwellDepth']) {
       expect(() => designClariflocculator({ ...CLF_010_WATER, criteriaOverrides: { [k]: { min: 0.1, sourceId: 'MWH-2012', note: 'x' } } })).toThrow(/no aplica al clarifloculador/);

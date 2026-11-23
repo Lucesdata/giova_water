@@ -13,7 +13,7 @@ Clarifloculador 10 L/s — potabilización (rangos de referencia)
 | parentVariantId | `CLF-010@5f8c2b3de5` |
 | Modo | B |
 | createdAt | 2026-11-22T00:00:00.000Z |
-| outputsHash | `05344b52293c4fd5` |
+| outputsHash | `83e3711f002eda47` |
 | Versión de esquema | 1.0.0 |
 | Modelo de cálculo | CF-ENG-1.1.0 |
 | Estado de validación | **FAILED** |
@@ -336,7 +336,7 @@ Reglas de modelado (no son criterios de diseño):
 
 ## 7. Validación
 
-Estado global: **FAILED** — PASS 56 · WARNING 1 · FAIL 8 · NOT_EVALUATED 26
+Estado global: **FAILED** — PASS 57 · WARNING 1 · FAIL 8 · NOT_EVALUATED 26
 
 ### Nivel 1 — Datos
 
@@ -415,13 +415,14 @@ Estado global: **FAILED** — PASS 56 · WARNING 1 · FAIL 8 · NOT_EVALUATED 26
 | PASS | `GEO-BLADE-WALL` | Holgura paletas – muro | 0.0500 m | ≥ 0.05 | Distancia del punto más exterior de las paletas a la cara interior del muro. |
 | PASS | `GEO-BLADE-SUMP-COVERAGE` | Las paletas barren hasta la poceta | 0.220 m | ≤ 0.400 | La paleta interior alcanza la poceta. |
 | PASS | `GEO-DEFLECTOR-CAGE` | Holgura deflectores – jaula giratoria | 0.0711 m | ≥ 0.05 | Los deflectores fijos quedan dentro de la jaula. |
+| PASS | `GEO-DRIVE-DECK` | Accionamiento central apoyado sobre el puente | 0.400 m | ≥ -1e-9 | La envolvente del accionamiento apoya sobre el tablero del puente. |
 | PASS | `GEO-BAFFLE-ARMS` | Holgura deflector de flotantes – brazos | 2.495 m | ≥ 0.3 | Cumple. |
 | PASS | `GEO-CONNECTIONS` | Componentes correctamente conectados | 0 |  | 16 conexiones coincidentes. |
 | PASS | `GEO-AXIS-ALIGNMENT` | Alineación con el eje del tanque |  |  | Todos los sólidos de revolución son coaxiales. |
 | NOT_EVALUATED | `GEO-SKIMMER-BEACH` | Interacción barredor – playa de flotantes |  |  | Contacto funcional previsto (labio flexible sobre la rampa). Geometría de rampa y labio a definir con el fabricante. |
 | PASS | `GEO-SLEEVE-CAGE` | Holgura tubo del agitador – jaula del rascador | 0.0500 m | ≥ 0.05 | El tubo de giro no toca la jaula giratoria. |
 | PASS | `GEO-SLEEVE-BRIDGE` | Holgura tubo del agitador – vigas del puente | 0.333 m | ≥ 0.05 | El tubo de giro pasa entre las vigas principales del puente. |
-| PASS | `GEO-FLOC-DRIVE-DECK` | Accionamiento del floculador dentro del tablero | 0.100 m | ≥ -1e-9 | El reductor anular apoya sobre el tablero del puente. |
+| PASS | `GEO-FLOC-DRIVE-DECK` | Accionamiento del floculador apoyado sobre el puente | 0.100 m | ≥ -1e-9 | El reductor anular apoya sobre el tablero del puente. |
 | PASS | `GEO-PADDLES-WALL` | Holgura paletas – pared de la cámara | 0.150 m | ≥ 0.15 | Distancia del punto más exterior de las paletas a la cara interior de la cámara. |
 | PASS | `GEO-PADDLES-SLEEVE` | Holgura paletas – tubo de giro | 1.148 m | ≥ 0.05 | Separación entre el canto interior de las paletas y el tubo de giro. |
 | PASS | `GEO-PADDLES-VERTICAL` | Agitador sumergido y dentro de la cámara | 0.305 m | > 0 | Paletas y brazos quedan entre el fondo de la cámara y la cresta del vertedero. |

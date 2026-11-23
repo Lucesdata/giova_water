@@ -2402,6 +2402,21 @@
           "critical": false
         },
         {
+          "id": "GEO-DRIVE-DECK",
+          "level": 3,
+          "status": "PASS",
+          "title": "Accionamiento central apoyado sobre el puente",
+          "message": "La envolvente del accionamiento apoya sobre el tablero del puente.",
+          "value": 0.4,
+          "limit": "≥ -1e-9",
+          "unit": "m",
+          "componentIds": [
+            "MEC-002",
+            "MEC-001"
+          ],
+          "critical": false
+        },
+        {
           "id": "GEO-BAFFLE-ARMS",
           "level": 3,
           "status": "PASS",
@@ -2480,7 +2495,7 @@
           "id": "GEO-FLOC-DRIVE-DECK",
           "level": 3,
           "status": "PASS",
-          "title": "Accionamiento del floculador dentro del tablero",
+          "title": "Accionamiento del floculador apoyado sobre el puente",
           "message": "El reductor anular apoya sobre el tablero del puente.",
           "value": 0.10000000000000009,
           "limit": "≥ -1e-9",
@@ -2743,7 +2758,7 @@
       "summary": {
         "status": "FAILED",
         "counts": {
-          "PASS": 56,
+          "PASS": 57,
           "WARNING": 1,
           "FAIL": 8,
           "NOT_EVALUATED": 26
@@ -2762,7 +2777,7 @@
             "NOT_EVALUATED": 12
           },
           "3": {
-            "PASS": 34,
+            "PASS": 35,
             "WARNING": 0,
             "FAIL": 0,
             "NOT_EVALUATED": 3
@@ -4378,6 +4393,7 @@
           "checkIds": [
             "GEO-BRIDGE-CLEARANCE",
             "GEO-WALKWAY-WIDTH",
+            "GEO-DRIVE-DECK",
             "GEO-SLEEVE-BRIDGE",
             "GEO-FLOC-DRIVE-DECK",
             "MEC-BRIDGE-STRUCTURE",
@@ -4419,6 +4435,7 @@
             "note": "Solo el eje de salida gira; la carcasa es fija."
           },
           "checkIds": [
+            "GEO-DRIVE-DECK",
             "MEC-DRIVE-TORQUE",
             "MEC-FABRICATION"
           ],
@@ -4690,6 +4707,6 @@
       ]
     },
     "validationStatus": "FAILED",
-    "outputsHash": "05344b52293c4fd5"
+    "outputsHash": "83e3711f002eda47"
   }
 }

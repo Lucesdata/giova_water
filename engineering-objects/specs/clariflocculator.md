@@ -106,7 +106,8 @@ Los 17 del tanque circular (HYD-002 pasa a ser **Cámara de floculación**) más
 | MEC-008 | Accionamiento del floculador (anular alrededor de MEC-002) | salida giratoria |
 
 Comprobaciones geométricas propias: `GEO-SLEEVE-CAGE`, `GEO-SLEEVE-BRIDGE` (el tubo de giro pasa
-entre las vigas del puente), `GEO-FLOC-DRIVE-DECK` (el reductor anular apoya sobre el tablero),
+entre las vigas del puente), `GEO-FLOC-DRIVE-DECK` (el reductor anular apoya sobre el tablero; en
+puente radial, sobre el tablero y la plataforma de la columna central),
 `GEO-PADDLES-WALL`, `GEO-PADDLES-SLEEVE`, `GEO-PADDLES-VERTICAL`, `GEO-PADDLES-FIT`,
 `GEO-SETTLING-ANNULUS`. Si no cabe ningún anillo de paletas no se generan brazos; con anillos fijados
 que no caben, la traza `floc.paddle.rings` da los construidos y `GEO-PADDLES-FIT` explica la diferencia. Pendientes críticas propias:
