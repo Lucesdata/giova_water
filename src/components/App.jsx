@@ -10,6 +10,7 @@ import About from './About.jsx';
 import Projects from './Projects.jsx';
 import ProjectModal from './ProjectModal.jsx';
 import DigitalTwins from './DigitalTwins.jsx';
+import EngineeringObjects from './EngineeringObjects.jsx';
 import { Contact, Footer } from './Contact.jsx';
 import Faq from './Faq.jsx';
 import { ScrollBackground } from './ScrollBackground.jsx';
@@ -189,6 +190,7 @@ export default function App() {
         <Projects onOpen={openProjectFromUi} />
         <About />
         <DigitalTwins />
+        <EngineeringObjects />
         <Faq />
         <Contact />
         <Footer />

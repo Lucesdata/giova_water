@@ -9,7 +9,11 @@ import { Viewer, type ViewMode } from './viewer/Viewer';
 export function App() {
   // Un almacén de variantes por equipo (los hooks no pueden ser condicionales).
   const stores = [useVariants(EQUIPMENT[0]!), useVariants(EQUIPMENT[1]!)];
-  const [eqIndex, setEqIndex] = useState(0);
+  // `?equipo=clariflocculator` abre directamente un equipo (enlaces desde el portafolio).
+  const [eqIndex, setEqIndex] = useState(() => {
+    const id = typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('equipo');
+    return Math.max(0, EQUIPMENT.findIndex((e) => e.id === id));
+  });
   const equipment = EQUIPMENT[eqIndex]!;
   const vs = stores[eqIndex]!;
   const [leftOpen, setLeftOpen] = useState(true);
