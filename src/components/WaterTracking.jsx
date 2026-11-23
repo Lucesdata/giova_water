@@ -30,6 +30,16 @@ function Slider({ id, label, unit, value, min, max, onChange }) {
   );
 }
 
+// Always in the DOM so assistive tech announces it when the clamped value appears.
+function EffectiveNote({ id, show, label, value }) {
+  return (
+    <span id={id} className="mono" aria-live="polite"
+          style={{ fontSize: 12, color: 'var(--warn)', ...(show ? {} : { margin: '-4px 0 0' }) }}>
+      {show ? `${label}: ${value}` : ''}
+    </span>
+  );
+}
+
 function StageCard({ i, spec, row, cfg, eff, copy, W, onChange }) {
   const id = row.id;
   const nameId = `wt-${id}`;
@@ -54,19 +64,19 @@ function StageCard({ i, spec, row, cfg, eff, copy, W, onChange }) {
           {spec.size && (
             <div style={{ display: 'grid', gap: 4, width: 140 }}>
               <label htmlFor={`${nameId}-size`} className="label">{copy.sizeLabel} ({spec.size.unit})</label>
-              <input id={`${nameId}-size`} type="number" inputMode="decimal" min={spec.size.min} max={spec.size.max} value={cfg[sizeKey]}
+              <input id={`${nameId}-size`} type="number" aria-describedby={`${nameId}-size-eff`} inputMode="decimal" min={spec.size.min} max={spec.size.max} value={cfg[sizeKey]}
                      onChange={(e) => onChange({ [sizeKey]: e.target.value })}
                      onBlur={() => onChange({ [sizeKey]: eff[sizeKey] })} />
-              {Number(cfg[sizeKey]) !== eff[sizeKey] && <span className="mono" role="note" style={{ fontSize: 12, color: 'var(--warn)' }}>{W.effective}: {eff[sizeKey]}</span>}
+              <EffectiveNote id={`${nameId}-size-eff`} show={Number(cfg[sizeKey]) !== eff[sizeKey]} label={W.effective} value={eff[sizeKey]} />
             </div>
           )}
           {spec.dose && (
             <div style={{ display: 'grid', gap: 4, width: 140 }}>
               <label htmlFor={`${nameId}-dose`} className="label">{copy.doseLabel} (mg/L)</label>
-              <input id={`${nameId}-dose`} type="number" inputMode="decimal" step="0.1" min={spec.dose.min} max={spec.dose.max} value={cfg.dose}
+              <input id={`${nameId}-dose`} type="number" aria-describedby={`${nameId}-dose-eff`} inputMode="decimal" step="0.1" min={spec.dose.min} max={spec.dose.max} value={cfg.dose}
                      onChange={(e) => onChange({ dose: e.target.value })}
                      onBlur={() => onChange({ dose: eff.dose })} />
-              {Number(cfg.dose) !== eff.dose && <span className="mono" role="note" style={{ fontSize: 12, color: 'var(--warn)' }}>{W.effective}: {eff.dose}</span>}
+              <EffectiveNote id={`${nameId}-dose-eff`} show={Number(cfg.dose) !== eff.dose} label={W.effective} value={eff.dose} />
             </div>
           )}
           {spec.metric && (
