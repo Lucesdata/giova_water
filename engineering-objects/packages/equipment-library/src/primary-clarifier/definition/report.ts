@@ -1,8 +1,8 @@
 import { LEVEL_NAMES, round, unitLabel, type CheckStatus, type ValidationLevel } from '@eo/engineering-core';
 import { getMaterial, isMaterialId } from '@eo/material-library';
-import type { ClarifierDesign } from './design.js';
+import type { CircularDesign, ProfileInfo } from './design.js';
 import { MODELLING_RULES } from './engine.js';
-import type { ClarifierVariant } from './variant.js';
+import type { EquipmentVariant } from '../../shared/variants.js';
 
 const ICON: Record<CheckStatus, string> = { PASS: 'PASS', WARNING: 'WARNING', FAIL: 'FAIL', NOT_EVALUATED: 'NOT_EVALUATED' };
 
@@ -18,7 +18,14 @@ const esc = (s: string) => s.replace(/\|/g, '\\|');
 /**
  * Memoria de cálculo preliminar, inventario, mediciones y reporte de validación en Markdown (spec §13, fase 6).
  */
-export function renderReport(design: ClarifierDesign, variant?: ClarifierVariant): string {
+/** Diseño mínimo que el informe necesita (decantador, clarifloculador u otro equipo circular). */
+type ReportableDesign = CircularDesign<{ readonly tag: string; readonly name?: string }, ProfileInfo, object>;
+
+export function renderReport(
+  design: ReportableDesign,
+  variant?: EquipmentVariant<unknown, unknown>,
+  extraRules: Readonly<Record<string, number>> = {},
+): string {
   const d = design;
   const L: string[] = [];
   L.push(`# Memoria de cálculo preliminar — ${d.input.tag}`);
@@ -75,7 +82,7 @@ export function renderReport(design: ClarifierDesign, variant?: ClarifierVariant
   L.push('');
   L.push('Reglas de modelado (no son criterios de diseño):');
   L.push('');
-  for (const [k, v] of Object.entries(MODELLING_RULES)) L.push(`- \`${k}\` = ${v}`);
+  for (const [k, v] of Object.entries({ ...MODELLING_RULES, ...extraRules })) L.push(`- \`${k}\` = ${v}`);
   L.push('');
   L.push('## 5. Inventario de componentes');
   L.push('');

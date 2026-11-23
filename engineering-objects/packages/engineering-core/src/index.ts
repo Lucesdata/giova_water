@@ -8,3 +8,4 @@ export * from './calculations/hydraulics.js';
 export * from './calculations/geometry.js';
 export * from './calculations/pipes.js';
 export * from './contracts/engineering-object.js';
+export * from './calculations/water.js';

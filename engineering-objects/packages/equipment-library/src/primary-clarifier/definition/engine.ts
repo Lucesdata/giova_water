@@ -48,7 +48,7 @@ export interface SizingDecisions {
 }
 
 /** `mechanical` no tiene decisiones propias: controla qué entradas mecánicas pueden cambiar en modo C. */
-export type ResizeGroup = 'tank' | 'inlet' | 'feedwell' | 'weir' | 'effluent' | 'sludge' | 'mechanical';
+export type ResizeGroup = 'tank' | 'inlet' | 'feedwell' | 'weir' | 'effluent' | 'sludge' | 'mechanical' | 'flocculator';
 export const RESIZE_GROUPS: readonly ResizeGroup[] = ['tank', 'inlet', 'feedwell', 'weir', 'effluent', 'sludge', 'mechanical'];
 
 export const DECISION_GROUP: Record<keyof SizingDecisions, ResizeGroup> = {
@@ -174,7 +174,58 @@ export const MODELLING_RULES = {
   effluentDropM: 0.6,
 } as const;
 
-interface EngineOutput {
+
+/** Contexto que el motor circular comparte con las estrategias de zona central. */
+export interface EngineContext {
+  readonly t: CalcTrace;
+  readonly input: DesignInput;
+  readonly fixed: Partial<SizingDecisions>;
+  readonly checks: CheckList;
+  readonly criterionCheck: (id: string, level: ValidationLevel, key: CriterionKey, value: number, componentIds?: string[]) => void;
+  readonly simple: (id: string, level: ValidationLevel, status: CheckStatus, title: string, message: string, extra?: Partial<{ value: number; limit: string; unit: string; componentIds: string[] }>) => void;
+  readonly decide: <K extends keyof SizingDecisions>(key: K, computed: () => number) => { value: number; fixed: boolean };
+  readonly sourcesUsed: Set<string>;
+  readonly flows: { readonly avgLs: number; readonly avgH: number; readonly avgD: number; readonly peakLs: number; readonly peakH: number; readonly peakS: number; readonly peakD: number };
+  /** Entrada y columna central (memoizado: se registra la primera vez que se pide). */
+  readonly inlet: () => InletResult;
+}
+
+export interface InletResult {
+  readonly inletDn: number;
+  readonly dIn: number;
+  readonly rColumnInner: number;
+  readonly rColumnOuter: number;
+}
+
+export interface SurfaceResult {
+  readonly D: number;
+  /** Superficie sobre la que se evalúan las cargas superficiales y de sólidos. */
+  readonly loadingArea: number;
+  readonly loadingAreaKey: string;
+  readonly loadingAreaLabel: string;
+}
+
+export interface ChamberResult {
+  /** Diámetro exterior de la zona central (pozo de alimentación o cámara de floculación). */
+  readonly dFw: number;
+  /** Profundidad bajo la cresta y clave trazada o de entrada de la que procede. */
+  readonly depth: number;
+  readonly depthKey: string;
+}
+
+/**
+ * Estrategia de zona central del tanque circular. El decantador primario dimensiona por carga
+ * superficial bruta y un pozo de alimentación proporcional; el clarifloculador por superficie anular de
+ * sedimentación y una cámara dimensionada por tiempo de floculación. Todo lo demás es común.
+ */
+export interface CentralZoneStrategy {
+  /** Versión del método que se registra en cada valor trazado (por defecto, la del decantador primario). */
+  readonly modelVersion?: string;
+  sizeSurface(ctx: EngineContext): SurfaceResult;
+  sizeChamber(ctx: EngineContext, D: number, H: number): ChamberResult;
+}
+
+export interface EngineOutput {
   trace: CalcTrace;
   decisions: SizingDecisions;
   model: ResolvedModel;
@@ -191,8 +242,9 @@ export function runEngine(
   criteria: Partial<Record<CriterionKey, Criterion>>,
   fixed: Partial<SizingDecisions>,
   checks: CheckList,
+  strategy: CentralZoneStrategy = PRIMARY_STRATEGY,
 ): EngineOutput {
-  const t = new CalcTrace(ENGINEERING_MODEL_VERSION);
+  const t = new CalcTrace(strategy.modelVersion ?? ENGINEERING_MODEL_VERSION);
   const sourcesUsed = new Set<string>();
   const g = input.geometry;
   const hy = input.hydraulics;
@@ -262,84 +314,50 @@ export function runEngine(
   t.record('flow.peak.m3d', m3hToM3d(qPeakH), { label: 'Caudal punta en base diaria', unit: 'm3/d', inputs: ['flow.peak.m3h'], equation: 'Q[m³/d] = 24 · Q[m³/h]' });
   const qPeakD = t.get('flow.peak.m3d');
 
-  // ───────────────────────── 2. Superficie y diámetro ─────────────────────────
-  const aAvg = t.record('area.required.avg', requiredSurfaceArea(qAvgH, crit.surfaceLoadingAvgM_h), {
-    label: 'Superficie requerida a caudal medio',
-    unit: 'm2',
-    inputs: ['flow.avg.m3h', 'input.designCriteria.surfaceLoadingAvgM_h'],
-    equation: 'A = Qmed / CHSmed',
-  });
-  let aReq = aAvg;
-  let governing = 'caudal medio';
-  if (crit.surfaceLoadingPeakM_h !== undefined) {
-    const aPeak = t.record('area.required.peak', requiredSurfaceArea(qPeakH, crit.surfaceLoadingPeakM_h), {
-      label: 'Superficie requerida a caudal punta',
-      unit: 'm2',
-      inputs: ['flow.peak.m3h', 'input.designCriteria.surfaceLoadingPeakM_h'],
-      equation: 'A = Qmax / CHSmax',
-    });
-    if (aPeak > aReq) {
-      aReq = aPeak;
-      governing = 'caudal punta';
+  // ───────────────────────── 4. Entrada y columna central ─────────────────────────
+  // Memoizado: una estrategia puede necesitar la columna antes (p. ej. la cámara de floculación la rodea).
+  let inletCache: InletResult | undefined;
+  const inlet = (): InletResult => {
+    if (inletCache) return inletCache;
+    const rpInlet = g.sumpDiameterM / 2;
+    const inletSel = selectDn(qPeakS, hy.inletMaxVelocityM_s);
+    const inletDecision = decide('inletDn', () => inletSel.dn);
+    const inletDn = t.record('inlet.dn', inletDecision.value, { label: 'DN de la tubería de entrada', unit: 'mm', inputs: ['flow.peak.m3h', 'input.hydraulics.inletMaxVelocityM_s'], equation: inletDecision.fixed ? 'DN fijado' : 'menor DN (ISO 6708) con v(Qmax) ≤ vmax', origin: inletDecision.fixed ? 'FIXED_BY_CONSTRAINT' : 'ADOPTED' });
+    sourcesUsed.add('ISO-6708-1995');
+    const dIn = inletDn / 1000;
+    const vInPeak = t.record('inlet.velocity.peak', qPeakS / circleArea(dIn), { label: 'Velocidad en la entrada a caudal punta', unit: 'm/s', inputs: ['inlet.dn', 'flow.peak.m3h'], equation: 'v = Qmax / (π·DN²/4)' });
+    const vInAvg = t.record('inlet.velocity.avg', qAvgH / 3600 / circleArea(dIn), { label: 'Velocidad en la entrada a caudal medio', unit: 'm/s', inputs: ['inlet.dn', 'flow.avg.m3h'], equation: 'v = Qmed / (π·DN²/4)' });
+    {
+      const ev = evaluateRange(vInPeak, { max: hy.inletMaxVelocityM_s });
+      simple('HYD-INLET-VMAX', 2, inletSel.exhausted && !inletDecision.fixed ? 'FAIL' : ev.status, 'Velocidad máxima en la entrada', ev.status === 'PASS' ? 'Cumple.' : 'La velocidad a caudal punta supera el máximo adoptado.', { value: vInPeak, limit: ev.limit, unit: 'm/s', componentIds: ['HYD-001'] });
+      const ev2 = evaluateRange(vInAvg, { warnMin: hy.inletMinVelocityM_s });
+      simple('HYD-INLET-VMIN', 2, ev2.status, 'Velocidad mínima en la entrada (autolimpieza)', ev2.status === 'PASS' ? 'Cumple.' : 'A caudal medio la velocidad es inferior a la mínima adoptada: riesgo de sedimentación en la conducción.', { value: vInAvg, limit: ev2.limit, unit: 'm/s', componentIds: ['HYD-001'] });
     }
-  }
-  t.record('area.required', aReq, {
-    label: `Superficie requerida (gobierna ${governing})`,
-    unit: 'm2',
-    inputs: crit.surfaceLoadingPeakM_h !== undefined ? ['area.required.avg', 'area.required.peak'] : ['area.required.avg'],
-    equation: 'A = max(Amed, Amax)',
-  });
-  const dTheory = t.record('tank.diameter.theoretical', circleDiameterFromArea(aReq), {
-    label: 'Diámetro hidráulico teórico',
-    unit: 'm',
-    inputs: ['area.required'],
-    equation: 'D = √(4A/π)',
-  });
-  const dReq = Math.max(dTheory, g.minDiameterM);
+    const rColumnInner = dIn / 2;
+    const rColumnOuter = t.record('column.outerRadius', rColumnInner + hy.columnWallThicknessM, { label: 'Radio exterior de la columna central', unit: 'm', inputs: ['inlet.dn', 'input.hydraulics.columnWallThicknessM'], equation: 'rc = DN/2 + e' });
+    simple('GEO-SUMP-CLEAR-OF-COLUMN', 3, rpInlet > rColumnOuter ? 'PASS' : 'FAIL', 'Poceta mayor que la columna central', rpInlet > rColumnOuter ? 'Queda corona libre para el lodo.' : 'La columna ocupa toda la poceta.', { value: rpInlet - rColumnOuter, limit: '> 0', unit: 'm', componentIds: ['CIV-004', 'HYD-001'] });
+    inletCache = { inletDn, dIn, rColumnInner, rColumnOuter };
+    return inletCache;
+  };
 
-  const dDecision = decide('diameterM', () => (g.adoptedDiameterM !== undefined ? g.adoptedDiameterM : ceilTo(dReq, g.diameterRoundingStepM)));
-  const D = t.record('tank.diameter', dDecision.value, {
-    label: 'Diámetro interior hidráulico adoptado',
-    unit: 'm',
-    inputs: ['tank.diameter.theoretical', 'input.geometry.diameterRoundingStepM', 'input.geometry.minDiameterM'],
-    equation: dDecision.fixed
-      ? 'D fijado por la geometría existente / restricción'
-      : g.adoptedDiameterM !== undefined
-        ? 'D impuesto por el usuario'
-        : g.diameterRoundingStepM > 0
-          ? 'D = ⌈max(Dteórico, Dmín) / paso⌉ · paso'
-          : 'D = max(Dteórico, Dmín) (sin redondeo)',
-    origin: dDecision.fixed ? 'FIXED_BY_CONSTRAINT' : g.adoptedDiameterM !== undefined ? 'INPUT' : g.diameterRoundingStepM > 0 || g.minDiameterM > dTheory ? 'ADOPTED' : 'CALCULATED',
-  });
+  const ctx: EngineContext = {
+    t, input, fixed, checks, criterionCheck, simple, decide, sourcesUsed,
+    flows: { avgLs: qAvgLs, avgH: qAvgH, avgD: qAvgD, peakLs: qPeakLs, peakH: qPeakH, peakS: qPeakS, peakD: qPeakD },
+    inlet,
+  };
+
+  // ───────────────────────── 2. Superficie y diámetro ─────────────────────────
+  const { D, loadingArea, loadingAreaKey } = strategy.sizeSurface(ctx);
   const R = D / 2;
-  simple('HYD-DIAMETER-GE-REQUIRED', 2, D + 1e-9 >= dReq ? 'PASS' : 'FAIL', 'Diámetro adoptado ≥ requerido', D + 1e-9 >= dReq ? 'El diámetro cubre la superficie requerida.' : `El diámetro ${dDecision.fixed ? 'fijado' : 'impuesto'} (${D.toFixed(2)} m) no proporciona la superficie requerida; no se corrige automáticamente.`, { value: D, limit: `≥ ${dReq.toFixed(3)}`, unit: 'm', componentIds: ['CIV-002'] });
-  criterionCheck('HYD-DIAMETER-RANGE', 3, 'diameter', D, ['CIV-002']);
-
-  const area = t.record('tank.area', circleArea(D), { label: 'Superficie libre adoptada', unit: 'm2', inputs: ['tank.diameter'], equation: 'A = π·D²/4' });
-  const chsAvg = t.record('loading.surface.avg', qAvgH / area, { label: 'Carga superficial real a caudal medio', unit: 'm3/(m2.h)', inputs: ['flow.avg.m3h', 'tank.area'], equation: 'CHS = Qmed / A' });
-  const chsPeak = t.record('loading.surface.peak', qPeakH / area, { label: 'Carga superficial real a caudal punta', unit: 'm3/(m2.h)', inputs: ['flow.peak.m3h', 'tank.area'], equation: 'CHS = Qmax / A' });
-
-  {
-    const ev = evaluateRange(chsAvg, { max: crit.surfaceLoadingAvgM_h });
-    simple('HYD-CHS-AVG-ADMISSIBLE', 2, ev.status, 'CHS media ≤ admisible de diseño', ev.status === 'PASS' ? 'Cumple la carga admisible adoptada.' : 'La geometría no cumple la carga superficial admisible adoptada.', { value: chsAvg, limit: ev.limit, unit: 'm³/(m²·h)', componentIds: ['CIV-002'] });
-  }
-  if (crit.surfaceLoadingPeakM_h !== undefined) {
-    const ev = evaluateRange(chsPeak, { max: crit.surfaceLoadingPeakM_h });
-    simple('HYD-CHS-PEAK-ADMISSIBLE', 2, ev.status, 'CHS punta ≤ admisible de diseño', ev.status === 'PASS' ? 'Cumple la carga admisible adoptada.' : 'La geometría no cumple la carga superficial admisible en punta.', { value: chsPeak, limit: ev.limit, unit: 'm³/(m²·h)', componentIds: ['CIV-002'] });
-  } else {
-    simple('HYD-CHS-PEAK-ADMISSIBLE', 2, 'NOT_EVALUATED', 'CHS punta ≤ admisible de diseño', 'No se ha definido carga superficial admisible a caudal punta.', { value: chsPeak, unit: 'm³/(m²·h)' });
-  }
-  criterionCheck('HYD-CHS-AVG-CRITERION', 2, 'surfaceLoadingAvg', chsAvg, ['CIV-002']);
-  criterionCheck('HYD-CHS-PEAK-CRITERION', 2, 'surfaceLoadingPeak', chsPeak, ['CIV-002']);
-
+  const area = loadingArea;
   // Carga de sólidos: SLR = Q · Cs / A (indicador; en un primario no suele gobernar el dimensionamiento).
   const tss = input.influent.tssMgL;
   if (tss !== undefined) {
     const cs = tss / 1000; // mg/L = g/m³ → kg/m³
     const mAvg = t.record('solids.influentLoad.avg', qAvgD * cs, { label: 'Carga de SST afluente a caudal medio', unit: 'kg/d', inputs: ['flow.avg.m3d', 'input.influent.tssMgL'], equation: 'Mmed[kg/d] = Qmed[m³/d] · SST[mg/L] / 1000' });
     const mPeak = t.record('solids.influentLoad.peak', qPeakD * cs, { label: 'Carga de SST afluente a caudal punta', unit: 'kg/d', inputs: ['flow.peak.m3d', 'input.influent.tssMgL'], equation: 'Mmax[kg/d] = Qmax[m³/d] · SST[mg/L] / 1000 (SST de entrada supuestos constantes)' });
-    t.record('loading.solids.avg', mAvg / area, { label: 'Carga de sólidos superficial a caudal medio', unit: 'kg/(m2.d)', inputs: ['solids.influentLoad.avg', 'tank.area'], equation: 'SLR = Mmed / A' });
-    const slrPeak = t.record('loading.solids.peak', mPeak / area, { label: 'Carga de sólidos superficial a caudal punta', unit: 'kg/(m2.d)', inputs: ['solids.influentLoad.peak', 'tank.area'], equation: 'SLR = Mmax / A' });
+    t.record('loading.solids.avg', mAvg / area, { label: 'Carga de sólidos superficial a caudal medio', unit: 'kg/(m2.d)', inputs: ['solids.influentLoad.avg', loadingAreaKey], equation: 'SLR = Mmed / A' });
+    const slrPeak = t.record('loading.solids.peak', mPeak / area, { label: 'Carga de sólidos superficial a caudal punta', unit: 'kg/(m2.d)', inputs: ['solids.influentLoad.peak', loadingAreaKey], equation: 'SLR = Mmax / A' });
     criterionCheck('HYD-SLR-CRITERION', 2, 'solidsLoadingPeak', slrPeak, ['CIV-002']);
   } else {
     simple('HYD-SLR-CRITERION', 2, 'NOT_EVALUATED', CRITERION_META.solidsLoadingPeak.label, 'Faltan los SST de entrada (influent.tssMgL): no se calcula la carga de sólidos.', {});
@@ -362,41 +380,13 @@ export function runEngine(
   const sumpDrop = t.record('floor.dropAtSump', s * Math.max(0, rs - rp), { label: 'Descenso del fondo hasta el borde de la poceta', unit: 'm', inputs: ['floor.slopeStartRadius', 'input.geometry.floorSlope', 'input.geometry.sumpDiameterM'], equation: 'Δy = s · (rs − rp)' });
   const ySumpBottom = t.record('level.sumpBottom', -sumpDrop - g.sumpDepthM, { label: 'Cota del fondo de la poceta', unit: 'm', inputs: ['floor.dropAtSump', 'input.geometry.sumpDepthM'], equation: 'y = −Δy − hp' });
 
-  // ───────────────────────── 4. Entrada y columna central ─────────────────────────
-  const inletSel = selectDn(qPeakS, hy.inletMaxVelocityM_s);
-  const inletDecision = decide('inletDn', () => inletSel.dn);
-  const inletDn = t.record('inlet.dn', inletDecision.value, { label: 'DN de la tubería de entrada', unit: 'mm', inputs: ['flow.peak.m3h', 'input.hydraulics.inletMaxVelocityM_s'], equation: inletDecision.fixed ? 'DN fijado' : 'menor DN (ISO 6708) con v(Qmax) ≤ vmax', origin: inletDecision.fixed ? 'FIXED_BY_CONSTRAINT' : 'ADOPTED' });
-  sourcesUsed.add('ISO-6708-1995');
-  const dIn = inletDn / 1000;
-  const vInPeak = t.record('inlet.velocity.peak', qPeakS / circleArea(dIn), { label: 'Velocidad en la entrada a caudal punta', unit: 'm/s', inputs: ['inlet.dn', 'flow.peak.m3h'], equation: 'v = Qmax / (π·DN²/4)' });
-  const vInAvg = t.record('inlet.velocity.avg', qAvgH / 3600 / circleArea(dIn), { label: 'Velocidad en la entrada a caudal medio', unit: 'm/s', inputs: ['inlet.dn', 'flow.avg.m3h'], equation: 'v = Qmed / (π·DN²/4)' });
-  {
-    const ev = evaluateRange(vInPeak, { max: hy.inletMaxVelocityM_s });
-    simple('HYD-INLET-VMAX', 2, inletSel.exhausted && !inletDecision.fixed ? 'FAIL' : ev.status, 'Velocidad máxima en la entrada', ev.status === 'PASS' ? 'Cumple.' : 'La velocidad a caudal punta supera el máximo adoptado.', { value: vInPeak, limit: ev.limit, unit: 'm/s', componentIds: ['HYD-001'] });
-    const ev2 = evaluateRange(vInAvg, { warnMin: hy.inletMinVelocityM_s });
-    simple('HYD-INLET-VMIN', 2, ev2.status, 'Velocidad mínima en la entrada (autolimpieza)', ev2.status === 'PASS' ? 'Cumple.' : 'A caudal medio la velocidad es inferior a la mínima adoptada: riesgo de sedimentación en la conducción.', { value: vInAvg, limit: ev2.limit, unit: 'm/s', componentIds: ['HYD-001'] });
-  }
-  const rColumnInner = dIn / 2;
-  const rColumnOuter = t.record('column.outerRadius', rColumnInner + hy.columnWallThicknessM, { label: 'Radio exterior de la columna central', unit: 'm', inputs: ['inlet.dn', 'input.hydraulics.columnWallThicknessM'], equation: 'rc = DN/2 + e' });
-  simple('GEO-SUMP-CLEAR-OF-COLUMN', 3, rp > rColumnOuter ? 'PASS' : 'FAIL', 'Poceta mayor que la columna central', rp > rColumnOuter ? 'Queda corona libre para el lodo.' : 'La columna ocupa toda la poceta.', { value: rp - rColumnOuter, limit: '> 0', unit: 'm', componentIds: ['CIV-004', 'HYD-001'] });
+  const { inletDn, dIn, rColumnInner, rColumnOuter } = inlet();
 
-  // ───────────────────────── 5. Pozo de alimentación ─────────────────────────
-  const fwByRatio = hy.feedwellDiameterRatio * D;
-  const fwDecision = decide('feedwellDiameterM', () => Math.max(fwByRatio, hy.feedwellMinDiameterM));
-  const dFw = t.record('feedwell.diameter', fwDecision.value, {
-    label: 'Diámetro del pozo de alimentación',
-    unit: 'm',
-    inputs: ['tank.diameter', 'input.hydraulics.feedwellDiameterRatio', 'input.hydraulics.feedwellMinDiameterM'],
-    equation: fwDecision.fixed ? 'Dpa fijado' : 'Dpa = max(k · D, Dpa,mín constructivo)',
-    origin: fwDecision.fixed ? 'FIXED_BY_CONSTRAINT' : fwByRatio >= hy.feedwellMinDiameterM ? 'CALCULATED' : 'ADOPTED',
-    warnings: !fwDecision.fixed && fwByRatio < hy.feedwellMinDiameterM ? ['Gobierna el diámetro mínimo constructivo, no la proporción hidráulica.'] : [],
-  });
-  criterionCheck('HYD-FEEDWELL-RATIO', 2, 'feedwellDiameterRatio', dFw / D, ['HYD-002']);
-  criterionCheck('HYD-FEEDWELL-DEPTH', 2, 'feedwellDepth', hy.feedwellDepthM, ['HYD-002']);
-  simple('GEO-FEEDWELL-DEPTH-LT-H', 3, hy.feedwellDepthM < H ? 'PASS' : 'FAIL', 'Pozo de alimentación menos profundo que el tanque', hy.feedwellDepthM < H ? 'Cumple.' : 'El pozo de alimentación llega al fondo.', { value: hy.feedwellDepthM, limit: `< ${H}`, unit: 'm', componentIds: ['HYD-002'] });
+  // ───────────────────────── 5. Zona central (pozo de alimentación o cámara) ─────────────────────────
+  const { dFw, depth: fwDepth, depthKey: fwDepthKey } = strategy.sizeChamber(ctx, D, H);
   const rFwOuter = dFw / 2;
   const rFwInner = rFwOuter - hy.feedwellPlateThicknessM;
-  const yFwBottom = t.record('level.feedwellBottom', H - hy.feedwellDepthM, { label: 'Cota inferior del pozo de alimentación', unit: 'm', inputs: ['tank.depth', 'input.hydraulics.feedwellDepthM'], equation: 'y = H − hpa' });
+  const yFwBottom = t.record('level.feedwellBottom', H - fwDepth, { label: 'Cota inferior del pozo de alimentación', unit: 'm', inputs: ['tank.depth', fwDepthKey], equation: 'y = H − hpa' });
   // La corona entre la columna y el pozo debe existir antes de usarla como área de paso o volumen.
   const annulusOk = rFwInner > rColumnOuter;
   simple('GEO-FEEDWELL-ANNULUS', 3, annulusOk ? 'PASS' : 'FAIL', 'Corona libre entre columna y pozo de alimentación', annulusOk ? 'Cumple.' : 'El radio interior del pozo no supera el de la columna: no hay paso de agua.', { value: rFwInner - rColumnOuter, limit: '> 0', unit: 'm', componentIds: ['HYD-001', 'HYD-002'] });
@@ -425,10 +415,10 @@ export function runEngine(
   {
     const ev = evaluateRange(vPort, { max: hy.portMaxVelocityM_s });
     simple('HYD-PORT-VELOCITY', 2, ev.status, 'Velocidad de salida por las ventanas', ev.status === 'PASS' ? 'Cumple.' : 'La velocidad en las ventanas supera el máximo adoptado.', { value: vPort, limit: ev.limit, unit: 'm/s', componentIds: ['HYD-001', 'HYD-003'] });
-    const avail = hy.feedwellDepthM - 2 * MODELLING_RULES.portMarginInFeedwellM;
+    const avail = fwDepth - 2 * MODELLING_RULES.portMarginInFeedwellM;
     simple('GEO-PORTS-INSIDE-FEEDWELL', 3, portHeight <= avail ? 'PASS' : 'FAIL', 'Ventanas contenidas en el pozo de alimentación', portHeight <= avail ? 'Cumple.' : 'Las ventanas no caben dentro del pozo de alimentación con el margen de modelado.', { value: portHeight, limit: `≤ ${avail.toFixed(3)}`, unit: 'm', componentIds: ['HYD-001', 'HYD-002'] });
   }
-  const yPortCenter = H - hy.feedwellDepthM / 2;
+  const yPortCenter = H - fwDepth / 2;
 
   // ───────────────────────── 6. Vertedero ─────────────────────────
   const weirLength = t.record('weir.length.gross', 2 * Math.PI * (R - hy.weirPlateThicknessM / 2), { label: 'Longitud bruta de vertedero', unit: 'm', inputs: ['tank.diameter', 'input.hydraulics.weirPlateThicknessM'], equation: 'L = 2π·(R − e/2)' });
@@ -545,11 +535,11 @@ export function runEngine(
   const vColumn = t.record('volume.deduction.column', Math.PI * rColumnOuter ** 2 * (H + sumpDrop), { label: 'Deducción: columna central', unit: 'm3', inputs: ['column.outerRadius', 'tank.depth', 'floor.dropAtSump'], equation: 'V = π·rc²·(H + Δy)' });
   const vFeedwell = t.record(
     'volume.deduction.feedwell',
-    g.excludeFeedwellFromEffectiveVolume && annulusOk ? Math.PI * (rFwInner ** 2 - rColumnOuter ** 2) * hy.feedwellDepthM : 0,
+    g.excludeFeedwellFromEffectiveVolume && annulusOk ? Math.PI * (rFwInner ** 2 - rColumnOuter ** 2) * fwDepth : 0,
     {
       label: 'Deducción: interior del pozo de alimentación',
       unit: 'm3',
-      inputs: ['feedwell.diameter', 'column.outerRadius', 'input.hydraulics.feedwellDepthM'],
+      inputs: ['feedwell.diameter', 'column.outerRadius', fwDepthKey],
       equation: !g.excludeFeedwellFromEffectiveVolume ? 'No se deduce (opción de entrada)' : annulusOk ? 'V = π·(rpa,int² − rc²)·hpa' : 'No calculable: sin corona entre columna y pozo (GEO-FEEDWELL-ANNULUS)',
       status: g.excludeFeedwellFromEffectiveVolume && !annulusOk ? 'NOT_EVALUATED' : 'PASS',
     },
@@ -747,3 +737,102 @@ export function runEngine(
 
   return { trace: t, decisions, model, sourcesUsed };
 }
+
+/** Superficie y diámetro del decantador primario: la carga superficial se evalúa sobre la superficie bruta. */
+function primarySizeSurface(ctx: EngineContext): SurfaceResult {
+  const { t, input, simple, criterionCheck, decide } = ctx;
+  const g = input.geometry;
+  const crit = input.designCriteria;
+  const { avgH: qAvgH, peakH: qPeakH } = ctx.flows;
+  const aAvg = t.record('area.required.avg', requiredSurfaceArea(qAvgH, crit.surfaceLoadingAvgM_h), {
+    label: 'Superficie requerida a caudal medio',
+    unit: 'm2',
+    inputs: ['flow.avg.m3h', 'input.designCriteria.surfaceLoadingAvgM_h'],
+    equation: 'A = Qmed / CHSmed',
+  });
+  let aReq = aAvg;
+  let governing = 'caudal medio';
+  if (crit.surfaceLoadingPeakM_h !== undefined) {
+    const aPeak = t.record('area.required.peak', requiredSurfaceArea(qPeakH, crit.surfaceLoadingPeakM_h), {
+      label: 'Superficie requerida a caudal punta',
+      unit: 'm2',
+      inputs: ['flow.peak.m3h', 'input.designCriteria.surfaceLoadingPeakM_h'],
+      equation: 'A = Qmax / CHSmax',
+    });
+    if (aPeak > aReq) {
+      aReq = aPeak;
+      governing = 'caudal punta';
+    }
+  }
+  t.record('area.required', aReq, {
+    label: `Superficie requerida (gobierna ${governing})`,
+    unit: 'm2',
+    inputs: crit.surfaceLoadingPeakM_h !== undefined ? ['area.required.avg', 'area.required.peak'] : ['area.required.avg'],
+    equation: 'A = max(Amed, Amax)',
+  });
+  const dTheory = t.record('tank.diameter.theoretical', circleDiameterFromArea(aReq), {
+    label: 'Diámetro hidráulico teórico',
+    unit: 'm',
+    inputs: ['area.required'],
+    equation: 'D = √(4A/π)',
+  });
+  const dReq = Math.max(dTheory, g.minDiameterM);
+
+  const dDecision = decide('diameterM', () => (g.adoptedDiameterM !== undefined ? g.adoptedDiameterM : ceilTo(dReq, g.diameterRoundingStepM)));
+  const D = t.record('tank.diameter', dDecision.value, {
+    label: 'Diámetro interior hidráulico adoptado',
+    unit: 'm',
+    inputs: ['tank.diameter.theoretical', 'input.geometry.diameterRoundingStepM', 'input.geometry.minDiameterM'],
+    equation: dDecision.fixed
+      ? 'D fijado por la geometría existente / restricción'
+      : g.adoptedDiameterM !== undefined
+        ? 'D impuesto por el usuario'
+        : g.diameterRoundingStepM > 0
+          ? 'D = ⌈max(Dteórico, Dmín) / paso⌉ · paso'
+          : 'D = max(Dteórico, Dmín) (sin redondeo)',
+    origin: dDecision.fixed ? 'FIXED_BY_CONSTRAINT' : g.adoptedDiameterM !== undefined ? 'INPUT' : g.diameterRoundingStepM > 0 || g.minDiameterM > dTheory ? 'ADOPTED' : 'CALCULATED',
+  });
+  const R = D / 2;
+  simple('HYD-DIAMETER-GE-REQUIRED', 2, D + 1e-9 >= dReq ? 'PASS' : 'FAIL', 'Diámetro adoptado ≥ requerido', D + 1e-9 >= dReq ? 'El diámetro cubre la superficie requerida.' : `El diámetro ${dDecision.fixed ? 'fijado' : 'impuesto'} (${D.toFixed(2)} m) no proporciona la superficie requerida; no se corrige automáticamente.`, { value: D, limit: `≥ ${dReq.toFixed(3)}`, unit: 'm', componentIds: ['CIV-002'] });
+  criterionCheck('HYD-DIAMETER-RANGE', 3, 'diameter', D, ['CIV-002']);
+
+  const area = t.record('tank.area', circleArea(D), { label: 'Superficie libre adoptada', unit: 'm2', inputs: ['tank.diameter'], equation: 'A = π·D²/4' });
+  const chsAvg = t.record('loading.surface.avg', qAvgH / area, { label: 'Carga superficial real a caudal medio', unit: 'm3/(m2.h)', inputs: ['flow.avg.m3h', 'tank.area'], equation: 'CHS = Qmed / A' });
+  const chsPeak = t.record('loading.surface.peak', qPeakH / area, { label: 'Carga superficial real a caudal punta', unit: 'm3/(m2.h)', inputs: ['flow.peak.m3h', 'tank.area'], equation: 'CHS = Qmax / A' });
+
+  {
+    const ev = evaluateRange(chsAvg, { max: crit.surfaceLoadingAvgM_h });
+    simple('HYD-CHS-AVG-ADMISSIBLE', 2, ev.status, 'CHS media ≤ admisible de diseño', ev.status === 'PASS' ? 'Cumple la carga admisible adoptada.' : 'La geometría no cumple la carga superficial admisible adoptada.', { value: chsAvg, limit: ev.limit, unit: 'm³/(m²·h)', componentIds: ['CIV-002'] });
+  }
+  if (crit.surfaceLoadingPeakM_h !== undefined) {
+    const ev = evaluateRange(chsPeak, { max: crit.surfaceLoadingPeakM_h });
+    simple('HYD-CHS-PEAK-ADMISSIBLE', 2, ev.status, 'CHS punta ≤ admisible de diseño', ev.status === 'PASS' ? 'Cumple la carga admisible adoptada.' : 'La geometría no cumple la carga superficial admisible en punta.', { value: chsPeak, limit: ev.limit, unit: 'm³/(m²·h)', componentIds: ['CIV-002'] });
+  } else {
+    simple('HYD-CHS-PEAK-ADMISSIBLE', 2, 'NOT_EVALUATED', 'CHS punta ≤ admisible de diseño', 'No se ha definido carga superficial admisible a caudal punta.', { value: chsPeak, unit: 'm³/(m²·h)' });
+  }
+  criterionCheck('HYD-CHS-AVG-CRITERION', 2, 'surfaceLoadingAvg', chsAvg, ['CIV-002']);
+  criterionCheck('HYD-CHS-PEAK-CRITERION', 2, 'surfaceLoadingPeak', chsPeak, ['CIV-002']);
+  return { D, loadingArea: area, loadingAreaKey: 'tank.area', loadingAreaLabel: 'superficie bruta' };
+}
+
+/** Pozo de alimentación del decantador primario: proporción del diámetro con mínimo constructivo. */
+function primarySizeChamber(ctx: EngineContext, D: number, H: number): ChamberResult {
+  const { t, input, simple, criterionCheck, decide } = ctx;
+  const hy = input.hydraulics;
+  const fwByRatio = hy.feedwellDiameterRatio * D;
+  const fwDecision = decide('feedwellDiameterM', () => Math.max(fwByRatio, hy.feedwellMinDiameterM));
+  const dFw = t.record('feedwell.diameter', fwDecision.value, {
+    label: 'Diámetro del pozo de alimentación',
+    unit: 'm',
+    inputs: ['tank.diameter', 'input.hydraulics.feedwellDiameterRatio', 'input.hydraulics.feedwellMinDiameterM'],
+    equation: fwDecision.fixed ? 'Dpa fijado' : 'Dpa = max(k · D, Dpa,mín constructivo)',
+    origin: fwDecision.fixed ? 'FIXED_BY_CONSTRAINT' : fwByRatio >= hy.feedwellMinDiameterM ? 'CALCULATED' : 'ADOPTED',
+    warnings: !fwDecision.fixed && fwByRatio < hy.feedwellMinDiameterM ? ['Gobierna el diámetro mínimo constructivo, no la proporción hidráulica.'] : [],
+  });
+  criterionCheck('HYD-FEEDWELL-RATIO', 2, 'feedwellDiameterRatio', dFw / D, ['HYD-002']);
+  criterionCheck('HYD-FEEDWELL-DEPTH', 2, 'feedwellDepth', hy.feedwellDepthM, ['HYD-002']);
+  simple('GEO-FEEDWELL-DEPTH-LT-H', 3, hy.feedwellDepthM < H ? 'PASS' : 'FAIL', 'Pozo de alimentación menos profundo que el tanque', hy.feedwellDepthM < H ? 'Cumple.' : 'El pozo de alimentación llega al fondo.', { value: hy.feedwellDepthM, limit: `< ${H}`, unit: 'm', componentIds: ['HYD-002'] });
+  return { dFw, depth: hy.feedwellDepthM, depthKey: 'input.hydraulics.feedwellDepthM' };
+}
+
+export const PRIMARY_STRATEGY: CentralZoneStrategy = { sizeSurface: primarySizeSurface, sizeChamber: primarySizeChamber };

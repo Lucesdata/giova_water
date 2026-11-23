@@ -6,6 +6,13 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
+  CLF_010_WATER,
+  FLOC_RULES,
+  compareClfVariants,
+  createClfBaseVariant,
+  createClfVariant,
+  exportClfVariant,
+  regenerateClf,
   DEC_005_CONCEPTUAL,
   DEC_005_DIDACTIC,
   compareVariants,
@@ -44,3 +51,27 @@ const md = [
   '',
 ];
 writeFileSync(join(out, 'comparison.md'), md.join('\n'));
+
+// ── Clarifloculador ──
+const clf010 = createClfBaseVariant(CLF_010_WATER, { createdAt });
+// A 20 L/s la columna crece y sus deflectores ya no caben en la jaula de 0,22 m: se agranda la jaula.
+const clf020 = createClfVariant(clf010, { tag: 'CLF-020', flow: { averageLps: 20 }, mechanical: { cageHalfWidthM: 0.3 } }, { createdAt });
+const clfEval15 = createClfVariant(clf010, { tag: 'CLF-010-EVAL-15', flow: { averageLps: 15 } }, { mode: 'B', createdAt });
+for (const v of [clf010, clf020, clfEval15]) {
+  writeFileSync(join(out, `${v.tag}.variant.json`), exportClfVariant(v) + '\n');
+  writeFileSync(join(out, `${v.tag}.memoria.md`), renderReport(regenerateClf(v), v, FLOC_RULES));
+  console.log(`${v.tag.padEnd(18)} ${v.mode.padEnd(4)} ${v.validationStatus.padEnd(12)} ${v.variantId}`);
+}
+const clfRows = compareClfVariants([clf010, clf020, clfEval15]);
+writeFileSync(
+  join(out, 'comparison-clariflocculator.md'),
+  [
+    '# Comparación de variantes — clarifloculador',
+    '',
+    '| Magnitud | Unidad | CLF-010 | CLF-020 (A) | CLF-010 eval. 15 L/s (B) |',
+    '|---|---|---:|---:|---:|',
+    ...clfRows.map((r) => `| ${r.label} | ${r.unit} | ${r.values.map((x) => (x === null ? '—' : Number(x.toFixed(3)))).join(' | ')} |`),
+    `| Estado | | ${[clf010, clf020, clfEval15].map((v) => v.validationStatus).join(' | ')} |`,
+    '',
+  ].join('\n'),
+);

@@ -3,7 +3,9 @@ import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect, useMemo } from 'react';
 import * as THREE from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
-import type { ClarifierDesign } from '@eo/equipment-library';
+import type { CircularDesign, ProfileInfo } from '@eo/equipment-library';
+
+type ClarifierDesign = CircularDesign<{ readonly geometry: { readonly sludgeBlanketDepthM?: number } }, ProfileInfo, object>;
 import { EngineeringAssembly } from '@eo/r3f-components';
 
 export type ViewMode = 'iso' | 'plan' | 'elevation';
@@ -40,7 +42,7 @@ function Dim({ a, b, label, color = '#ffb020' }: { a: [number, number, number]; 
   );
 }
 
-function Dimensions({ design }: { design: ClarifierDesign }) {
+function Dimensions({ design, centralLabel }: { design: ClarifierDesign; centralLabel: string }) {
   const m = design.model;
   const yTop = m.yChannelTop + 0.35;
   return (
@@ -49,7 +51,7 @@ function Dimensions({ design }: { design: ClarifierDesign }) {
       <Dim a={[-m.rChannelOuter, yTop, 0]} b={[m.rChannelOuter, yTop, 0]} label={`Dcanal = ${(2 * m.rChannelOuter).toFixed(2)} m`} color="#7cc4ff" />
       <Dim a={[m.R - 0.05, 0, 0.02]} b={[m.R - 0.05, m.H, 0.02]} label={`H = ${m.H.toFixed(2)} m`} />
       <Dim a={[0.0, m.ySumpBottom, 0.02]} b={[0.0, -m.sumpDrop, 0.02]} label={`poceta ${(-m.sumpDrop - m.ySumpBottom).toFixed(2)} m`} color="#9be38c" />
-      <Dim a={[-m.rFeedwellOuter, m.yFeedwellBottom - 0.05, 0]} b={[m.rFeedwellOuter, m.yFeedwellBottom - 0.05, 0]} label={`Dpozo = ${(2 * m.rFeedwellOuter).toFixed(2)} m`} color="#9be38c" />
+      <Dim a={[-m.rFeedwellOuter, m.yFeedwellBottom - 0.05, 0]} b={[m.rFeedwellOuter, m.yFeedwellBottom - 0.05, 0]} label={`${centralLabel} = ${(2 * m.rFeedwellOuter).toFixed(2)} m`} color="#9be38c" />
     </group>
   );
 }
@@ -91,6 +93,8 @@ function SludgeBlanket({ design, plane }: { design: ClarifierDesign; plane: THRE
 
 export interface ViewerProps {
   design: ClarifierDesign;
+  /** Etiqueta de la cota de la zona central (pozo o cámara). */
+  centralLabel: string;
   view: ViewMode;
   viewNonce: number;
   section: boolean;
@@ -101,7 +105,7 @@ export interface ViewerProps {
   onSelect: (id: string | null) => void;
 }
 
-export function Viewer({ design, view, viewNonce, section, showDims, showWater, selectedId, isolatedIds, onSelect }: ViewerProps) {
+export function Viewer({ design, centralLabel, view, viewNonce, section, showDims, showWater, selectedId, isolatedIds, onSelect }: ViewerProps) {
   const extent = design.model.rChannelOuter + 0.5;
   const centerY = (design.model.yPitBottom + design.model.yDeck) / 2;
   const plane = useMemo(() => new THREE.Plane(new THREE.Vector3(0, 0, -1), 0), []);
@@ -115,7 +119,7 @@ export function Viewer({ design, view, viewNonce, section, showDims, showWater, 
       {/* Sin lámina calculada (vertedero no disponible) no se dibuja una superficie supuesta. */}
       {showWater && !isolatedIds && design.values['level.water.avg'] && <Water design={design} plane={section ? plane : null} />}
       {showWater && !isolatedIds && <SludgeBlanket design={design} plane={section ? plane : null} />}
-      {showDims && <Dimensions design={design} />}
+      {showDims && <Dimensions design={design} centralLabel={centralLabel} />}
       <Grid position={[0, design.model.yPitBottom - 0.01, 0]} args={[40, 40]} cellSize={0.5} sectionSize={2.5} cellColor="#26303a" sectionColor="#3a4856" fadeDistance={40} infiniteGrid />
       <OrbitControls makeDefault enableDamping dampingFactor={0.12} />
       <CameraRig view={view} extent={extent} centerY={centerY} nonce={viewNonce} />

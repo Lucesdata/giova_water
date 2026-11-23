@@ -1,0 +1,4632 @@
+{
+  "format": "engineering-objects/clariflocculator-variant",
+  "formatVersion": 1,
+  "variant": {
+    "objectId": "clariflocculator/circular-center-feed:CLF-010",
+    "variantId": "CLF-010@5c26de7437",
+    "parentVariantId": null,
+    "schemaVersion": "1.0.0",
+    "engineeringModelVersion": "CF-ENG-1.0.0",
+    "createdAt": "2026-11-22T00:00:00.000Z",
+    "tag": "CLF-010",
+    "mode": "BASE",
+    "lockedDecisions": {},
+    "allowedResize": null,
+    "designInputs": {
+      "tag": "CLF-010",
+      "name": "Clarifloculador 10 L/s — potabilización (rangos de referencia)",
+      "profileId": "water-reference",
+      "flow": {
+        "averageLps": 10,
+        "peak": {
+          "method": "factor",
+          "factor": 1.5
+        }
+      },
+      "influent": {
+        "tssMgL": 60,
+        "turbidityNtu": 40,
+        "temperatureC": 15
+      },
+      "designCriteria": {
+        "settlingLoadingAvgM_h": 1.5,
+        "hrtTargetMinH": 1.5
+      },
+      "criteriaOverrides": {},
+      "flocculation": {
+        "designFlow": "peak",
+        "detentionTimeMin": 30,
+        "chamberDepthM": 2.5,
+        "chamberWallThicknessM": 0.008,
+        "chamberMinInnerDiameterM": 0,
+        "velocityGradientS": 40,
+        "designTemperatureC": 10,
+        "paddles": {
+          "tipSpeedM_s": 0.6,
+          "relativeVelocityFactor": 0.75,
+          "dragCoefficient": 1.8,
+          "armCount": 4,
+          "bladeWidthM": 0.15,
+          "bladeHeightRatio": 0.7,
+          "wallClearanceM": 0.15,
+          "sleeveClearanceM": 0.05,
+          "sleeveWallThicknessM": 0.006,
+          "bladeThicknessM": 0.008,
+          "maxRings": 6
+        },
+        "drive": {
+          "footprintM": 0.5,
+          "heightM": 0.5
+        },
+        "materials": {
+          "chamber": "SS-1.4301",
+          "paddles": "SS-1.4301"
+        }
+      },
+      "geometry": {
+        "sideWaterDepthM": 3.5,
+        "diameterRoundingStepM": 0.1,
+        "minDiameterM": 0,
+        "freeboardM": 0.5,
+        "floorSlope": 0.08333333333333333,
+        "sumpDiameterM": 0.8,
+        "sumpDepthM": 0.6
+      },
+      "civil": {
+        "wallThicknessM": 0.3,
+        "baseSlabThicknessM": 0.35,
+        "slabProjectionM": 0.3,
+        "minFillThicknessM": 0.1,
+        "sumpWallThicknessM": 0.25,
+        "launderWidthM": 0.4,
+        "launderDepthM": 0.35,
+        "channelWallThicknessM": 0.2,
+        "channelFloorThicknessM": 0.2,
+        "concrete": "CONC-C30/37-XC4-XA1",
+        "fillConcrete": "CONC-C20/25-FILL",
+        "thicknessStatus": "PRELIMINARY_UNVERIFIED"
+      },
+      "hydraulics": {
+        "inletMaxVelocityM_s": 1.5,
+        "inletMinVelocityM_s": 0.5,
+        "portMaxVelocityM_s": 0.3,
+        "columnPortCount": 4,
+        "columnWallThicknessM": 0.008,
+        "effluentMaxVelocityM_s": 1.5,
+        "sludgePipeMinDn": 150,
+        "sludgeDesignVelocityM_s": 1,
+        "sludgeFlowFraction": 0.01,
+        "pipeWallThicknessM": 0.008,
+        "vNotchAngleDeg": 90,
+        "notchSpacingM": 0.2,
+        "notchDepthM": 0.05,
+        "weirCd": 0.58,
+        "weirPlateThicknessM": 0.005,
+        "weirExclusionLengthM": 0,
+        "launderFreeFallMinM": 0.05,
+        "materials": {
+          "plates": "SS-1.4301",
+          "pipes": "PE-HD-PE100"
+        }
+      },
+      "mechanical": {
+        "bridgeType": "full-span",
+        "bridgeWidthM": 0.8,
+        "bridgeGirderDepthM": 0.3,
+        "bridgeBearingHeightM": 0.1,
+        "bridgeClearanceAboveWaterMinM": 0.3,
+        "armCount": 2,
+        "armTrussDepthM": 0.4,
+        "armWallClearanceM": 0.05,
+        "bladeHeightM": 0.3,
+        "bladeFloorClearanceM": 0.03,
+        "bladeLengthM": 0.6,
+        "bladeAngleDeg": 30,
+        "cageHalfWidthM": 0.22,
+        "cageColumnClearanceM": 0.05,
+        "feedwellArmClearanceMinM": 0.3,
+        "skimmerClearanceM": 0.1,
+        "scumBaffleOffsetM": 0.3,
+        "scumBaffleDepthM": 0.3,
+        "scumBoxLengthM": 0.3,
+        "scumBoxWidthM": 0.4,
+        "walkwayClearWidthMinM": 0.6,
+        "driveFootprintM": 0.8,
+        "driveHeightM": 0.7,
+        "materials": {
+          "bridge": "STEEL-S275JR-HDG",
+          "mechanism": "STEEL-S275JR-HDG",
+          "submerged": "SS-1.4301",
+          "wipers": "EPDM-WIPER"
+        }
+      },
+      "site": {
+        "groundLevelM": 3.7,
+        "excavationWorkingSpaceM": 0.5
+      },
+      "meshResolution": {
+        "circularSegments": 96
+      }
+    },
+    "calculatedOutputs": {
+      "values": {
+        "flow.avg.Ls": {
+          "key": "flow.avg.Ls",
+          "label": "Caudal medio",
+          "value": 10,
+          "unit": "L/s",
+          "inputs": [
+            "input.flow.averageLps"
+          ],
+          "equation": "Qmed (dato)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "INPUT",
+          "status": "PASS",
+          "warnings": []
+        },
+        "flow.avg.m3h": {
+          "key": "flow.avg.m3h",
+          "label": "Caudal medio",
+          "value": 36,
+          "unit": "m3/h",
+          "inputs": [
+            "flow.avg.Ls"
+          ],
+          "equation": "Q[m³/h] = 3,6 · Q[L/s]",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "flow.avg.m3d": {
+          "key": "flow.avg.m3d",
+          "label": "Caudal medio diario",
+          "value": 864.0000000000001,
+          "unit": "m3/d",
+          "inputs": [
+            "flow.avg.m3h"
+          ],
+          "equation": "Q[m³/d] = 24 · Q[m³/h]",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "flow.peak.Ls": {
+          "key": "flow.peak.Ls",
+          "label": "Caudal punta",
+          "value": 15,
+          "unit": "L/s",
+          "inputs": [
+            "flow.avg.Ls",
+            "input.flow.peak.factor"
+          ],
+          "equation": "Qmax = Fp · Qmed",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "flow.peak.m3h": {
+          "key": "flow.peak.m3h",
+          "label": "Caudal punta",
+          "value": 54,
+          "unit": "m3/h",
+          "inputs": [
+            "flow.peak.Ls"
+          ],
+          "equation": "Q[m³/h] = 3,6 · Q[L/s]",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "flow.peak.m3d": {
+          "key": "flow.peak.m3d",
+          "label": "Caudal punta en base diaria",
+          "value": 1296,
+          "unit": "m3/d",
+          "inputs": [
+            "flow.peak.m3h"
+          ],
+          "equation": "Q[m³/d] = 24 · Q[m³/h]",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "floc.volume.required": {
+          "key": "floc.volume.required",
+          "label": "Volumen de floculación requerido",
+          "value": 27,
+          "unit": "m3",
+          "inputs": [
+            "flow.peak.m3h",
+            "input.flocculation.detentionTimeMin"
+          ],
+          "equation": "Vf = Qmax · tf",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "inlet.dn": {
+          "key": "inlet.dn",
+          "label": "DN de la tubería de entrada",
+          "value": 125,
+          "unit": "mm",
+          "inputs": [
+            "flow.peak.m3h",
+            "input.hydraulics.inletMaxVelocityM_s"
+          ],
+          "equation": "menor DN (ISO 6708) con v(Qmax) ≤ vmax",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "ADOPTED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "inlet.velocity.peak": {
+          "key": "inlet.velocity.peak",
+          "label": "Velocidad en la entrada a caudal punta",
+          "value": 1.2223099629457561,
+          "unit": "m/s",
+          "inputs": [
+            "inlet.dn",
+            "flow.peak.m3h"
+          ],
+          "equation": "v = Qmax / (π·DN²/4)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "inlet.velocity.avg": {
+          "key": "inlet.velocity.avg",
+          "label": "Velocidad en la entrada a caudal medio",
+          "value": 0.8148733086305042,
+          "unit": "m/s",
+          "inputs": [
+            "inlet.dn",
+            "flow.avg.m3h"
+          ],
+          "equation": "v = Qmed / (π·DN²/4)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "column.outerRadius": {
+          "key": "column.outerRadius",
+          "label": "Radio exterior de la columna central",
+          "value": 0.07050000000000001,
+          "unit": "m",
+          "inputs": [
+            "inlet.dn",
+            "input.hydraulics.columnWallThicknessM"
+          ],
+          "equation": "rc = DN/2 + e",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "floc.area.net": {
+          "key": "floc.area.net",
+          "label": "Superficie neta de la cámara de floculación",
+          "value": 10.8,
+          "unit": "m2",
+          "inputs": [
+            "floc.volume.required",
+            "input.flocculation.chamberDepthM"
+          ],
+          "equation": "Af = Vf / hf",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "floc.chamber.innerDiameter.required": {
+          "key": "floc.chamber.innerDiameter.required",
+          "label": "Diámetro interior requerido de la cámara",
+          "value": 3.7109120284829924,
+          "unit": "m",
+          "inputs": [
+            "floc.area.net",
+            "column.outerRadius"
+          ],
+          "equation": "Df,int = √(4·(Af + π·rc²)/π)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "feedwell.diameter": {
+          "key": "feedwell.diameter",
+          "label": "Diámetro exterior de la cámara de floculación",
+          "value": 3.7269120284829924,
+          "unit": "m",
+          "inputs": [
+            "floc.chamber.innerDiameter.required",
+            "input.flocculation.chamberMinInnerDiameterM",
+            "input.flocculation.chamberWallThicknessM"
+          ],
+          "equation": "Df = max(Df,int, Df,int,mín) + 2·e",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "area.required.avg": {
+          "key": "area.required.avg",
+          "label": "Superficie de sedimentación requerida a caudal medio",
+          "value": 24,
+          "unit": "m2",
+          "inputs": [
+            "flow.avg.m3h",
+            "input.designCriteria.settlingLoadingAvgM_h"
+          ],
+          "equation": "As = Qmed / CHSmed",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "area.required": {
+          "key": "area.required",
+          "label": "Superficie de sedimentación requerida (gobierna caudal medio)",
+          "value": 24,
+          "unit": "m2",
+          "inputs": [
+            "area.required.avg"
+          ],
+          "equation": "As = max(As,med, As,max)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "tank.diameter.theoretical": {
+          "key": "tank.diameter.theoretical",
+          "label": "Diámetro hidráulico teórico (corona + cámara)",
+          "value": 6.666905004700091,
+          "unit": "m",
+          "inputs": [
+            "area.required",
+            "feedwell.diameter"
+          ],
+          "equation": "D = √(4·(As + π·Df²/4)/π)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "tank.diameter": {
+          "key": "tank.diameter",
+          "label": "Diámetro interior hidráulico adoptado",
+          "value": 6.7,
+          "unit": "m",
+          "inputs": [
+            "tank.diameter.theoretical",
+            "input.geometry.diameterRoundingStepM",
+            "input.geometry.minDiameterM"
+          ],
+          "equation": "D = ⌈max(Dteórico, Dmín) / paso⌉ · paso",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "ADOPTED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "tank.area": {
+          "key": "tank.area",
+          "label": "Superficie libre total",
+          "value": 35.25652355491146,
+          "unit": "m2",
+          "inputs": [
+            "tank.diameter"
+          ],
+          "equation": "A = π·D²/4",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "settling.area": {
+          "key": "settling.area",
+          "label": "Superficie de sedimentación (corona)",
+          "value": 24.347442600360726,
+          "unit": "m2",
+          "inputs": [
+            "tank.area",
+            "feedwell.diameter"
+          ],
+          "equation": "As = π·(D² − Df²)/4",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "loading.surface.avg": {
+          "key": "loading.surface.avg",
+          "label": "Carga superficial real en la corona a caudal medio",
+          "value": 1.4785947169443838,
+          "unit": "m3/(m2.h)",
+          "inputs": [
+            "flow.avg.m3h",
+            "settling.area"
+          ],
+          "equation": "CHS = Qmed / As",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "loading.surface.peak": {
+          "key": "loading.surface.peak",
+          "label": "Carga superficial real en la corona a caudal punta",
+          "value": 2.2178920754165756,
+          "unit": "m3/(m2.h)",
+          "inputs": [
+            "flow.peak.m3h",
+            "settling.area"
+          ],
+          "equation": "CHS = Qmax / As",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "solids.influentLoad.avg": {
+          "key": "solids.influentLoad.avg",
+          "label": "Carga de SST afluente a caudal medio",
+          "value": 51.84,
+          "unit": "kg/d",
+          "inputs": [
+            "flow.avg.m3d",
+            "input.influent.tssMgL"
+          ],
+          "equation": "Mmed[kg/d] = Qmed[m³/d] · SST[mg/L] / 1000",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "solids.influentLoad.peak": {
+          "key": "solids.influentLoad.peak",
+          "label": "Carga de SST afluente a caudal punta",
+          "value": 77.75999999999999,
+          "unit": "kg/d",
+          "inputs": [
+            "flow.peak.m3d",
+            "input.influent.tssMgL"
+          ],
+          "equation": "Mmax[kg/d] = Qmax[m³/d] · SST[mg/L] / 1000 (SST de entrada supuestos constantes)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "loading.solids.avg": {
+          "key": "loading.solids.avg",
+          "label": "Carga de sólidos superficial a caudal medio",
+          "value": 2.1291763923999127,
+          "unit": "kg/(m2.d)",
+          "inputs": [
+            "solids.influentLoad.avg",
+            "settling.area"
+          ],
+          "equation": "SLR = Mmed / A",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "loading.solids.peak": {
+          "key": "loading.solids.peak",
+          "label": "Carga de sólidos superficial a caudal punta",
+          "value": 3.1937645885998687,
+          "unit": "kg/(m2.d)",
+          "inputs": [
+            "solids.influentLoad.peak",
+            "settling.area"
+          ],
+          "equation": "SLR = Mmax / A",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "tank.depth": {
+          "key": "tank.depth",
+          "label": "Profundidad útil en pared (fondo → cresta)",
+          "value": 3.5,
+          "unit": "m",
+          "inputs": [
+            "input.geometry.sideWaterDepthM"
+          ],
+          "equation": "H (dato)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "INPUT",
+          "status": "PASS",
+          "warnings": []
+        },
+        "floor.slopeStartRadius": {
+          "key": "floor.slopeStartRadius",
+          "label": "Radio de comienzo de la pendiente",
+          "value": 3.35,
+          "unit": "m",
+          "inputs": [
+            "tank.diameter",
+            "input.geometry.slopeStartRadiusM"
+          ],
+          "equation": "rs = D/2",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "floor.dropAtSump": {
+          "key": "floor.dropAtSump",
+          "label": "Descenso del fondo hasta el borde de la poceta",
+          "value": 0.24583333333333335,
+          "unit": "m",
+          "inputs": [
+            "floor.slopeStartRadius",
+            "input.geometry.floorSlope",
+            "input.geometry.sumpDiameterM"
+          ],
+          "equation": "Δy = s · (rs − rp)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "level.sumpBottom": {
+          "key": "level.sumpBottom",
+          "label": "Cota del fondo de la poceta",
+          "value": -0.8458333333333333,
+          "unit": "m",
+          "inputs": [
+            "floor.dropAtSump",
+            "input.geometry.sumpDepthM"
+          ],
+          "equation": "y = −Δy − hp",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "floc.volume": {
+          "key": "floc.volume",
+          "label": "Volumen útil de floculación",
+          "value": 26.999999999999996,
+          "unit": "m3",
+          "inputs": [
+            "feedwell.diameter",
+            "column.outerRadius",
+            "input.flocculation.chamberDepthM",
+            "input.flocculation.chamberWallThicknessM"
+          ],
+          "equation": "Vf = π·(rf,int² − rc²)·hf",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "floc.time.design": {
+          "key": "floc.time.design",
+          "label": "Tiempo de floculación al caudal de diseño",
+          "value": 29.999999999999996,
+          "unit": "min",
+          "inputs": [
+            "floc.volume",
+            "flow.peak.m3h"
+          ],
+          "equation": "tf = Vf / Qdiseño",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "floc.time.peak": {
+          "key": "floc.time.peak",
+          "label": "Tiempo de floculación a caudal punta",
+          "value": 29.999999999999996,
+          "unit": "min",
+          "inputs": [
+            "floc.volume",
+            "flow.peak.m3h"
+          ],
+          "equation": "tf = Vf / Qmax",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "water.viscosity": {
+          "key": "water.viscosity",
+          "label": "Viscosidad dinámica del agua a la temperatura de diseño",
+          "value": 0.001307,
+          "unit": "Pa.s",
+          "inputs": [
+            "input.flocculation.designTemperatureC"
+          ],
+          "equation": "μ(T) interpolada en tabla (CRC Handbook)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "water.density": {
+          "key": "water.density",
+          "label": "Densidad del agua a la temperatura de diseño",
+          "value": 999.7,
+          "unit": "kg/m3",
+          "inputs": [
+            "input.flocculation.designTemperatureC"
+          ],
+          "equation": "ρ(T) interpolada en tabla (CRC Handbook)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "floc.power.required": {
+          "key": "floc.power.required",
+          "label": "Potencia útil requerida para el G de diseño",
+          "value": 56.462399999999995,
+          "unit": "W",
+          "inputs": [
+            "input.flocculation.velocityGradientS",
+            "water.viscosity",
+            "floc.volume"
+          ],
+          "equation": "P = G²·μ·Vf",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "floc.paddle.angularSpeed": {
+          "key": "floc.paddle.angularSpeed",
+          "label": "Velocidad angular del agitador",
+          "value": 0.35181206374698015,
+          "unit": "rad/s",
+          "inputs": [
+            "input.flocculation.paddles.tipSpeedM_s",
+            "feedwell.diameter",
+            "input.flocculation.paddles.wallClearanceM"
+          ],
+          "equation": "ω = vpunta / rpunta",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "floc.paddle.rpm": {
+          "key": "floc.paddle.rpm",
+          "label": "Velocidad de giro del agitador",
+          "value": 3.359557739081573,
+          "unit": "rpm",
+          "inputs": [
+            "floc.paddle.angularSpeed"
+          ],
+          "equation": "N = 60·ω/(2π)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "floc.paddle.rings": {
+          "key": "floc.paddle.rings",
+          "label": "Anillos de paletas por brazo",
+          "value": 1,
+          "unit": "-",
+          "inputs": [
+            "floc.power.required",
+            "floc.paddle.angularSpeed"
+          ],
+          "equation": "menor n con Σ ½·CD·ρ·A·(k·ω·rj)³·narm ≥ P",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "ADOPTED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "floc.paddle.area": {
+          "key": "floc.paddle.area",
+          "label": "Área total de paletas",
+          "value": 1.05,
+          "unit": "m2",
+          "inputs": [
+            "floc.paddle.rings",
+            "input.flocculation.paddles.bladeWidthM",
+            "input.flocculation.paddles.bladeHeightRatio",
+            "input.flocculation.paddles.armCount"
+          ],
+          "equation": "Ap = narm · nanillos · b · hp",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "floc.power.delivered": {
+          "key": "floc.power.delivered",
+          "label": "Potencia útil entregada por las paletas",
+          "value": 75.22132620206726,
+          "unit": "W",
+          "inputs": [
+            "floc.paddle.rings",
+            "floc.paddle.angularSpeed",
+            "water.density",
+            "input.flocculation.paddles.dragCoefficient",
+            "input.flocculation.paddles.relativeVelocityFactor"
+          ],
+          "equation": "P = Σ narm · ½·CD·ρ·b·hp·(k·ω·rj)³",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "floc.G": {
+          "key": "floc.G",
+          "label": "Gradiente de velocidad G suministrado",
+          "value": 46.16903711533148,
+          "unit": "1/s",
+          "inputs": [
+            "floc.power.delivered",
+            "water.viscosity",
+            "floc.volume"
+          ],
+          "equation": "G = √(P / (μ·Vf))",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "floc.Gt": {
+          "key": "floc.Gt",
+          "label": "Producto Gt al caudal de diseño",
+          "value": 83104.26680759665,
+          "unit": "-",
+          "inputs": [
+            "floc.G",
+            "floc.time.design"
+          ],
+          "equation": "Gt = G · tf",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "floc.paddle.areaRatio": {
+          "key": "floc.paddle.areaRatio",
+          "label": "Área de paletas / sección vertical de la cámara",
+          "value": 0.16168532031875676,
+          "unit": "-",
+          "inputs": [
+            "floc.paddle.area",
+            "feedwell.diameter"
+          ],
+          "equation": "Ap / (2·rf,int · hp)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "level.feedwellBottom": {
+          "key": "level.feedwellBottom",
+          "label": "Cota inferior de la cámara de floculación",
+          "value": 1,
+          "unit": "m",
+          "inputs": [
+            "tank.depth",
+            "input.flocculation.chamberDepthM"
+          ],
+          "equation": "y = H − hpa",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "feedwell.downwardVelocity.peak": {
+          "key": "feedwell.downwardVelocity.peak",
+          "label": "Velocidad descendente en la cámara a caudal punta",
+          "value": 0.001388888888888889,
+          "unit": "m/s",
+          "inputs": [
+            "flow.peak.m3h",
+            "feedwell.diameter",
+            "column.outerRadius"
+          ],
+          "equation": "v = Qmax / (π·(rpa,int² − rc²))",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "column.portWidth": {
+          "key": "column.portWidth",
+          "label": "Anchura de ventana de la columna",
+          "value": 0.05537057051952011,
+          "unit": "m",
+          "inputs": [
+            "column.outerRadius",
+            "input.hydraulics.columnPortCount"
+          ],
+          "equation": "b = 0,5 · 2π·rc / n (regla de modelado)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "column.portHeight": {
+          "key": "column.portHeight",
+          "label": "Altura de ventana de la columna",
+          "value": 0.22575169232892955,
+          "unit": "m",
+          "inputs": [
+            "flow.peak.m3h",
+            "input.hydraulics.portMaxVelocityM_s",
+            "column.portWidth"
+          ],
+          "equation": "h = Qmax / (vmax · n · b)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "column.portVelocity.peak": {
+          "key": "column.portVelocity.peak",
+          "label": "Velocidad en ventanas a caudal punta",
+          "value": 0.3,
+          "unit": "m/s",
+          "inputs": [
+            "column.portHeight",
+            "column.portWidth",
+            "flow.peak.m3h"
+          ],
+          "equation": "v = Qmax / (n · b · h)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "weir.length.gross": {
+          "key": "weir.length.gross",
+          "label": "Longitud bruta de vertedero",
+          "value": 21.032962815783666,
+          "unit": "m",
+          "inputs": [
+            "tank.diameter",
+            "input.hydraulics.weirPlateThicknessM"
+          ],
+          "equation": "L = 2π·(R − e/2)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "weir.length.effective": {
+          "key": "weir.length.effective",
+          "label": "Longitud efectiva de vertedero",
+          "value": 21.032962815783666,
+          "unit": "m",
+          "inputs": [
+            "weir.length.gross",
+            "input.hydraulics.weirExclusionLengthM"
+          ],
+          "equation": "Lef = L − Lexcl",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "loading.weir.avg": {
+          "key": "loading.weir.avg",
+          "label": "Carga lineal de vertedero a caudal medio",
+          "value": 41.07837814231444,
+          "unit": "m3/(m.d)",
+          "inputs": [
+            "flow.avg.m3d",
+            "weir.length.effective"
+          ],
+          "equation": "CLV = Qdiario / Lef",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "loading.weir.peak": {
+          "key": "loading.weir.peak",
+          "label": "Carga lineal de vertedero a caudal punta",
+          "value": 61.61756721347165,
+          "unit": "m3/(m.d)",
+          "inputs": [
+            "flow.peak.m3d",
+            "weir.length.effective"
+          ],
+          "equation": "CLV = Qmax,diario / Lef",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "weir.notchCount": {
+          "key": "weir.notchCount",
+          "label": "Número de escotaduras en V",
+          "value": 105,
+          "unit": "-",
+          "inputs": [
+            "weir.length.effective",
+            "input.hydraulics.notchSpacingM"
+          ],
+          "equation": "n = ⌊Lef / paso⌋",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "ADOPTED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "weir.head.peak": {
+          "key": "weir.head.peak",
+          "label": "Carga sobre escotaduras a caudal punta",
+          "value": 0.025543473921434037,
+          "unit": "m",
+          "inputs": [
+            "weir.notchCount",
+            "flow.peak.m3h",
+            "input.hydraulics.weirCd",
+            "input.hydraulics.vNotchAngleDeg"
+          ],
+          "equation": "h = [q / (Cd·8/15·√(2g)·tan(θ/2))]^(2/5)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "weir.head.avg": {
+          "key": "weir.head.avg",
+          "label": "Carga sobre escotaduras a caudal medio",
+          "value": 0.021719181646995277,
+          "unit": "m",
+          "inputs": [
+            "weir.notchCount",
+            "flow.avg.m3h",
+            "input.hydraulics.weirCd",
+            "input.hydraulics.vNotchAngleDeg"
+          ],
+          "equation": "h = [q / (Cd·8/15·√(2g)·tan(θ/2))]^(2/5)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "level.water.avg": {
+          "key": "level.water.avg",
+          "label": "Cota de lámina a caudal medio",
+          "value": 3.5217191816469953,
+          "unit": "m",
+          "inputs": [
+            "tank.depth",
+            "weir.head.avg"
+          ],
+          "equation": "y = H + hmed",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "level.water.peak": {
+          "key": "level.water.peak",
+          "label": "Cota de lámina a caudal punta",
+          "value": 3.525543473921434,
+          "unit": "m",
+          "inputs": [
+            "tank.depth",
+            "weir.head.peak"
+          ],
+          "equation": "y = H + hmax",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "level.water.reference.avg": {
+          "key": "level.water.reference.avg",
+          "label": "Lámina media de referencia de la geometría instalada",
+          "value": 3.5217191816469953,
+          "unit": "m",
+          "inputs": [
+            "tank.depth"
+          ],
+          "equation": "y = lámina a caudal medio",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "level.water.reference.peak": {
+          "key": "level.water.reference.peak",
+          "label": "Lámina punta de referencia de la geometría instalada",
+          "value": 3.525543473921434,
+          "unit": "m",
+          "inputs": [
+            "tank.depth"
+          ],
+          "equation": "y = lámina a caudal punta",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "launder.upstreamDepth": {
+          "key": "launder.upstreamDepth",
+          "label": "Calado aguas arriba en el canal (cada rama, Qmax/2)",
+          "value": 0.05711119535921324,
+          "unit": "m",
+          "inputs": [
+            "flow.peak.m3h",
+            "input.civil.launderWidthM"
+          ],
+          "equation": "y₀ = √3 · (Q² / (g·b²))^(1/3), Q = Qmax/2",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "launder.freeFall": {
+          "key": "launder.freeFall",
+          "label": "Resguardo de caída libre bajo la cresta",
+          "value": 0.29288880464078676,
+          "unit": "m",
+          "inputs": [
+            "launder.upstreamDepth",
+            "input.civil.launderDepthM"
+          ],
+          "equation": "Δ = hcanal − y₀",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "effluent.dn": {
+          "key": "effluent.dn",
+          "label": "DN del colector de efluente",
+          "value": 125,
+          "unit": "mm",
+          "inputs": [
+            "flow.peak.m3h",
+            "input.hydraulics.effluentMaxVelocityM_s"
+          ],
+          "equation": "menor DN con v(Qmax) ≤ vmax",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "ADOPTED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "effluent.velocity.peak": {
+          "key": "effluent.velocity.peak",
+          "label": "Velocidad en el colector de efluente a caudal punta",
+          "value": 1.2223099629457561,
+          "unit": "m/s",
+          "inputs": [
+            "effluent.dn",
+            "flow.peak.m3h"
+          ],
+          "equation": "v = Qmax / (π·DN²/4)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "sludge.flow": {
+          "key": "sludge.flow",
+          "label": "Caudal de purga para dimensionar la conducción",
+          "value": 0.36,
+          "unit": "m3/h",
+          "inputs": [
+            "flow.avg.m3h",
+            "input.hydraulics.sludgeFlowFraction"
+          ],
+          "equation": "Qlodo = f · Qmed (hipótesis de prediseño)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "sludge.dn": {
+          "key": "sludge.dn",
+          "label": "DN de la conducción de lodos",
+          "value": 150,
+          "unit": "mm",
+          "inputs": [
+            "sludge.flow",
+            "input.hydraulics.sludgePipeMinDn",
+            "input.hydraulics.sludgeDesignVelocityM_s"
+          ],
+          "equation": "max(DNmín, menor DN con v ≤ v diseño)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "ADOPTED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "sludge.velocity": {
+          "key": "sludge.velocity",
+          "label": "Velocidad en la conducción de lodos",
+          "value": 0.005658842421045167,
+          "unit": "m/s",
+          "inputs": [
+            "sludge.flow",
+            "sludge.dn"
+          ],
+          "equation": "v = Qlodo / (π·DN²/4)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "volume.cylinder": {
+          "key": "volume.cylinder",
+          "label": "Volumen cilíndrico sobre el fondo en pared",
+          "value": 123.39783244219011,
+          "unit": "m3",
+          "inputs": [
+            "tank.diameter",
+            "tank.depth"
+          ],
+          "equation": "V = π·R²·H",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "volume.floorCone": {
+          "key": "volume.floorCone",
+          "label": "Volumen del fondo en pendiente (sin poceta)",
+          "value": 3.2752303327534333,
+          "unit": "m3",
+          "inputs": [
+            "input.geometry.floorSlope",
+            "floor.slopeStartRadius",
+            "input.geometry.sumpDiameterM"
+          ],
+          "equation": "V = 2π·s·[rs·r²/2 − r³/3]rp→rs + π·rp²·s·(rs − rp)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "volume.gross": {
+          "key": "volume.gross",
+          "label": "Volumen hidráulico bruto",
+          "value": 126.67306277494355,
+          "unit": "m3",
+          "inputs": [
+            "volume.cylinder",
+            "volume.floorCone"
+          ],
+          "equation": "Vbruto = Vcil + Vfondo",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "volume.deduction.column": {
+          "key": "volume.deduction.column",
+          "label": "Deducción: columna central",
+          "value": 0.058489317904032084,
+          "unit": "m3",
+          "inputs": [
+            "column.outerRadius",
+            "tank.depth",
+            "floor.dropAtSump"
+          ],
+          "equation": "V = π·rc²·(H + Δy)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "volume.deduction.feedwell": {
+          "key": "volume.deduction.feedwell",
+          "label": "Deducción: interior de la cámara de floculación",
+          "value": 26.999999999999996,
+          "unit": "m3",
+          "inputs": [
+            "feedwell.diameter",
+            "column.outerRadius",
+            "input.flocculation.chamberDepthM"
+          ],
+          "equation": "V = π·(rpa,int² − rc²)·hpa",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "volume.effective": {
+          "key": "volume.effective",
+          "label": "Volumen efectivo de sedimentación",
+          "value": 99.61457345703951,
+          "unit": "m3",
+          "inputs": [
+            "volume.gross",
+            "volume.deduction.column",
+            "volume.deduction.feedwell"
+          ],
+          "equation": "Vef = Vbruto − Vcolumna − Vpozo (se desprecian chapas y mecanismos)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "volume.sump": {
+          "key": "volume.sump",
+          "label": "Volumen de la poceta (almacenamiento de lodo, no efectivo)",
+          "value": 0.29222419421271734,
+          "unit": "m3",
+          "inputs": [
+            "input.geometry.sumpDiameterM",
+            "input.geometry.sumpDepthM",
+            "column.outerRadius"
+          ],
+          "equation": "V = π·(rp² − rc²)·hp",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "hrt.avg": {
+          "key": "hrt.avg",
+          "label": "TRH a caudal medio",
+          "value": 2.7670714849177642,
+          "unit": "h",
+          "inputs": [
+            "volume.effective",
+            "flow.avg.m3h"
+          ],
+          "equation": "TRH = Vef / Qmed",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "hrt.peak": {
+          "key": "hrt.peak",
+          "label": "TRH a caudal punta",
+          "value": 1.8447143232785095,
+          "unit": "h",
+          "inputs": [
+            "volume.effective",
+            "flow.peak.m3h"
+          ],
+          "equation": "TRH = Vef / Qmax",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "level.slabTop": {
+          "key": "level.slabTop",
+          "label": "Cota superior de la losa",
+          "value": -0.3458333333333333,
+          "unit": "m",
+          "inputs": [
+            "floor.dropAtSump",
+            "input.civil.minFillThicknessM"
+          ],
+          "equation": "y = −Δy − efill,mín",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "level.slabBottom": {
+          "key": "level.slabBottom",
+          "label": "Cota inferior de la losa",
+          "value": -0.6958333333333333,
+          "unit": "m",
+          "inputs": [
+            "level.slabTop",
+            "input.civil.baseSlabThicknessM"
+          ],
+          "equation": "y = ylosa − elosa",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "level.pitBottom": {
+          "key": "level.pitBottom",
+          "label": "Cota inferior del bloque de la poceta",
+          "value": -1.0958333333333332,
+          "unit": "m",
+          "inputs": [
+            "level.sumpBottom",
+            "level.slabBottom",
+            "input.civil.sumpWallThicknessM"
+          ],
+          "equation": "y = min(yp − ep, ylosa,inf)",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "civil.wallOuterRadius": {
+          "key": "civil.wallOuterRadius",
+          "label": "Radio exterior del muro",
+          "value": 3.65,
+          "unit": "m",
+          "inputs": [
+            "tank.diameter",
+            "input.civil.wallThicknessM"
+          ],
+          "equation": "r = R + em",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "civil.structuralOuterDiameter": {
+          "key": "civil.structuralOuterDiameter",
+          "label": "Diámetro exterior estructural",
+          "value": 7.3,
+          "unit": "m",
+          "inputs": [
+            "civil.wallOuterRadius"
+          ],
+          "equation": "Dext = D + 2·em",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "civil.channelOuterRadius": {
+          "key": "civil.channelOuterRadius",
+          "label": "Radio exterior del canal perimetral",
+          "value": 4.25,
+          "unit": "m",
+          "inputs": [
+            "civil.wallOuterRadius",
+            "input.civil.launderWidthM",
+            "input.civil.channelWallThicknessM"
+          ],
+          "equation": "r = Rext + b + ec",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "civil.channelOuterDiameter": {
+          "key": "civil.channelOuterDiameter",
+          "label": "Diámetro exterior del canal de recogida",
+          "value": 8.5,
+          "unit": "m",
+          "inputs": [
+            "civil.channelOuterRadius"
+          ],
+          "equation": "Dcanal = 2·r",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "civil.slabRadius": {
+          "key": "civil.slabRadius",
+          "label": "Radio de la losa",
+          "value": 3.9499999999999997,
+          "unit": "m",
+          "inputs": [
+            "civil.wallOuterRadius",
+            "input.civil.slabProjectionM"
+          ],
+          "equation": "r = Rext + vuelo",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "level.channelTop": {
+          "key": "level.channelTop",
+          "label": "Coronación del canal perimetral",
+          "value": 4,
+          "unit": "m",
+          "inputs": [
+            "tank.depth",
+            "input.geometry.freeboardM"
+          ],
+          "equation": "y = H + resguardo",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "level.inletAxis": {
+          "key": "level.inletAxis",
+          "label": "Cota del eje de la tubería de entrada",
+          "value": -1.4663333333333333,
+          "unit": "m",
+          "inputs": [
+            "level.slabBottom",
+            "level.pitBottom",
+            "inlet.dn"
+          ],
+          "equation": "y = min(ylosa,inf, ypoceta,inf) − recubrimiento − rext",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "bridge.span": {
+          "key": "bridge.span",
+          "label": "Luz del puente (vano completo)",
+          "value": 8.299999999999999,
+          "unit": "m",
+          "inputs": [
+            "civil.channelOuterRadius",
+            "input.mechanical.bridgeType"
+          ],
+          "equation": "L = 2·rapoyo",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "level.bridgeDeck": {
+          "key": "level.bridgeDeck",
+          "label": "Cota del tablero del puente",
+          "value": 4.3999999999999995,
+          "unit": "m",
+          "inputs": [
+            "level.channelTop",
+            "input.mechanical.bridgeBearingHeightM",
+            "input.mechanical.bridgeGirderDepthM"
+          ],
+          "equation": "y = ycoronación + apoyo + canto",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "arm.tipRadius": {
+          "key": "arm.tipRadius",
+          "label": "Radio de punta de los brazos",
+          "value": 3.3000000000000003,
+          "unit": "m",
+          "inputs": [
+            "tank.diameter",
+            "input.mechanical.armWallClearanceM"
+          ],
+          "equation": "r = R − holgura",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        },
+        "arm.length": {
+          "key": "arm.length",
+          "label": "Longitud de brazo portarrasquetas (en planta)",
+          "value": 3.08,
+          "unit": "m",
+          "inputs": [
+            "arm.tipRadius",
+            "input.mechanical.cageHalfWidthM"
+          ],
+          "equation": "L = rpunta − rjaula",
+          "methodVersion": "CF-ENG-1.0.0",
+          "origin": "CALCULATED",
+          "status": "PASS",
+          "warnings": []
+        }
+      },
+      "decisions": {
+        "diameterM": 6.7,
+        "sideWaterDepthM": 3.5,
+        "inletDn": 125,
+        "portHeightM": 0.22575169232892955,
+        "feedwellDiameterM": 3.7269120284829924,
+        "notchCount": 105,
+        "effluentDn": 125,
+        "sludgeDn": 150,
+        "referenceWaterAvgY": 3.5217191816469953,
+        "referenceWaterPeakY": 3.525543473921434,
+        "paddleRings": 1
+      },
+      "checks": [
+        {
+          "id": "DATA-SCHEMA",
+          "level": 1,
+          "status": "PASS",
+          "title": "Esquema de entradas",
+          "message": "Entradas válidas (esquema 1.0.0).",
+          "critical": false
+        },
+        {
+          "id": "DATA-PEAK-GE-AVG",
+          "level": 1,
+          "status": "PASS",
+          "title": "Caudal punta ≥ caudal medio",
+          "message": "Coherente.",
+          "value": 15,
+          "limit": "≥ 10",
+          "unit": "L/s",
+          "critical": false
+        },
+        {
+          "id": "HYD-INLET-VMAX",
+          "level": 2,
+          "status": "PASS",
+          "title": "Velocidad máxima en la entrada",
+          "message": "Cumple.",
+          "value": 1.2223099629457561,
+          "limit": "≤ 1.5",
+          "unit": "m/s",
+          "componentIds": [
+            "HYD-001"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-INLET-VMIN",
+          "level": 2,
+          "status": "PASS",
+          "title": "Velocidad mínima en la entrada (autolimpieza)",
+          "message": "Cumple.",
+          "value": 0.8148733086305042,
+          "limit": "recomendado 0.5…—",
+          "unit": "m/s",
+          "componentIds": [
+            "HYD-001"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-SUMP-CLEAR-OF-COLUMN",
+          "level": 3,
+          "status": "PASS",
+          "title": "Poceta mayor que la columna central",
+          "message": "Queda corona libre para el lodo.",
+          "value": 0.3295,
+          "limit": "> 0",
+          "unit": "m",
+          "componentIds": [
+            "CIV-004",
+            "HYD-001"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-DIAMETER-GE-REQUIRED",
+          "level": 2,
+          "status": "PASS",
+          "title": "Diámetro adoptado ≥ requerido",
+          "message": "El diámetro cubre la cámara y la superficie de sedimentación requerida.",
+          "value": 6.7,
+          "limit": "≥ 6.667",
+          "unit": "m",
+          "componentIds": [
+            "CIV-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-DIAMETER-RANGE",
+          "level": 3,
+          "status": "NOT_EVALUATED",
+          "title": "Diámetro interior",
+          "message": "El perfil de diseño no define criterio para esta magnitud.",
+          "value": 6.7,
+          "unit": "m",
+          "componentIds": [
+            "CIV-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-SETTLING-ANNULUS",
+          "level": 3,
+          "status": "PASS",
+          "title": "Corona de sedimentación alrededor de la cámara",
+          "message": "Cumple.",
+          "value": 24.347442600360726,
+          "limit": "> 0",
+          "unit": "m²",
+          "componentIds": [
+            "CIV-002",
+            "HYD-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-CHS-AVG-ADMISSIBLE",
+          "level": 2,
+          "status": "PASS",
+          "title": "CHS media ≤ admisible de diseño",
+          "message": "Cumple la carga admisible adoptada en la corona.",
+          "value": 1.4785947169443838,
+          "limit": "≤ 1.5",
+          "unit": "m³/(m²·h)",
+          "componentIds": [
+            "CIV-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-CHS-PEAK-ADMISSIBLE",
+          "level": 2,
+          "status": "NOT_EVALUATED",
+          "title": "CHS punta ≤ admisible de diseño",
+          "message": "No se ha definido carga superficial admisible a caudal punta.",
+          "value": 2.2178920754165756,
+          "unit": "m³/(m²·h)",
+          "critical": false
+        },
+        {
+          "id": "HYD-CHS-AVG-CRITERION",
+          "level": 2,
+          "status": "PASS",
+          "title": "Carga superficial sobre la zona de sedimentación a caudal medio",
+          "message": "Cumple el criterio (Design Guidelines for Drinking-Water Systems (Ontario Ministry of the Environment) — Sedimentación convencional 1,0–2,4 m/h).",
+          "value": 1.4785947169443838,
+          "limit": "recomendado 1…2.4",
+          "unit": "m³/(m²·h)",
+          "componentIds": [
+            "CIV-002"
+          ],
+          "sourceId": "ONTARIO-DWS-2008",
+          "critical": false
+        },
+        {
+          "id": "HYD-CHS-PEAK-CRITERION",
+          "level": 2,
+          "status": "NOT_EVALUATED",
+          "title": "Carga superficial sobre la zona de sedimentación a caudal punta",
+          "message": "El perfil de diseño no define criterio para esta magnitud.",
+          "value": 2.2178920754165756,
+          "unit": "m³/(m²·h)",
+          "componentIds": [
+            "CIV-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-SLR-CRITERION",
+          "level": 2,
+          "status": "NOT_EVALUATED",
+          "title": "Carga de sólidos superficial a caudal punta",
+          "message": "El perfil de diseño no define criterio para esta magnitud.",
+          "value": 3.1937645885998687,
+          "unit": "kg/(m²·d)",
+          "componentIds": [
+            "CIV-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-DEPTH-CRITERION",
+          "level": 2,
+          "status": "NOT_EVALUATED",
+          "title": "Profundidad útil en pared",
+          "message": "El perfil de diseño no define criterio para esta magnitud.",
+          "value": 3.5,
+          "unit": "m",
+          "componentIds": [
+            "CIV-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-SLOPE-START-INSIDE",
+          "level": 3,
+          "status": "PASS",
+          "title": "Comienzo de pendiente dentro del tanque",
+          "message": "rs ≤ R.",
+          "value": 3.35,
+          "limit": "≤ 3.350",
+          "unit": "m",
+          "componentIds": [
+            "CIV-003"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-SUMP-INSIDE-SLOPE",
+          "level": 3,
+          "status": "PASS",
+          "title": "Poceta dentro de la zona en pendiente",
+          "message": "rp < rs.",
+          "value": 0.4,
+          "limit": "< 3.350",
+          "unit": "m",
+          "componentIds": [
+            "CIV-004"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-FLOOR-SLOPE-CRITERION",
+          "level": 3,
+          "status": "NOT_EVALUATED",
+          "title": "Pendiente radial del fondo",
+          "message": "El perfil de diseño no define criterio para esta magnitud.",
+          "value": 0.08333333333333333,
+          "unit": "m/m",
+          "componentIds": [
+            "CIV-003"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-CHAMBER-DEPTH-LT-H",
+          "level": 3,
+          "status": "PASS",
+          "title": "Cámara de floculación menos profunda que el tanque",
+          "message": "Cumple.",
+          "value": 2.5,
+          "limit": "< 3.5",
+          "unit": "m",
+          "componentIds": [
+            "HYD-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-FLOC-TIME-TARGET",
+          "level": 2,
+          "status": "PASS",
+          "title": "Tiempo de floculación ≥ objetivo de diseño",
+          "message": "Cumple.",
+          "value": 29.999999999999996,
+          "limit": "≥ 30",
+          "unit": "min",
+          "componentIds": [
+            "HYD-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-FLOC-TIME-CRITERION",
+          "level": 2,
+          "status": "PASS",
+          "title": "Tiempo de floculación al caudal de diseño",
+          "message": "Cumple el criterio (Recommended Standards for Water Works (Ten States Standards) — Detención mínima de 30 min).",
+          "value": 29.999999999999996,
+          "limit": "≥ 30",
+          "unit": "min",
+          "componentIds": [
+            "HYD-002"
+          ],
+          "sourceId": "TEN-STATES-WATER-2018",
+          "critical": false
+        },
+        {
+          "id": "GEO-PADDLES-FIT",
+          "level": 3,
+          "status": "PASS",
+          "title": "Las paletas caben entre el tubo de giro y la pared",
+          "message": "1 anillo(s) de 4 paletas.",
+          "value": 4,
+          "limit": "≥ 1",
+          "componentIds": [
+            "MEC-007"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-FLOC-POWER",
+          "level": 2,
+          "status": "PASS",
+          "title": "Potencia de paletas ≥ potencia requerida",
+          "message": "Las paletas entregan la potencia necesaria para el G de diseño.",
+          "value": 75.22132620206726,
+          "limit": "≥ 56.5",
+          "unit": "W",
+          "componentIds": [
+            "MEC-007"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-FLOC-G-CRITERION",
+          "level": 2,
+          "status": "PASS",
+          "title": "Gradiente de velocidad G suministrado",
+          "message": "Cumple el criterio (MWH — Water Treatment: Principles and Design — Rango típico de floculación).",
+          "value": 46.16903711533148,
+          "limit": "recomendado 10…75",
+          "unit": "s⁻¹",
+          "componentIds": [
+            "MEC-007"
+          ],
+          "sourceId": "MWH-2012",
+          "critical": false
+        },
+        {
+          "id": "HYD-FLOC-GT-CRITERION",
+          "level": 2,
+          "status": "PASS",
+          "title": "Producto Gt",
+          "message": "Cumple el criterio (MWH — Water Treatment: Principles and Design — Rango típico de Gt).",
+          "value": 83104.26680759665,
+          "limit": "recomendado 10000…100000",
+          "unit": "—",
+          "componentIds": [
+            "MEC-007"
+          ],
+          "sourceId": "MWH-2012",
+          "critical": false
+        },
+        {
+          "id": "HYD-FLOC-TIP-SPEED",
+          "level": 2,
+          "status": "PASS",
+          "title": "Velocidad periférica de las paletas",
+          "message": "Cumple el criterio (Recommended Standards for Water Works (Ten States Standards) — 0,5–3,0 ft/s).",
+          "value": 0.6,
+          "limit": "≥ 0.15; ≤ 0.91",
+          "unit": "m/s",
+          "componentIds": [
+            "MEC-007"
+          ],
+          "sourceId": "TEN-STATES-WATER-2018",
+          "critical": false
+        },
+        {
+          "id": "HYD-FLOC-PADDLE-AREA",
+          "level": 2,
+          "status": "NOT_EVALUATED",
+          "title": "Área de paletas / sección vertical de la cámara",
+          "message": "El perfil de diseño no define criterio para esta magnitud.",
+          "value": 0.16168532031875676,
+          "unit": "—",
+          "componentIds": [
+            "MEC-007"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-FEEDWELL-ANNULUS",
+          "level": 3,
+          "status": "PASS",
+          "title": "Corona libre entre columna y cámara de floculación",
+          "message": "Cumple.",
+          "value": 1.7849560142414962,
+          "limit": "> 0",
+          "unit": "m",
+          "componentIds": [
+            "HYD-001",
+            "HYD-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-FEEDWELL-VELOCITY",
+          "level": 2,
+          "status": "NOT_EVALUATED",
+          "title": "Velocidad descendente en la cámara de floculación a caudal punta",
+          "message": "El perfil de diseño no define criterio para esta magnitud.",
+          "value": 0.001388888888888889,
+          "unit": "m/s",
+          "componentIds": [
+            "HYD-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-PORT-VELOCITY",
+          "level": 2,
+          "status": "PASS",
+          "title": "Velocidad de salida por las ventanas",
+          "message": "Cumple.",
+          "value": 0.3,
+          "limit": "≤ 0.3",
+          "unit": "m/s",
+          "componentIds": [
+            "HYD-001",
+            "HYD-003"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-PORTS-INSIDE-FEEDWELL",
+          "level": 3,
+          "status": "PASS",
+          "title": "Ventanas contenidas en la cámara de floculación",
+          "message": "Cumple.",
+          "value": 0.22575169232892955,
+          "limit": "≤ 2.300",
+          "unit": "m",
+          "componentIds": [
+            "HYD-001",
+            "HYD-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-WEIR-LENGTH-POSITIVE",
+          "level": 3,
+          "status": "PASS",
+          "title": "Longitud efectiva de vertedero positiva",
+          "message": "Cumple.",
+          "value": 21.032962815783666,
+          "limit": "> 0",
+          "unit": "m",
+          "componentIds": [
+            "HYD-004"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-WEIR-LOADING-ADMISSIBLE",
+          "level": 2,
+          "status": "NOT_EVALUATED",
+          "title": "CLV punta ≤ admisible de diseño",
+          "message": "No se ha definido carga lineal máxima de vertedero.",
+          "value": 61.61756721347165,
+          "unit": "m³/(m·d)",
+          "critical": false
+        },
+        {
+          "id": "HYD-WEIR-LOADING-CRITERION",
+          "level": 2,
+          "status": "NOT_EVALUATED",
+          "title": "Carga lineal sobre vertedero a caudal punta",
+          "message": "El perfil de diseño no define criterio para esta magnitud.",
+          "value": 61.61756721347165,
+          "unit": "m³/(m·d)",
+          "componentIds": [
+            "HYD-004"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-NOTCH-COUNT",
+          "level": 2,
+          "status": "PASS",
+          "title": "Al menos una escotadura en V",
+          "message": "Cumple.",
+          "value": 105,
+          "limit": "≥ 1",
+          "unit": "—",
+          "componentIds": [
+            "HYD-004"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-NOTCH-NOT-DROWNED",
+          "level": 2,
+          "status": "PASS",
+          "title": "Lámina dentro de la escotadura a caudal punta",
+          "message": "Cumple.",
+          "value": 0.025543473921434037,
+          "limit": "≤ 0.05",
+          "unit": "m",
+          "componentIds": [
+            "HYD-004"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-SHELLS-ABOVE-WATER",
+          "level": 2,
+          "status": "PASS",
+          "title": "Cámara y deflector de flotantes por encima de la lámina en punta",
+          "message": "Cumple.",
+          "value": 0.1499999999999999,
+          "limit": "> 0",
+          "unit": "m",
+          "componentIds": [
+            "HYD-002",
+            "MEC-006"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-LAUNDER-FREE-FALL",
+          "level": 2,
+          "status": "PASS",
+          "title": "Vertido libre al canal perimetral",
+          "message": "El canal no remansa el vertedero.",
+          "value": 0.29288880464078676,
+          "limit": "≥ 0.05",
+          "unit": "m",
+          "componentIds": [
+            "CIV-005",
+            "HYD-004"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-EFFLUENT-VMAX",
+          "level": 2,
+          "status": "PASS",
+          "title": "Velocidad en el colector de efluente",
+          "message": "Cumple.",
+          "value": 1.2223099629457561,
+          "limit": "≤ 1.5",
+          "unit": "m/s",
+          "componentIds": [
+            "HYD-005"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-EFFLUENT-FITS-LAUNDER",
+          "level": 3,
+          "status": "PASS",
+          "title": "Colector de efluente cabe en el canal",
+          "message": "El diámetro exterior cabe en la anchura del canal.",
+          "value": 0.14100000000000001,
+          "limit": "≤ 0.4",
+          "unit": "m",
+          "componentIds": [
+            "HYD-005",
+            "CIV-005"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-SLUDGE-VELOCITY",
+          "level": 2,
+          "status": "PASS",
+          "title": "Velocidad de diseño en la conducción de lodos",
+          "message": "Cumple.",
+          "value": 0.005658842421045167,
+          "limit": "≤ 1",
+          "unit": "m/s",
+          "componentIds": [
+            "HYD-006"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-SLUDGE-MIN-DN",
+          "level": 2,
+          "status": "PASS",
+          "title": "DN mínimo de la conducción de lodos",
+          "message": "Cumple.",
+          "value": 150,
+          "limit": "≥ 150",
+          "unit": "mm",
+          "componentIds": [
+            "HYD-006"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-SLUDGE-FITS-SUMP",
+          "level": 3,
+          "status": "PASS",
+          "title": "Conducción de lodos cabe en la altura de la poceta",
+          "message": "Cumple.",
+          "value": 0.16599999999999998,
+          "limit": "< 0.6",
+          "unit": "m",
+          "componentIds": [
+            "HYD-006",
+            "CIV-004"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-SLUDGE-HYDRAULICS",
+          "level": 2,
+          "status": "NOT_EVALUATED",
+          "title": "Hidráulica de purga de lodos",
+          "message": "Pérdidas, carga disponible, bombeo o purga telescópica no evaluados en V1. El caudal de purga es una hipótesis de prediseño.",
+          "componentIds": [
+            "HYD-006"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-SLUDGE-BLANKET",
+          "level": 2,
+          "status": "NOT_EVALUATED",
+          "title": "Manto de lodos por debajo de la cámara de floculación",
+          "message": "No se ha definido la altura de diseño del manto (geometry.sludgeBlanketDepthM): el volumen efectivo no lo descuenta.",
+          "componentIds": [
+            "HYD-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-EFFECTIVE-VOLUME-POSITIVE",
+          "level": 2,
+          "status": "PASS",
+          "title": "Volumen efectivo positivo",
+          "message": "Cumple.",
+          "value": 99.61457345703951,
+          "limit": "> 0",
+          "unit": "m³",
+          "critical": false
+        },
+        {
+          "id": "HYD-HRT-TARGET",
+          "level": 2,
+          "status": "PASS",
+          "title": "TRH ≥ objetivo de diseño",
+          "message": "Cumple.",
+          "value": 2.7670714849177642,
+          "limit": "≥ 1.5",
+          "unit": "h",
+          "componentIds": [
+            "CIV-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-HRT-CRITERION",
+          "level": 2,
+          "status": "NOT_EVALUATED",
+          "title": "Tiempo de retención hidráulico a caudal medio",
+          "message": "El perfil de diseño no define criterio para esta magnitud.",
+          "value": 2.7670714849177642,
+          "unit": "h",
+          "componentIds": [
+            "CIV-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "HYD-REMOVAL-EFFICIENCY",
+          "level": 2,
+          "status": "NOT_EVALUATED",
+          "title": "Eficiencia de eliminación de SST y DBO₅",
+          "message": "V1 conserva la calidad del agua como dato técnico pero no calcula rendimientos (spec §4.1).",
+          "critical": false
+        },
+        {
+          "id": "HYD-FREEBOARD-OVER-PEAK",
+          "level": 2,
+          "status": "PASS",
+          "title": "Coronación sobre la lámina en punta",
+          "message": "Cumple.",
+          "value": 0.47445652607856603,
+          "limit": "> 0",
+          "unit": "m",
+          "componentIds": [
+            "CIV-005"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-BRIDGE-CLEARANCE",
+          "level": 3,
+          "status": "PASS",
+          "title": "Gálibo del puente sobre la lámina en punta",
+          "message": "Cumple.",
+          "value": 0.5744565260785657,
+          "limit": "≥ 0.3",
+          "unit": "m",
+          "componentIds": [
+            "MEC-001"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-WALKWAY-WIDTH",
+          "level": 4,
+          "status": "PASS",
+          "title": "Anchura libre de pasarela",
+          "message": "Cumple el criterio (EN ISO 14122-2 — Seguridad de las máquinas. Medios de acceso permanentes. Plataformas y pasarelas).",
+          "value": 0.8,
+          "limit": "≥ 0.6; recomendado 0.8…—",
+          "unit": "m",
+          "componentIds": [
+            "MEC-001"
+          ],
+          "sourceId": "EN-ISO-14122-2-2016",
+          "critical": false
+        },
+        {
+          "id": "GEO-CAGE-COLUMN",
+          "level": 3,
+          "status": "PASS",
+          "title": "Holgura jaula giratoria – columna",
+          "message": "Cumple.",
+          "value": 0.10949999999999999,
+          "limit": "≥ 0.05",
+          "unit": "m",
+          "componentIds": [
+            "MEC-003",
+            "HYD-001"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-CAGE-FEEDWELL",
+          "level": 3,
+          "status": "PASS",
+          "title": "Holgura jaula giratoria – cámara de floculación",
+          "message": "Cumple.",
+          "value": 1.5043290305194152,
+          "limit": "≥ 0.05",
+          "unit": "m",
+          "componentIds": [
+            "MEC-003",
+            "HYD-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-FEEDWELL-ARMS",
+          "level": 3,
+          "status": "PASS",
+          "title": "Holgura cámara de floculación – brazos",
+          "message": "Cumple.",
+          "value": 0.3938786654798754,
+          "limit": "≥ 0.3",
+          "unit": "m",
+          "componentIds": [
+            "HYD-002",
+            "MEC-004"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-SKIMMER-LENGTH",
+          "level": 3,
+          "status": "PASS",
+          "title": "Espacio para el barredor de flotantes",
+          "message": "Cumple.",
+          "value": 0.981543985758504,
+          "limit": "> 0",
+          "unit": "m",
+          "componentIds": [
+            "MEC-006",
+            "HYD-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-SKIMMER-REACHES-BOX",
+          "level": 3,
+          "status": "PASS",
+          "title": "El barredor alcanza la caja de flotantes",
+          "message": "Cumple.",
+          "componentIds": [
+            "MEC-006"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-FLOOR-CONTINUITY",
+          "level": 3,
+          "status": "PASS",
+          "title": "Continuidad del fondo",
+          "message": "El fondo es continuo y la geometría sigue la ley de pendiente.",
+          "value": 8.33333335670261e-9,
+          "unit": "m",
+          "componentIds": [
+            "CIV-003",
+            "CIV-004"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-VOLUME-CONSISTENCY",
+          "level": 3,
+          "status": "PASS",
+          "title": "Volumen geométrico = volumen calculado",
+          "message": "La geometría generada encierra 126.673 m³, igual al volumen bruto calculado.",
+          "value": 126.67306277494353,
+          "unit": "m³",
+          "componentIds": [
+            "CIV-002",
+            "CIV-003"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-DIAMETER-CONSISTENCY",
+          "level": 3,
+          "status": "PASS",
+          "title": "Diámetro modelado = diámetro calculado",
+          "message": "Se compara la cara interior del muro generado con el diámetro hidráulico adoptado.",
+          "value": 6.7,
+          "unit": "m",
+          "componentIds": [
+            "CIV-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-BLADE-FLOOR",
+          "level": 3,
+          "status": "PASS",
+          "title": "Holgura paletas – fondo",
+          "message": "7 paletas por brazo; holgura mínima medida a lo largo de cada paleta.",
+          "value": 0.03,
+          "limit": "≥ 0.03",
+          "unit": "m",
+          "componentIds": [
+            "MEC-005",
+            "CIV-003"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-BLADE-WALL",
+          "level": 3,
+          "status": "PASS",
+          "title": "Holgura paletas – muro",
+          "message": "Distancia del punto más exterior de las paletas a la cara interior del muro.",
+          "value": 0.04999999999999982,
+          "limit": "≥ 0.05",
+          "unit": "m",
+          "componentIds": [
+            "MEC-005",
+            "CIV-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-BLADE-SUMP-COVERAGE",
+          "level": 3,
+          "status": "PASS",
+          "title": "Las paletas barren hasta la poceta",
+          "message": "La paleta interior alcanza la poceta.",
+          "value": 0.22,
+          "limit": "≤ 0.400",
+          "unit": "m",
+          "componentIds": [
+            "MEC-005",
+            "CIV-004"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-DEFLECTOR-CAGE",
+          "level": 3,
+          "status": "PASS",
+          "title": "Holgura deflectores – jaula giratoria",
+          "message": "Los deflectores fijos quedan dentro de la jaula.",
+          "value": 0.07108675258424069,
+          "limit": "≥ 0.05",
+          "unit": "m",
+          "componentIds": [
+            "HYD-003",
+            "MEC-003"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-BAFFLE-ARMS",
+          "level": 3,
+          "status": "PASS",
+          "title": "Holgura deflector de flotantes – brazos",
+          "message": "Cumple.",
+          "value": 2.495416666666667,
+          "limit": "≥ 0.3",
+          "unit": "m",
+          "componentIds": [
+            "MEC-006",
+            "MEC-004"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-CONNECTIONS",
+          "level": 3,
+          "status": "PASS",
+          "title": "Componentes correctamente conectados",
+          "message": "16 conexiones coincidentes.",
+          "value": 0,
+          "componentIds": [],
+          "critical": false
+        },
+        {
+          "id": "GEO-AXIS-ALIGNMENT",
+          "level": 3,
+          "status": "PASS",
+          "title": "Alineación con el eje del tanque",
+          "message": "Todos los sólidos de revolución son coaxiales.",
+          "componentIds": [],
+          "critical": false
+        },
+        {
+          "id": "GEO-SKIMMER-BEACH",
+          "level": 3,
+          "status": "NOT_EVALUATED",
+          "title": "Interacción barredor – playa de flotantes",
+          "message": "Contacto funcional previsto (labio flexible sobre la rampa). Geometría de rampa y labio a definir con el fabricante.",
+          "componentIds": [
+            "MEC-006"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-SLEEVE-CAGE",
+          "level": 3,
+          "status": "PASS",
+          "title": "Holgura tubo del agitador – jaula del rascador",
+          "message": "El tubo de giro no toca la jaula giratoria.",
+          "value": 0.04999999999999999,
+          "limit": "≥ 0.05",
+          "unit": "m",
+          "componentIds": [
+            "MEC-007",
+            "MEC-003"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-PADDLES-WALL",
+          "level": 3,
+          "status": "PASS",
+          "title": "Holgura paletas – pared de la cámara",
+          "message": "Distancia del punto más exterior de las paletas a la cara interior de la cámara.",
+          "value": 0.1499999999999999,
+          "limit": "≥ 0.15",
+          "unit": "m",
+          "componentIds": [
+            "MEC-007",
+            "HYD-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-PADDLES-SLEEVE",
+          "level": 3,
+          "status": "PASS",
+          "title": "Holgura paletas – tubo de giro",
+          "message": "Separación entre el canto interior de las paletas y el tubo de giro.",
+          "value": 1.148324339685448,
+          "limit": "≥ 0.05",
+          "unit": "m",
+          "componentIds": [
+            "MEC-007"
+          ],
+          "critical": false
+        },
+        {
+          "id": "GEO-PADDLES-VERTICAL",
+          "level": 3,
+          "status": "PASS",
+          "title": "Agitador sumergido y dentro de la cámara",
+          "message": "Paletas y brazos quedan entre el fondo de la cámara y la cresta del vertedero.",
+          "value": 0.30499999999999994,
+          "limit": "> 0",
+          "unit": "m",
+          "componentIds": [
+            "MEC-007",
+            "HYD-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "STR-THICKNESS",
+          "level": 4,
+          "status": "NOT_EVALUATED",
+          "critical": true,
+          "title": "Espesores estructurales",
+          "message": "Espesores preliminares NO verificados (muro 0.3 m, losa 0.35 m, canal 0.2 m, poceta 0.25 m). Requiere cálculo según EN 1992-1-1 / EN 1992-3: presión hidrostática, estado vacío con empuje del terreno, nivel freático, cargas de equipos y puente, fisuración y estanqueidad.",
+          "componentIds": [
+            "CIV-001",
+            "CIV-002",
+            "CIV-004",
+            "CIV-005"
+          ]
+        },
+        {
+          "id": "STR-CRACKING-WATERTIGHTNESS",
+          "level": 4,
+          "status": "NOT_EVALUATED",
+          "critical": true,
+          "title": "Fisuración y estanqueidad (EN 1992-3)",
+          "message": "Método no implementado en V1.",
+          "componentIds": [
+            "CIV-002",
+            "CIV-001"
+          ]
+        },
+        {
+          "id": "STR-GEOTECHNICS",
+          "level": 4,
+          "status": "NOT_EVALUATED",
+          "critical": true,
+          "title": "Cimentación y geotecnia",
+          "message": "Sin datos geotécnicos: capacidad portante, asientos y empujes no evaluados.",
+          "componentIds": [
+            "CIV-001"
+          ]
+        },
+        {
+          "id": "STR-FLOTATION",
+          "level": 4,
+          "status": "NOT_EVALUATED",
+          "critical": true,
+          "title": "Flotación con tanque vacío",
+          "message": "Falta el nivel freático (site.groundwaterLevelM).",
+          "componentIds": [
+            "CIV-001"
+          ]
+        },
+        {
+          "id": "STR-REBAR",
+          "level": 4,
+          "status": "NOT_EVALUATED",
+          "title": "Cuantías de armadura",
+          "message": "No se miden armaduras sin diseño estructural (spec §7.4).",
+          "componentIds": [
+            "CIV-001",
+            "CIV-002"
+          ],
+          "critical": false
+        },
+        {
+          "id": "MEC-BRIDGE-STRUCTURE",
+          "level": 4,
+          "status": "NOT_EVALUATED",
+          "critical": true,
+          "title": "Resistencia y flecha del puente",
+          "message": "Puente full-span de 8.30 m de luz: perfiles, cargas de mantenimiento y apoyos sin dimensionar. El tipo de apoyo no se infiere del diámetro.",
+          "componentIds": [
+            "MEC-001"
+          ]
+        },
+        {
+          "id": "MEC-DRIVE-TORQUE",
+          "level": 4,
+          "status": "NOT_EVALUATED",
+          "critical": true,
+          "title": "Par y potencia del accionamiento",
+          "message": "Representación paramétrica sin selección comercial. Par, potencia y limitador de par se calcularán en fase posterior.",
+          "componentIds": [
+            "MEC-002"
+          ]
+        },
+        {
+          "id": "MEC-ARMS-STRUCTURE",
+          "level": 4,
+          "status": "NOT_EVALUATED",
+          "critical": true,
+          "title": "Resistencia de jaula, brazos y paletas",
+          "message": "Secciones representativas; sin cálculo de esfuerzos de barrido.",
+          "componentIds": [
+            "MEC-003",
+            "MEC-004",
+            "MEC-005"
+          ]
+        },
+        {
+          "id": "MEC-FABRICATION",
+          "level": 4,
+          "status": "NOT_EVALUATED",
+          "critical": true,
+          "title": "Equipo mecánico apto para fabricación",
+          "message": "El equipo mecánico NO está dimensionado para fabricación.",
+          "componentIds": [
+            "MEC-001",
+            "MEC-002",
+            "MEC-003",
+            "MEC-004",
+            "MEC-005",
+            "MEC-006"
+          ]
+        },
+        {
+          "id": "MAT-SUBMERGED-COMPATIBILITY",
+          "level": 4,
+          "status": "PASS",
+          "title": "Material de piezas sumergidas",
+          "message": "Acero inoxidable austenítico X5CrNi18-10 (AISI 304): compatible con inmersión en agua residual urbana (confirmar agresividad real).",
+          "componentIds": [
+            "MEC-003",
+            "MEC-004",
+            "MEC-005",
+            "MEC-006"
+          ],
+          "critical": false
+        },
+        {
+          "id": "MAT-CONCRETE-EXPOSURE",
+          "level": 4,
+          "status": "PASS",
+          "title": "Clase de exposición del hormigón",
+          "message": "El hormigón declara exposición química (XA). Confirmar la clase con análisis del agua y del terreno.",
+          "componentIds": [
+            "CIV-001",
+            "CIV-002",
+            "CIV-004",
+            "CIV-005"
+          ],
+          "critical": false
+        },
+        {
+          "id": "SITE-EXCAVATION",
+          "level": 4,
+          "status": "PASS",
+          "title": "Implantación y excavación",
+          "message": "Excavación estimada 275.1 m³.",
+          "componentIds": [
+            "CIV-001"
+          ],
+          "critical": false
+        },
+        {
+          "id": "MEC-FLOC-DRIVE",
+          "level": 4,
+          "status": "NOT_EVALUATED",
+          "critical": true,
+          "title": "Par, potencia y regulación del accionamiento del floculador",
+          "message": "Representación paramétrica. Potencia útil al agua 75 W; faltan rendimientos, par de arranque, reductor, variador de velocidad y selección comercial.",
+          "componentIds": [
+            "MEC-008"
+          ]
+        },
+        {
+          "id": "MEC-FLOC-STRUCTURE",
+          "level": 4,
+          "status": "NOT_EVALUATED",
+          "critical": true,
+          "title": "Resistencia de paletas, brazos y tubo de giro",
+          "message": "Secciones representativas; sin cálculo de esfuerzos hidrodinámicos ni fatiga.",
+          "componentIds": [
+            "MEC-007"
+          ]
+        },
+        {
+          "id": "DOC-PROFILE",
+          "level": 4,
+          "status": "PASS",
+          "title": "Perfil de diseño: Potabilización: rangos de referencia",
+          "message": "Agua coagulada en potabilización, con rangos de bibliografía y normas de referencia.",
+          "critical": false
+        },
+        {
+          "id": "DOC-SOURCES",
+          "level": 4,
+          "status": "WARNING",
+          "title": "Verificación de fuentes",
+          "message": "Fuentes pendientes de contrastar con su edición: ISO-6708-1995, ISO-1438-2017, CHOW-1959, EN-ISO-14122-2-2016, ONTARIO-DWS-2008, TEN-STATES-WATER-2018, CRC-HANDBOOK, MWH-2012.",
+          "critical": false
+        },
+        {
+          "id": "GEO-COMPONENT-INVENTORY",
+          "level": 3,
+          "status": "PASS",
+          "title": "Inventario de componentes completo",
+          "message": "19 componentes generados.",
+          "critical": false
+        }
+      ],
+      "summary": {
+        "status": "INCOMPLETE",
+        "counts": {
+          "PASS": 61,
+          "WARNING": 1,
+          "FAIL": 0,
+          "NOT_EVALUATED": 26
+        },
+        "byLevel": {
+          "1": {
+            "PASS": 2,
+            "WARNING": 0,
+            "FAIL": 0,
+            "NOT_EVALUATED": 0
+          },
+          "2": {
+            "PASS": 22,
+            "WARNING": 0,
+            "FAIL": 0,
+            "NOT_EVALUATED": 12
+          },
+          "3": {
+            "PASS": 32,
+            "WARNING": 0,
+            "FAIL": 0,
+            "NOT_EVALUATED": 3
+          },
+          "4": {
+            "PASS": 5,
+            "WARNING": 1,
+            "FAIL": 0,
+            "NOT_EVALUATED": 11
+          }
+        },
+        "pendingCritical": [
+          "STR-THICKNESS",
+          "STR-CRACKING-WATERTIGHTNESS",
+          "STR-GEOTECHNICS",
+          "STR-FLOTATION",
+          "MEC-BRIDGE-STRUCTURE",
+          "MEC-DRIVE-TORQUE",
+          "MEC-ARMS-STRUCTURE",
+          "MEC-FABRICATION",
+          "MEC-FLOC-DRIVE",
+          "MEC-FLOC-STRUCTURE"
+        ],
+        "failures": []
+      },
+      "measurements": {
+        "concreteByElementM3": {
+          "CIV-001": 16.691281768522565,
+          "CIV-002": 25.372287668554574,
+          "CIV-004": 0.744164759819082,
+          "CIV-005": 7.411017069818316
+        },
+        "concreteTotalM3": 50.218751266714534,
+        "fillTotalM3": 8.86738524752934,
+        "wettedLiningM2": {
+          "CIV-002 cara interior": 73.67034772668066,
+          "CIV-003 fondo": 34.87433310794051,
+          "CIV-004 poceta": 1.9950047974109628,
+          "CIV-005 canal": 26.609289775905552
+        },
+        "wettedLiningTotalM2": 137.14897540793768,
+        "excavationM3": 275.1327978948366,
+        "components": [
+          {
+            "componentId": "CIV-001",
+            "items": [
+              {
+                "nodeId": "CIV-001.slab",
+                "label": "Losa de cimentación (corona)",
+                "materialId": "CONC-C30/37-XC4-XA1",
+                "section": "real",
+                "volumeM3": 16.691281768522565,
+                "outerSurfaceM2": 105.49468130754522,
+                "massKg": 41728.204421306415
+              }
+            ],
+            "massKg": 41728.204421306415,
+            "massStatus": "ESTIMATED"
+          },
+          {
+            "componentId": "CIV-002",
+            "items": [
+              {
+                "nodeId": "CIV-002.wall",
+                "label": "Muro circular",
+                "materialId": "CONC-C30/37-XC4-XA1",
+                "section": "real",
+                "volumeM3": 25.372287668554574,
+                "outerSurfaceM2": 182.34327360210756,
+                "massKg": 63430.71917138643
+              }
+            ],
+            "massKg": 63430.71917138643,
+            "massStatus": "ESTIMATED"
+          },
+          {
+            "componentId": "CIV-003",
+            "items": [
+              {
+                "nodeId": "CIV-003.fill",
+                "label": "Formación de pendiente (no estructural)",
+                "materialId": "CONC-C20/25-FILL",
+                "section": "real",
+                "volumeM3": 8.86738524752934,
+                "outerSurfaceM2": 77.15886122832013,
+                "massKg": 21281.724594070416
+              }
+            ],
+            "massKg": 21281.724594070416,
+            "massStatus": "ESTIMATED"
+          },
+          {
+            "componentId": "CIV-004",
+            "items": [
+              {
+                "nodeId": "CIV-004.pit",
+                "label": "Poceta central de lodos",
+                "materialId": "CONC-C30/37-XC4-XA1",
+                "section": "real",
+                "volumeM3": 0.744164759819082,
+                "outerSurfaceM2": 6.97433569096934,
+                "massKg": 1860.4118995477052
+              }
+            ],
+            "massKg": 1860.4118995477052,
+            "massStatus": "ESTIMATED"
+          },
+          {
+            "componentId": "CIV-005",
+            "items": [
+              {
+                "nodeId": "CIV-005.floor",
+                "label": "Solera del canal",
+                "materialId": "CONC-C30/37-XC4-XA1",
+                "section": "real",
+                "volumeM3": 1.9352210746113143,
+                "outerSurfaceM2": 29.02831611916969,
+                "massKg": 4838.052686528285
+              },
+              {
+                "nodeId": "CIV-005.outerWall",
+                "label": "Muro exterior del canal",
+                "materialId": "CONC-C30/37-XC4-XA1",
+                "section": "real",
+                "volumeM3": 5.475795995207001,
+                "outerSurfaceM2": 65.18804756198823,
+                "massKg": 13689.489988017502
+              }
+            ],
+            "massKg": 18527.542674545788,
+            "massStatus": "ESTIMATED"
+          },
+          {
+            "componentId": "HYD-001",
+            "items": [
+              {
+                "nodeId": "HYD-001.buried",
+                "label": "Tubería de entrada enterrada",
+                "materialId": "PE-HD-PE100",
+                "section": "real",
+                "volumeM3": 0.01654614018792673,
+                "lengthM": 4.949999999999999,
+                "outerSurfaceM2": 2.192674592572996,
+                "massKg": 15.801563879470027
+              },
+              {
+                "nodeId": "HYD-001.column",
+                "label": "Columna central de alimentación",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.018272064171165694,
+                "outerSurfaceM2": 4.574701351958258,
+                "massKg": 144.349306952209
+              }
+            ],
+            "massKg": 160.15087083167901,
+            "massStatus": "ESTIMATED"
+          },
+          {
+            "componentId": "HYD-002",
+            "items": [
+              {
+                "nodeId": "HYD-002.shell",
+                "label": "Virola de la cámara de floculación",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.250073560131915,
+                "outerSurfaceM2": 62.70532294030684,
+                "massKg": 1975.5811250421286
+              },
+              {
+                "nodeId": "HYD-002.hanger-0",
+                "label": "Cuelgue 1",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.0010611413151964146,
+                "lengthM": 0.42445652607856577,
+                "outerSurfaceM2": 0.08489130521571316,
+                "massKg": null
+              },
+              {
+                "nodeId": "HYD-002.hanger-1",
+                "label": "Cuelgue 2",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.0010611413151964146,
+                "lengthM": 0.42445652607856577,
+                "outerSurfaceM2": 0.08489130521571316,
+                "massKg": null
+              }
+            ],
+            "massKg": null,
+            "massStatus": "PARTIAL"
+          },
+          {
+            "componentId": "HYD-003",
+            "items": [
+              {
+                "nodeId": "HYD-003.plate-0",
+                "label": "Deflector 1",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.00014062500000000002,
+                "outerSurfaceM2": 0.06046683394272675,
+                "massKg": 1.1109375000000001
+              },
+              {
+                "nodeId": "HYD-003.plate-1",
+                "label": "Deflector 2",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.00014062500000000002,
+                "outerSurfaceM2": 0.06046683394272675,
+                "massKg": 1.1109375000000001
+              },
+              {
+                "nodeId": "HYD-003.plate-2",
+                "label": "Deflector 3",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.00014062500000000002,
+                "outerSurfaceM2": 0.06046683394272675,
+                "massKg": 1.1109375000000001
+              },
+              {
+                "nodeId": "HYD-003.plate-3",
+                "label": "Deflector 4",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.00014062500000000002,
+                "outerSurfaceM2": 0.06046683394272675,
+                "massKg": 1.1109375000000001
+              }
+            ],
+            "massKg": 4.4437500000000005,
+            "massStatus": "ESTIMATED"
+          },
+          {
+            "componentId": "HYD-004",
+            "items": [
+              {
+                "nodeId": "HYD-004.plate",
+                "label": "Chapa vertedero (105 escotaduras en V)",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.02313625909735039,
+                "outerSurfaceM2": 9.464833267102634,
+                "massKg": 182.77644686906808
+              }
+            ],
+            "massKg": 182.77644686906808,
+            "massStatus": "ESTIMATED"
+          },
+          {
+            "componentId": "HYD-005",
+            "items": [
+              {
+                "nodeId": "HYD-005.pipe",
+                "label": "Colector de efluente",
+                "materialId": "PE-HD-PE100",
+                "section": "real",
+                "volumeM3": 0.008356636458548857,
+                "lengthM": 2.5000000000000004,
+                "outerSurfaceM2": 1.1074114103904025,
+                "massKg": 7.9805878179141585
+              }
+            ],
+            "massKg": 7.9805878179141585,
+            "massStatus": "ESTIMATED"
+          },
+          {
+            "componentId": "HYD-006",
+            "items": [
+              {
+                "nodeId": "HYD-006.pipe",
+                "label": "Conducción de lodos",
+                "materialId": "PE-HD-PE100",
+                "section": "real",
+                "volumeM3": 0.020053414226394343,
+                "lengthM": 5.049999999999999,
+                "outerSurfaceM2": 2.633597121504323,
+                "massKg": 19.1510105862066
+              }
+            ],
+            "massKg": 19.1510105862066,
+            "massStatus": "ESTIMATED"
+          },
+          {
+            "componentId": "MEC-001",
+            "items": [
+              {
+                "nodeId": "MEC-001.girder-L",
+                "label": "Viga principal",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.2987999999999998,
+                "lengthM": 8.299999999999999,
+                "outerSurfaceM2": 6.971999999999996,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.handrail-L",
+                "label": "Pasamanos",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.02075,
+                "lengthM": 8.299999999999999,
+                "outerSurfaceM2": 1.66,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.post-L-0",
+                "label": "Montante de barandilla",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.002750000000000002,
+                "lengthM": 1.1000000000000005,
+                "outerSurfaceM2": 0.2200000000000001,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.post-L-1",
+                "label": "Montante de barandilla",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.002750000000000002,
+                "lengthM": 1.1000000000000005,
+                "outerSurfaceM2": 0.2200000000000001,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.post-L-2",
+                "label": "Montante de barandilla",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.002750000000000002,
+                "lengthM": 1.1000000000000005,
+                "outerSurfaceM2": 0.2200000000000001,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.post-L-3",
+                "label": "Montante de barandilla",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.002750000000000002,
+                "lengthM": 1.1000000000000005,
+                "outerSurfaceM2": 0.2200000000000001,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.post-L-4",
+                "label": "Montante de barandilla",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.002750000000000002,
+                "lengthM": 1.1000000000000005,
+                "outerSurfaceM2": 0.2200000000000001,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.post-L-5",
+                "label": "Montante de barandilla",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.002750000000000002,
+                "lengthM": 1.1000000000000005,
+                "outerSurfaceM2": 0.2200000000000001,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.post-L-6",
+                "label": "Montante de barandilla",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.002750000000000002,
+                "lengthM": 1.1000000000000005,
+                "outerSurfaceM2": 0.2200000000000001,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.girder-R",
+                "label": "Viga principal",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.2987999999999998,
+                "lengthM": 8.299999999999999,
+                "outerSurfaceM2": 6.971999999999996,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.handrail-R",
+                "label": "Pasamanos",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.02075,
+                "lengthM": 8.299999999999999,
+                "outerSurfaceM2": 1.66,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.post-R-0",
+                "label": "Montante de barandilla",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.002750000000000002,
+                "lengthM": 1.1000000000000005,
+                "outerSurfaceM2": 0.2200000000000001,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.post-R-1",
+                "label": "Montante de barandilla",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.002750000000000002,
+                "lengthM": 1.1000000000000005,
+                "outerSurfaceM2": 0.2200000000000001,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.post-R-2",
+                "label": "Montante de barandilla",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.002750000000000002,
+                "lengthM": 1.1000000000000005,
+                "outerSurfaceM2": 0.2200000000000001,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.post-R-3",
+                "label": "Montante de barandilla",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.002750000000000002,
+                "lengthM": 1.1000000000000005,
+                "outerSurfaceM2": 0.2200000000000001,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.post-R-4",
+                "label": "Montante de barandilla",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.002750000000000002,
+                "lengthM": 1.1000000000000005,
+                "outerSurfaceM2": 0.2200000000000001,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.post-R-5",
+                "label": "Montante de barandilla",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.002750000000000002,
+                "lengthM": 1.1000000000000005,
+                "outerSurfaceM2": 0.2200000000000001,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.post-R-6",
+                "label": "Montante de barandilla",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.002750000000000002,
+                "lengthM": 1.1000000000000005,
+                "outerSurfaceM2": 0.2200000000000001,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.deck",
+                "label": "Tablero (chapa antideslizante)",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.26559999999999995,
+                "outerSurfaceM2": 14.008,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.crossbeam-0",
+                "label": "Travesaño de cuelgue",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.00512,
+                "lengthM": 0.8,
+                "outerSurfaceM2": 0.256,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-001.crossbeam-1",
+                "label": "Travesaño de cuelgue",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.00512,
+                "lengthM": 0.8,
+                "outerSurfaceM2": 0.256,
+                "massKg": null
+              }
+            ],
+            "massKg": null,
+            "massStatus": "NOT_EVALUATED"
+          },
+          {
+            "componentId": "MEC-002",
+            "items": [
+              {
+                "nodeId": "MEC-002.gearbox",
+                "label": "Reductor / corona (envolvente)",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.21111502632123413,
+                "outerSurfaceM2": 2.0608847807549044,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-002.motor",
+                "label": "Motor (envolvente)",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.021951999999999992,
+                "outerSurfaceM2": 0.47039999999999993,
+                "massKg": null
+              }
+            ],
+            "massKg": null,
+            "massStatus": "NOT_EVALUATED"
+          },
+          {
+            "componentId": "MEC-003",
+            "items": [
+              {
+                "nodeId": "MEC-003.leg-0",
+                "label": "Montante de jaula",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.02762133333333333,
+                "lengthM": 4.315833333333333,
+                "outerSurfaceM2": 1.3810666666666667,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-003.leg-1",
+                "label": "Montante de jaula",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.02762133333333333,
+                "lengthM": 4.315833333333333,
+                "outerSurfaceM2": 1.3810666666666667,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-003.leg-2",
+                "label": "Montante de jaula",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.02762133333333333,
+                "lengthM": 4.315833333333333,
+                "outerSurfaceM2": 1.3810666666666667,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-003.leg-3",
+                "label": "Montante de jaula",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.02762133333333333,
+                "lengthM": 4.315833333333333,
+                "outerSurfaceM2": 1.3810666666666667,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-003.ring-bottom-0",
+                "label": "Cerco de jaula",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.0028160000000000004,
+                "lengthM": 0.44,
+                "outerSurfaceM2": 0.1408,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-003.ring-bottom-1",
+                "label": "Cerco de jaula",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.0028160000000000004,
+                "lengthM": 0.44,
+                "outerSurfaceM2": 0.1408,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-003.ring-bottom-2",
+                "label": "Cerco de jaula",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.0028160000000000004,
+                "lengthM": 0.44,
+                "outerSurfaceM2": 0.1408,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-003.ring-bottom-3",
+                "label": "Cerco de jaula",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.0028160000000000004,
+                "lengthM": 0.44,
+                "outerSurfaceM2": 0.1408,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-003.ring-mid-0",
+                "label": "Cerco de jaula",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.0028160000000000004,
+                "lengthM": 0.44,
+                "outerSurfaceM2": 0.1408,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-003.ring-mid-1",
+                "label": "Cerco de jaula",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.0028160000000000004,
+                "lengthM": 0.44,
+                "outerSurfaceM2": 0.1408,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-003.ring-mid-2",
+                "label": "Cerco de jaula",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.0028160000000000004,
+                "lengthM": 0.44,
+                "outerSurfaceM2": 0.1408,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-003.ring-mid-3",
+                "label": "Cerco de jaula",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.0028160000000000004,
+                "lengthM": 0.44,
+                "outerSurfaceM2": 0.1408,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-003.ring-top-0",
+                "label": "Cerco de jaula",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.0028160000000000004,
+                "lengthM": 0.44,
+                "outerSurfaceM2": 0.1408,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-003.ring-top-1",
+                "label": "Cerco de jaula",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.0028160000000000004,
+                "lengthM": 0.44,
+                "outerSurfaceM2": 0.1408,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-003.ring-top-2",
+                "label": "Cerco de jaula",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.0028160000000000004,
+                "lengthM": 0.44,
+                "outerSurfaceM2": 0.1408,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-003.ring-top-3",
+                "label": "Cerco de jaula",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.0028160000000000004,
+                "lengthM": 0.44,
+                "outerSurfaceM2": 0.1408,
+                "massKg": null
+              }
+            ],
+            "massKg": null,
+            "massStatus": "NOT_EVALUATED"
+          },
+          {
+            "componentId": "MEC-004",
+            "items": [
+              {
+                "nodeId": "MEC-004.arm-0.bottom-1",
+                "label": "Cordón inferior",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.0011520000000000005,
+                "lengthM": 0.18000000000000005,
+                "outerSurfaceM2": 0.05760000000000002,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-004.arm-0.top-1",
+                "label": "Cordón superior",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.0011520000000000005,
+                "lengthM": 0.18000000000000005,
+                "outerSurfaceM2": 0.05760000000000002,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-004.arm-0.bottom-2",
+                "label": "Cordón inferior",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.018624332948532083,
+                "lengthM": 2.910052023208138,
+                "outerSurfaceM2": 0.9312166474266041,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-004.arm-0.top-2",
+                "label": "Cordón superior",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.018624332948532083,
+                "lengthM": 2.910052023208138,
+                "outerSurfaceM2": 0.9312166474266041,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-004.arm-0.vert-0",
+                "label": "Montante",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.001152,
+                "lengthM": 0.32,
+                "outerSurfaceM2": 0.0768,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-004.arm-0.vert-1",
+                "label": "Montante",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.001152,
+                "lengthM": 0.32,
+                "outerSurfaceM2": 0.0768,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-004.arm-0.vert-2",
+                "label": "Montante",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.001152,
+                "lengthM": 0.32,
+                "outerSurfaceM2": 0.0768,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-004.arm-1.bottom-1",
+                "label": "Cordón inferior",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.0011520000000000005,
+                "lengthM": 0.18000000000000005,
+                "outerSurfaceM2": 0.05760000000000002,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-004.arm-1.top-1",
+                "label": "Cordón superior",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.0011520000000000005,
+                "lengthM": 0.18000000000000005,
+                "outerSurfaceM2": 0.05760000000000002,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-004.arm-1.bottom-2",
+                "label": "Cordón inferior",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.01862433294853209,
+                "lengthM": 2.910052023208139,
+                "outerSurfaceM2": 0.9312166474266045,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-004.arm-1.top-2",
+                "label": "Cordón superior",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.01862433294853209,
+                "lengthM": 2.910052023208139,
+                "outerSurfaceM2": 0.9312166474266045,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-004.arm-1.vert-0",
+                "label": "Montante",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.001152,
+                "lengthM": 0.32,
+                "outerSurfaceM2": 0.0768,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-004.arm-1.vert-1",
+                "label": "Montante",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.001152,
+                "lengthM": 0.32,
+                "outerSurfaceM2": 0.0768,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-004.arm-1.vert-2",
+                "label": "Montante",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.001152,
+                "lengthM": 0.32,
+                "outerSurfaceM2": 0.0768,
+                "massKg": null
+              }
+            ],
+            "massKg": null,
+            "massStatus": "NOT_EVALUATED"
+          },
+          {
+            "componentId": "MEC-005",
+            "items": [
+              {
+                "nodeId": "MEC-005.arm-0.blade-0",
+                "label": "Paleta de barrido",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.0010829584559082523,
+                "lengthM": 0.6016435866156957,
+                "outerSurfaceM2": 0.36820587500880575,
+                "massKg": 8.555371801675193
+              },
+              {
+                "nodeId": "MEC-005.arm-0.blade-1",
+                "label": "Paleta de barrido",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.0010829835464723323,
+                "lengthM": 0.6016575258179624,
+                "outerSurfaceM2": 0.368214405800593,
+                "massKg": 8.555570017131425
+              },
+              {
+                "nodeId": "MEC-005.arm-0.blade-2",
+                "label": "Paleta de barrido",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.0010830187050167737,
+                "lengthM": 0.6016770583426521,
+                "outerSurfaceM2": 0.36822635970570305,
+                "massKg": 8.555847769632512
+              },
+              {
+                "nodeId": "MEC-005.arm-0.blade-3",
+                "label": "Paleta de barrido",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.0010830714624211664,
+                "lengthM": 0.6017063680117591,
+                "outerSurfaceM2": 0.36824429722319657,
+                "massKg": 8.556264553127214
+              },
+              {
+                "nodeId": "MEC-005.arm-0.blade-4",
+                "label": "Paleta de barrido",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.0010831592411063122,
+                "lengthM": 0.6017551339479512,
+                "outerSurfaceM2": 0.36827414197614616,
+                "massKg": 8.556958004739867
+              },
+              {
+                "nodeId": "MEC-005.arm-0.blade-5",
+                "label": "Paleta de barrido",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.0010833329468421598,
+                "lengthM": 0.6018516371345333,
+                "outerSurfaceM2": 0.36833320192633434,
+                "massKg": 8.558330280053063
+              },
+              {
+                "nodeId": "MEC-005.arm-0.blade-6",
+                "label": "Paleta de barrido",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.0010816499592218635,
+                "lengthM": 0.6009166440121464,
+                "outerSurfaceM2": 0.36776098613543357,
+                "massKg": 8.54503467785272
+              },
+              {
+                "nodeId": "MEC-005.arm-1.blade-0",
+                "label": "Paleta de barrido",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.0010829584559082527,
+                "lengthM": 0.601643586615696,
+                "outerSurfaceM2": 0.3682058750088059,
+                "massKg": 8.555371801675197
+              },
+              {
+                "nodeId": "MEC-005.arm-1.blade-1",
+                "label": "Paleta de barrido",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.0010829835464723327,
+                "lengthM": 0.6016575258179626,
+                "outerSurfaceM2": 0.3682144058005931,
+                "massKg": 8.555570017131428
+              },
+              {
+                "nodeId": "MEC-005.arm-1.blade-2",
+                "label": "Paleta de barrido",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.0010830187050167737,
+                "lengthM": 0.6016770583426521,
+                "outerSurfaceM2": 0.36822635970570305,
+                "massKg": 8.555847769632512
+              },
+              {
+                "nodeId": "MEC-005.arm-1.blade-3",
+                "label": "Paleta de barrido",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.0010830714624211664,
+                "lengthM": 0.6017063680117591,
+                "outerSurfaceM2": 0.36824429722319657,
+                "massKg": 8.556264553127214
+              },
+              {
+                "nodeId": "MEC-005.arm-1.blade-4",
+                "label": "Paleta de barrido",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.001083159241106312,
+                "lengthM": 0.6017551339479511,
+                "outerSurfaceM2": 0.36827414197614605,
+                "massKg": 8.556958004739865
+              },
+              {
+                "nodeId": "MEC-005.arm-1.blade-5",
+                "label": "Paleta de barrido",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.00108333294684216,
+                "lengthM": 0.6018516371345334,
+                "outerSurfaceM2": 0.3683332019263344,
+                "massKg": 8.558330280053065
+              },
+              {
+                "nodeId": "MEC-005.arm-1.blade-6",
+                "label": "Paleta de barrido",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.0010816499592218637,
+                "lengthM": 0.6009166440121465,
+                "outerSurfaceM2": 0.3677609861354337,
+                "massKg": 8.545034677852723
+              }
+            ],
+            "massKg": 119.766754208424,
+            "massStatus": "ESTIMATED"
+          },
+          {
+            "componentId": "MEC-006",
+            "items": [
+              {
+                "nodeId": "MEC-006.baffle",
+                "label": "Deflector de flotantes",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.04552854936898068,
+                "outerSurfaceM2": 18.402899819831532,
+                "massKg": 359.6755400149474
+              },
+              {
+                "nodeId": "MEC-006.strut",
+                "label": "Montante del barredor",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.01956649288827864,
+                "lengthM": 3.057264513793537,
+                "outerSurfaceM2": 0.9783246444139319,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-006.arm",
+                "label": "Brazo del barredor",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.006281881508854427,
+                "lengthM": 0.9815439857585041,
+                "outerSurfaceM2": 0.31409407544272133,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-006.blade",
+                "label": "Pala del barredor",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.0014723159786377562,
+                "lengthM": 0.9815439857585041,
+                "outerSurfaceM2": 0.5025505207083542,
+                "massKg": 11.631296231238274
+              },
+              {
+                "nodeId": "MEC-006.wiper",
+                "label": "Labio flexible",
+                "materialId": "EPDM-WIPER",
+                "section": "real",
+                "volumeM3": 0.00037499999999999963,
+                "lengthM": 0.14999999999999986,
+                "outerSurfaceM2": 0.07799999999999993,
+                "massKg": 0.4874999999999995
+              },
+              {
+                "nodeId": "MEC-006.box",
+                "label": "Caja de flotantes con playa",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.06,
+                "outerSurfaceM2": 0.94,
+                "massKg": null
+              }
+            ],
+            "massKg": null,
+            "massStatus": "PARTIAL"
+          },
+          {
+            "componentId": "MEC-007",
+            "items": [
+              {
+                "nodeId": "MEC-007.sleeve",
+                "label": "Tubo de giro del agitador",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.046086565783386345,
+                "outerSurfaceM2": 15.392659051178452,
+                "massKg": 364.08386968875215
+              },
+              {
+                "nodeId": "MEC-007.arm-0.top",
+                "label": "Brazo del agitador",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.004673967622867612,
+                "lengthM": 1.2983243396854478,
+                "outerSurfaceM2": 0.3115978415245075,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-007.arm-0.bottom",
+                "label": "Brazo del agitador",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.004673967622867612,
+                "lengthM": 1.2983243396854478,
+                "outerSurfaceM2": 0.3115978415245075,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-007.arm-0.blade-0",
+                "label": "Paleta de floculación",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.0021000000000000003,
+                "outerSurfaceM2": 0.5554,
+                "massKg": 16.590000000000003
+              },
+              {
+                "nodeId": "MEC-007.arm-1.top",
+                "label": "Brazo del agitador",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.004673967622867612,
+                "lengthM": 1.2983243396854478,
+                "outerSurfaceM2": 0.3115978415245075,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-007.arm-1.bottom",
+                "label": "Brazo del agitador",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.004673967622867612,
+                "lengthM": 1.2983243396854478,
+                "outerSurfaceM2": 0.3115978415245075,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-007.arm-1.blade-0",
+                "label": "Paleta de floculación",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.0021000000000000003,
+                "outerSurfaceM2": 0.5554,
+                "massKg": 16.590000000000003
+              },
+              {
+                "nodeId": "MEC-007.arm-2.top",
+                "label": "Brazo del agitador",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.004673967622867611,
+                "lengthM": 1.2983243396854476,
+                "outerSurfaceM2": 0.3115978415245074,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-007.arm-2.bottom",
+                "label": "Brazo del agitador",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.004673967622867611,
+                "lengthM": 1.2983243396854476,
+                "outerSurfaceM2": 0.3115978415245074,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-007.arm-2.blade-0",
+                "label": "Paleta de floculación",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.0021000000000000003,
+                "outerSurfaceM2": 0.5554,
+                "massKg": 16.590000000000003
+              },
+              {
+                "nodeId": "MEC-007.arm-3.top",
+                "label": "Brazo del agitador",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.004673967622867612,
+                "lengthM": 1.2983243396854478,
+                "outerSurfaceM2": 0.3115978415245075,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-007.arm-3.bottom",
+                "label": "Brazo del agitador",
+                "materialId": "SS-1.4301",
+                "section": "representational",
+                "volumeM3": 0.004673967622867612,
+                "lengthM": 1.2983243396854478,
+                "outerSurfaceM2": 0.3115978415245075,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-007.arm-3.blade-0",
+                "label": "Paleta de floculación",
+                "materialId": "SS-1.4301",
+                "section": "real",
+                "volumeM3": 0.0021000000000000003,
+                "outerSurfaceM2": 0.5554,
+                "massKg": 16.590000000000003
+              }
+            ],
+            "massKg": null,
+            "massStatus": "PARTIAL"
+          },
+          {
+            "componentId": "MEC-008",
+            "items": [
+              {
+                "nodeId": "MEC-008.gearbox",
+                "label": "Reductor anular (envolvente)",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.4516039439535322,
+                "outerSurfaceM2": 5.419247327442393,
+                "massKg": null
+              },
+              {
+                "nodeId": "MEC-008.motor",
+                "label": "Motor (envolvente)",
+                "materialId": "STEEL-S275JR-HDG",
+                "section": "representational",
+                "volumeM3": 0.015833626974092557,
+                "outerSurfaceM2": 0.35437165132492865,
+                "massKg": null
+              }
+            ],
+            "massKg": null,
+            "massStatus": "NOT_EVALUATED"
+          }
+        ],
+        "metalLengthByMaterialM": {
+          "STEEL-S275JR-HDG": 51.04891305215714,
+          "SS-1.4301": 60.65290453672545
+        },
+        "corrosionProtectionM2": 43.338686369953635,
+        "rebar": "NOT_EVALUATED",
+        "notes": [
+          "Volúmenes de hormigón medidos sobre la geometría modelada (Pappus-Guldin), sin descontar pasamuros.",
+          "Las piezas de sección representativa (celosías, vigas del puente, jaula) solo aportan longitud: su masa queda NOT_EVALUATED.",
+          "La superficie de protección anticorrosiva incluye solo acero estructural no inoxidable.",
+          "Armaduras: no se miden sin diseño estructural.",
+          "Excavación de paredes verticales con sobreancho de trabajo; sin taludes ni entibación."
+        ]
+      },
+      "components": [
+        {
+          "id": "CIV-001",
+          "name": "Losa de cimentación",
+          "discipline": "civil",
+          "materialIds": [
+            "CONC-C30/37-XC4-XA1"
+          ],
+          "massKg": 41728.204421306415,
+          "massStatus": "ESTIMATED",
+          "motion": {
+            "type": "fixed",
+            "dof": 0
+          },
+          "checkIds": [
+            "STR-THICKNESS",
+            "STR-CRACKING-WATERTIGHTNESS",
+            "STR-GEOTECHNICS",
+            "STR-FLOTATION",
+            "STR-REBAR",
+            "MAT-CONCRETE-EXPOSURE",
+            "SITE-EXCAVATION"
+          ],
+          "dependsOn": [
+            "decision.diameterM",
+            "input.civil.wallThicknessM",
+            "input.civil.baseSlabThicknessM",
+            "input.civil.slabProjectionM",
+            "input.civil.minFillThicknessM",
+            "input.geometry.floorSlope",
+            "input.geometry.sumpDiameterM"
+          ],
+          "assemblyConstraints": [],
+          "geometryHash": "93b37e57e5e5686c"
+        },
+        {
+          "id": "CIV-002",
+          "name": "Muro circular",
+          "discipline": "civil",
+          "materialIds": [
+            "CONC-C30/37-XC4-XA1"
+          ],
+          "massKg": 63430.71917138643,
+          "massStatus": "ESTIMATED",
+          "motion": {
+            "type": "fixed",
+            "dof": 0
+          },
+          "checkIds": [
+            "HYD-DIAMETER-GE-REQUIRED",
+            "HYD-DIAMETER-RANGE",
+            "GEO-SETTLING-ANNULUS",
+            "HYD-CHS-AVG-ADMISSIBLE",
+            "HYD-CHS-AVG-CRITERION",
+            "HYD-CHS-PEAK-CRITERION",
+            "HYD-SLR-CRITERION",
+            "HYD-DEPTH-CRITERION",
+            "HYD-HRT-TARGET",
+            "HYD-HRT-CRITERION",
+            "GEO-VOLUME-CONSISTENCY",
+            "GEO-DIAMETER-CONSISTENCY",
+            "GEO-BLADE-WALL",
+            "STR-THICKNESS",
+            "STR-CRACKING-WATERTIGHTNESS",
+            "STR-REBAR",
+            "MAT-CONCRETE-EXPOSURE"
+          ],
+          "dependsOn": [
+            "decision.diameterM",
+            "decision.sideWaterDepthM",
+            "input.civil.wallThicknessM",
+            "input.civil.minFillThicknessM",
+            "input.geometry.floorSlope"
+          ],
+          "assemblyConstraints": [
+            "Apoya en CIV-001.",
+            "Coaxial con el eje Y del objeto."
+          ],
+          "geometryHash": "4cd9e6703bf327f9"
+        },
+        {
+          "id": "CIV-003",
+          "name": "Fondo con pendiente",
+          "discipline": "civil",
+          "materialIds": [
+            "CONC-C20/25-FILL"
+          ],
+          "massKg": 21281.724594070416,
+          "massStatus": "ESTIMATED",
+          "motion": {
+            "type": "fixed",
+            "dof": 0
+          },
+          "checkIds": [
+            "GEO-SLOPE-START-INSIDE",
+            "GEO-FLOOR-SLOPE-CRITERION",
+            "GEO-FLOOR-CONTINUITY",
+            "GEO-VOLUME-CONSISTENCY",
+            "GEO-BLADE-FLOOR"
+          ],
+          "dependsOn": [
+            "decision.diameterM",
+            "input.geometry.floorSlope",
+            "input.geometry.slopeStartRadiusM",
+            "input.geometry.sumpDiameterM",
+            "input.civil.minFillThicknessM"
+          ],
+          "assemblyConstraints": [],
+          "geometryHash": "1906d64867935fa5"
+        },
+        {
+          "id": "CIV-004",
+          "name": "Poceta central de lodos",
+          "discipline": "civil",
+          "materialIds": [
+            "CONC-C30/37-XC4-XA1"
+          ],
+          "massKg": 1860.4118995477052,
+          "massStatus": "ESTIMATED",
+          "motion": {
+            "type": "fixed",
+            "dof": 0
+          },
+          "checkIds": [
+            "GEO-SUMP-CLEAR-OF-COLUMN",
+            "GEO-SUMP-INSIDE-SLOPE",
+            "GEO-SLUDGE-FITS-SUMP",
+            "GEO-FLOOR-CONTINUITY",
+            "GEO-BLADE-SUMP-COVERAGE",
+            "STR-THICKNESS",
+            "MAT-CONCRETE-EXPOSURE"
+          ],
+          "dependsOn": [
+            "input.geometry.sumpDiameterM",
+            "input.geometry.sumpDepthM",
+            "input.civil.sumpWallThicknessM",
+            "input.geometry.floorSlope",
+            "decision.diameterM"
+          ],
+          "assemblyConstraints": [],
+          "geometryHash": "f87aab388d74dcb5"
+        },
+        {
+          "id": "CIV-005",
+          "name": "Canal perimetral",
+          "discipline": "civil",
+          "materialIds": [
+            "CONC-C30/37-XC4-XA1"
+          ],
+          "massKg": 18527.542674545788,
+          "massStatus": "ESTIMATED",
+          "motion": {
+            "type": "fixed",
+            "dof": 0
+          },
+          "checkIds": [
+            "HYD-LAUNDER-FREE-FALL",
+            "GEO-EFFLUENT-FITS-LAUNDER",
+            "HYD-FREEBOARD-OVER-PEAK",
+            "STR-THICKNESS",
+            "MAT-CONCRETE-EXPOSURE"
+          ],
+          "dependsOn": [
+            "decision.diameterM",
+            "decision.sideWaterDepthM",
+            "input.civil.launderWidthM",
+            "input.civil.launderDepthM",
+            "input.civil.channelWallThicknessM",
+            "input.civil.channelFloorThicknessM",
+            "input.geometry.freeboardM"
+          ],
+          "assemblyConstraints": [
+            "Ménsula del muro CIV-002 (canal exterior)."
+          ],
+          "geometryHash": "b9cf5269d121695d"
+        },
+        {
+          "id": "HYD-001",
+          "name": "Tubería de entrada y columna central",
+          "discipline": "hydraulic",
+          "materialIds": [
+            "PE-HD-PE100",
+            "SS-1.4301"
+          ],
+          "massKg": 160.15087083167901,
+          "massStatus": "ESTIMATED",
+          "motion": {
+            "type": "fixed",
+            "dof": 0
+          },
+          "checkIds": [
+            "HYD-INLET-VMAX",
+            "HYD-INLET-VMIN",
+            "GEO-SUMP-CLEAR-OF-COLUMN",
+            "GEO-FEEDWELL-ANNULUS",
+            "HYD-PORT-VELOCITY",
+            "GEO-PORTS-INSIDE-FEEDWELL",
+            "GEO-CAGE-COLUMN"
+          ],
+          "dependsOn": [
+            "decision.inletDn",
+            "decision.portHeightM",
+            "input.hydraulics.columnPortCount",
+            "decision.diameterM"
+          ],
+          "assemblyConstraints": [
+            "La columna atraviesa la poceta CIV-004 y la losa CIV-001 (pasamuros)."
+          ],
+          "geometryHash": "156f9f2dc192b94a"
+        },
+        {
+          "id": "HYD-002",
+          "name": "Cámara de floculación",
+          "discipline": "hydraulic",
+          "materialIds": [
+            "SS-1.4301",
+            "STEEL-S275JR-HDG"
+          ],
+          "massKg": null,
+          "massStatus": "PARTIAL",
+          "motion": {
+            "type": "fixed",
+            "dof": 0
+          },
+          "checkIds": [
+            "GEO-SETTLING-ANNULUS",
+            "GEO-CHAMBER-DEPTH-LT-H",
+            "HYD-FLOC-TIME-TARGET",
+            "HYD-FLOC-TIME-CRITERION",
+            "GEO-FEEDWELL-ANNULUS",
+            "HYD-FEEDWELL-VELOCITY",
+            "GEO-PORTS-INSIDE-FEEDWELL",
+            "HYD-SHELLS-ABOVE-WATER",
+            "HYD-SLUDGE-BLANKET",
+            "GEO-CAGE-FEEDWELL",
+            "GEO-FEEDWELL-ARMS",
+            "GEO-SKIMMER-LENGTH",
+            "GEO-PADDLES-WALL",
+            "GEO-PADDLES-VERTICAL"
+          ],
+          "dependsOn": [
+            "decision.feedwellDiameterM",
+            "input.flocculation.detentionTimeMin",
+            "input.flocculation.designFlow",
+            "input.flocculation.chamberDepthM",
+            "input.flocculation.chamberWallThicknessM",
+            "decision.sideWaterDepthM"
+          ],
+          "assemblyConstraints": [
+            "Colgada de MEC-001 (y de la columna en puente radial). Delimita la zona de floculación."
+          ],
+          "geometryHash": "c14dedd8f48f8b17"
+        },
+        {
+          "id": "HYD-003",
+          "name": "Deflectores de entrada a la cámara",
+          "discipline": "hydraulic",
+          "materialIds": [
+            "SS-1.4301"
+          ],
+          "massKg": 4.4437500000000005,
+          "massStatus": "ESTIMATED",
+          "motion": {
+            "type": "fixed",
+            "dof": 0
+          },
+          "checkIds": [
+            "HYD-PORT-VELOCITY",
+            "GEO-DEFLECTOR-CAGE"
+          ],
+          "dependsOn": [
+            "decision.inletDn",
+            "decision.portHeightM",
+            "input.hydraulics.columnPortCount"
+          ],
+          "assemblyConstraints": [
+            "Fijos a la columna; deben quedar dentro del barrido libre de MEC-003."
+          ],
+          "geometryHash": "30f996a5b50e7528"
+        },
+        {
+          "id": "HYD-004",
+          "name": "Vertedero de salida",
+          "discipline": "hydraulic",
+          "materialIds": [
+            "SS-1.4301"
+          ],
+          "massKg": 182.77644686906808,
+          "massStatus": "ESTIMATED",
+          "motion": {
+            "type": "fixed",
+            "dof": 0
+          },
+          "checkIds": [
+            "GEO-WEIR-LENGTH-POSITIVE",
+            "HYD-WEIR-LOADING-CRITERION",
+            "HYD-NOTCH-COUNT",
+            "HYD-NOTCH-NOT-DROWNED",
+            "HYD-LAUNDER-FREE-FALL"
+          ],
+          "dependsOn": [
+            "decision.diameterM",
+            "decision.notchCount",
+            "input.hydraulics.notchDepthM",
+            "decision.sideWaterDepthM"
+          ],
+          "assemblyConstraints": [
+            "Atornillado a la cara interior de CIV-002 con colisos de nivelación."
+          ],
+          "geometryHash": "18b2012f853877b2"
+        },
+        {
+          "id": "HYD-005",
+          "name": "Colector de efluente",
+          "discipline": "hydraulic",
+          "materialIds": [
+            "PE-HD-PE100"
+          ],
+          "massKg": 7.9805878179141585,
+          "massStatus": "ESTIMATED",
+          "motion": {
+            "type": "fixed",
+            "dof": 0
+          },
+          "checkIds": [
+            "HYD-EFFLUENT-VMAX",
+            "GEO-EFFLUENT-FITS-LAUNDER"
+          ],
+          "dependsOn": [
+            "decision.effluentDn",
+            "decision.diameterM",
+            "input.civil.launderWidthM"
+          ],
+          "assemblyConstraints": [],
+          "geometryHash": "7cd0b69b537e2a44"
+        },
+        {
+          "id": "HYD-006",
+          "name": "Conducción de lodos",
+          "discipline": "hydraulic",
+          "materialIds": [
+            "PE-HD-PE100"
+          ],
+          "massKg": 19.1510105862066,
+          "massStatus": "ESTIMATED",
+          "motion": {
+            "type": "fixed",
+            "dof": 0
+          },
+          "checkIds": [
+            "HYD-SLUDGE-VELOCITY",
+            "HYD-SLUDGE-MIN-DN",
+            "GEO-SLUDGE-FITS-SUMP",
+            "HYD-SLUDGE-HYDRAULICS"
+          ],
+          "dependsOn": [
+            "decision.sludgeDn",
+            "input.geometry.sumpDiameterM",
+            "input.geometry.sumpDepthM",
+            "decision.diameterM"
+          ],
+          "assemblyConstraints": [],
+          "geometryHash": "c02a0082211381f3"
+        },
+        {
+          "id": "MEC-001",
+          "name": "Puente de soporte",
+          "discipline": "mechanical",
+          "materialIds": [
+            "STEEL-S275JR-HDG"
+          ],
+          "massKg": null,
+          "massStatus": "NOT_EVALUATED",
+          "motion": {
+            "type": "fixed",
+            "dof": 0
+          },
+          "checkIds": [
+            "GEO-BRIDGE-CLEARANCE",
+            "GEO-WALKWAY-WIDTH",
+            "MEC-BRIDGE-STRUCTURE",
+            "MEC-FABRICATION"
+          ],
+          "dependsOn": [
+            "input.mechanical.bridgeType",
+            "decision.diameterM",
+            "input.mechanical.bridgeWidthM",
+            "input.geometry.freeboardM"
+          ],
+          "assemblyConstraints": [
+            "Apoya en la coronación de CIV-005 (y en HYD-001 si es radial)."
+          ],
+          "geometryHash": "6e5eb6571b08037e"
+        },
+        {
+          "id": "MEC-002",
+          "name": "Accionamiento mecánico",
+          "discipline": "mechanical",
+          "materialIds": [
+            "STEEL-S275JR-HDG"
+          ],
+          "massKg": null,
+          "massStatus": "NOT_EVALUATED",
+          "motion": {
+            "type": "rotation",
+            "dof": 1,
+            "axis": [
+              0,
+              1,
+              0
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "note": "Solo el eje de salida gira; la carcasa es fija."
+          },
+          "checkIds": [
+            "MEC-DRIVE-TORQUE",
+            "MEC-FABRICATION"
+          ],
+          "dependsOn": [
+            "input.mechanical.driveFootprintM",
+            "input.mechanical.driveHeightM",
+            "input.mechanical.bridgeType"
+          ],
+          "assemblyConstraints": [],
+          "geometryHash": "b885c8b3c65658ee"
+        },
+        {
+          "id": "MEC-003",
+          "name": "Mecanismo giratorio",
+          "discipline": "mechanical",
+          "materialIds": [
+            "SS-1.4301"
+          ],
+          "massKg": null,
+          "massStatus": "NOT_EVALUATED",
+          "motion": {
+            "type": "rotation",
+            "dof": 1,
+            "axis": [
+              0,
+              1,
+              0
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ]
+          },
+          "checkIds": [
+            "GEO-CAGE-COLUMN",
+            "GEO-CAGE-FEEDWELL",
+            "GEO-DEFLECTOR-CAGE",
+            "GEO-SLEEVE-CAGE",
+            "MEC-ARMS-STRUCTURE",
+            "MEC-FABRICATION",
+            "MAT-SUBMERGED-COMPATIBILITY"
+          ],
+          "dependsOn": [
+            "decision.inletDn",
+            "input.mechanical.cageHalfWidthM",
+            "decision.sideWaterDepthM"
+          ],
+          "assemblyConstraints": [
+            "Cuelga de MEC-002; gira alrededor de HYD-001 sin contacto."
+          ],
+          "geometryHash": "2ec7e6cf670fdc0d"
+        },
+        {
+          "id": "MEC-004",
+          "name": "Brazos portarrasquetas",
+          "discipline": "mechanical",
+          "materialIds": [
+            "SS-1.4301"
+          ],
+          "massKg": null,
+          "massStatus": "NOT_EVALUATED",
+          "motion": {
+            "type": "rotation",
+            "dof": 1,
+            "axis": [
+              0,
+              1,
+              0
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ]
+          },
+          "checkIds": [
+            "GEO-FEEDWELL-ARMS",
+            "GEO-BAFFLE-ARMS",
+            "MEC-ARMS-STRUCTURE",
+            "MEC-FABRICATION",
+            "MAT-SUBMERGED-COMPATIBILITY"
+          ],
+          "dependsOn": [
+            "decision.diameterM",
+            "input.geometry.floorSlope",
+            "input.mechanical.armCount",
+            "input.mechanical.armTrussDepthM"
+          ],
+          "assemblyConstraints": [
+            "Unidos a MEC-003; siguen la pendiente de CIV-003."
+          ],
+          "geometryHash": "52accf1ea9a1ca05"
+        },
+        {
+          "id": "MEC-005",
+          "name": "Paletas de barrido",
+          "discipline": "mechanical",
+          "materialIds": [
+            "SS-1.4301"
+          ],
+          "massKg": 119.766754208424,
+          "massStatus": "ESTIMATED",
+          "motion": {
+            "type": "rotation",
+            "dof": 1,
+            "axis": [
+              0,
+              1,
+              0
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ]
+          },
+          "checkIds": [
+            "GEO-BLADE-FLOOR",
+            "GEO-BLADE-WALL",
+            "GEO-BLADE-SUMP-COVERAGE",
+            "MEC-ARMS-STRUCTURE",
+            "MEC-FABRICATION",
+            "MAT-SUBMERGED-COMPATIBILITY"
+          ],
+          "dependsOn": [
+            "decision.diameterM",
+            "input.geometry.floorSlope",
+            "input.mechanical.bladeLengthM",
+            "input.mechanical.bladeFloorClearanceM"
+          ],
+          "assemblyConstraints": [
+            "Unidas a MEC-004; holgura constante al fondo."
+          ],
+          "geometryHash": "d9914f2c96a7fb22"
+        },
+        {
+          "id": "MEC-006",
+          "name": "Sistema de retirada de flotantes",
+          "discipline": "mechanical",
+          "materialIds": [
+            "EPDM-WIPER",
+            "SS-1.4301"
+          ],
+          "massKg": null,
+          "massStatus": "PARTIAL",
+          "motion": {
+            "type": "rotation",
+            "dof": 1,
+            "axis": [
+              0,
+              1,
+              0
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "note": "Gira el barredor; deflector y caja son fijos."
+          },
+          "checkIds": [
+            "HYD-SHELLS-ABOVE-WATER",
+            "GEO-SKIMMER-LENGTH",
+            "GEO-SKIMMER-REACHES-BOX",
+            "GEO-BAFFLE-ARMS",
+            "GEO-SKIMMER-BEACH",
+            "MEC-FABRICATION",
+            "MAT-SUBMERGED-COMPATIBILITY"
+          ],
+          "dependsOn": [
+            "decision.diameterM",
+            "decision.feedwellDiameterM",
+            "input.mechanical.scumBaffleOffsetM"
+          ],
+          "assemblyConstraints": [
+            "Barredor unido a MEC-004; deflector anclado a CIV-002."
+          ],
+          "geometryHash": "53a5d1c64ccfcafa"
+        },
+        {
+          "id": "MEC-007",
+          "name": "Agitador de paletas de floculación",
+          "discipline": "mechanical",
+          "materialIds": [
+            "SS-1.4301"
+          ],
+          "massKg": null,
+          "massStatus": "PARTIAL",
+          "motion": {
+            "type": "rotation",
+            "dof": 1,
+            "axis": [
+              0,
+              1,
+              0
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "note": "Gira a la velocidad del floculador, independiente del rascador."
+          },
+          "checkIds": [
+            "GEO-PADDLES-FIT",
+            "HYD-FLOC-POWER",
+            "HYD-FLOC-G-CRITERION",
+            "HYD-FLOC-GT-CRITERION",
+            "HYD-FLOC-TIP-SPEED",
+            "HYD-FLOC-PADDLE-AREA",
+            "GEO-SLEEVE-CAGE",
+            "GEO-PADDLES-WALL",
+            "GEO-PADDLES-SLEEVE",
+            "GEO-PADDLES-VERTICAL",
+            "MEC-FLOC-STRUCTURE"
+          ],
+          "dependsOn": [
+            "decision.feedwellDiameterM",
+            "decision.paddleRings",
+            "input.flocculation.velocityGradientS",
+            "input.flocculation.designTemperatureC",
+            "input.flocculation.paddles",
+            "input.mechanical.cageHalfWidthM"
+          ],
+          "assemblyConstraints": [
+            "Cuelga de MEC-008; gira concéntrico y por fuera de la jaula MEC-003 sin contacto."
+          ],
+          "geometryHash": "c61b8f7ddb204451"
+        },
+        {
+          "id": "MEC-008",
+          "name": "Accionamiento del floculador",
+          "discipline": "mechanical",
+          "materialIds": [
+            "STEEL-S275JR-HDG"
+          ],
+          "massKg": null,
+          "massStatus": "NOT_EVALUATED",
+          "motion": {
+            "type": "rotation",
+            "dof": 1,
+            "axis": [
+              0,
+              1,
+              0
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "note": "Solo la salida gira; la carcasa es fija."
+          },
+          "checkIds": [
+            "MEC-FLOC-DRIVE"
+          ],
+          "dependsOn": [
+            "input.flocculation.drive",
+            "input.mechanical.driveFootprintM"
+          ],
+          "assemblyConstraints": [
+            "Apoya en el tablero de MEC-001, alrededor de MEC-002."
+          ],
+          "geometryHash": "1bc936d20dc40d14"
+        }
+      ]
+    },
+    "validationStatus": "INCOMPLETE",
+    "outputsHash": "32b55189d294ea10"
+  }
+}

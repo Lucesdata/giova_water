@@ -16,7 +16,7 @@ perimetral exterior y rasquetas de fondo (SPEC-DEC-001 + SPEC-DEC-002, v1.0).
 ```bash
 cd engineering-objects
 npm install
-npm test               # 120 pruebas (unitarias + integración + arquitectura)
+npm test               # 144 pruebas (unitarias + integración + arquitectura)
 npm run typecheck      # capas puras sin DOM/React/Three + proyecto completo
 npm run lab            # laboratorio visual (Vite, http://localhost:5173)
 npm run examples:presets   # regenera examples/output (variantes JSON + memorias)
@@ -115,7 +115,7 @@ Evaluar el equipo de 5 L/s a 10 L/s (modo B) da `FAILED` (CHS real 3,0 > 1,5 m/h
 | Advertencias presentadas | ✔ | panel de validación y memoria de cálculo |
 | Originales conservados | ✔ | variantes congeladas (`deepFreeze`) |
 | Exportar/importar configuraciones | ✔ | `exportVariant` / `importVariant` con recálculo e integridad |
-| Pruebas automatizadas | ✔ | 120 pruebas |
+| Pruebas automatizadas | ✔ | 144 pruebas |
 | Integrable sin el laboratorio | ✔ | `@eo/equipment-library` es independiente |
 | Verificaciones pendientes identificadas | ✔ | comprobaciones críticas NOT_EVALUATED |
 
@@ -163,6 +163,29 @@ se recalculan con el modelo actual y se marcan como no verificados (test en `tes
 - Los límites mecánicos de solo comprobación (gálibo, pasarela, holguras mínimas) no exigen el grupo
   `mechanical` en modo C.
 
+## Clarifloculador (segundo objeto)
+
+Tanque circular con **floculación mecánica en una cámara central** y sedimentación en la corona
+exterior (`packages/equipment-library/src/clariflocculator/`, modelo `CF-ENG-1.0.0`). Detalle de
+entradas, cálculo, criterios y componentes en [`specs/clariflocculator.md`](specs/clariflocculator.md).
+
+- **Motor común**: el motor del decantador se generalizó con una estrategia de zona central; el
+  clarifloculador solo aporta su cámara (V = Q·t), su diámetro por superficie anular y el agitador
+  (P = G²·μ·V; P = Σ ½·CD·ρ·A·(k·ω·r)³). El decantador no cambia ni un bit (los ejemplos lo prueban).
+- **Variantes comunes**: `src/shared/variants.ts` (modos A/B/C, exportación/importación verificada)
+  parametrizado por `EquipmentDefinition`; el decantador conserva su API.
+- **Componentes**: los 17 comunes (HYD-002 = cámara de floculación) + MEC-007 agitador + MEC-008
+  accionamiento del floculador, con holguras paletas–pared, paletas–tubo y tubo–jaula medidas.
+- **Laboratorio**: selector de equipo en la barra superior.
+
+```ts
+import { CLF_010_WATER, createClfBaseVariant, createClfVariant, regenerateClf } from '@eo/equipment-library';
+
+const clf = createClfBaseVariant(CLF_010_WATER);                                   // 10 L/s, agua potable
+const eval15 = createClfVariant(clf, { tag: 'EVAL', flow: { averageLps: 15 } }, { mode: 'B' });
+eval15.calculatedOutputs.values['floc.time.design'];  // 20 min < 30 min ⇒ FAIL (Ten States)
+```
+
 ## Límites conocidos de V1
 
 - **Estructura**: sin cálculo (espesores, fisuración, flotación, geotecnia, armaduras).
@@ -174,3 +197,6 @@ se recalculan con el modelo actual y se marcan como no verificados (test en `tes
 - **Geometría**: las escotaduras en V se cuentan y calculan pero se dibujan como chapa continua; la
   caja de flotantes y el labio del barredor son un contacto funcional no modelado en detalle.
 - **Vista explotada**: prevista, no implementada.
+- **Clarifloculador**: sin cálculo de par/potencia del motor ni rendimiento del floculador; la
+  velocidad relativa (k = 0,75) y CD son hipótesis de entrada; no se modelan pantallas ni la
+  transición hidráulica cámara → corona; floculación de un solo compartimento (sin G escalonado).
