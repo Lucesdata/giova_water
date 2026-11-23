@@ -49,7 +49,7 @@ test.describe('estructura', () => {
     await page.goto('/');
     const items = await page.locator('nav a.nav-link').allTextContents();
     expect(items.map((t) => t.replace(/\s+/g, '').trim())).toEqual(
-      ['00Inicio', '01Proyectos', '02Perfil', '03Demo', '04Preguntas', '05Contacto']);
+      ['00Inicio', '01Proyectos', '02Perfil', '03Demo', '04Lab3D', '05Preguntas', '06Contacto']);
   });
 
   for (const [lang, h1, projects, demo] of [

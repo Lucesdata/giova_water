@@ -74,7 +74,7 @@ const dict = {
       banner: { available: 'Consultar disponibilidad', location: 'Sant Feliu de Llobregat' },
       items: {
         inicio: 'Inicio', proyectos: 'Proyectos', sobre: 'Perfil',
-        gemelos: 'Demo', objetos: 'Laboratorio', faq: 'Preguntas', contacto: 'Contacto',
+        gemelos: 'Demo', objetos: 'Lab 3D', faq: 'Preguntas', contacto: 'Contacto',
       },
       aria: {
         main: 'Principal', openMenu: 'Abrir menú', closeMenu: 'Cerrar menú',
@@ -514,7 +514,7 @@ const dict = {
       banner: { available: 'Ask about availability', location: 'Sant Feliu de Llobregat' },
       items: {
         inicio: 'Home', proyectos: 'Projects', sobre: 'Profile',
-        gemelos: 'Demo', objetos: 'Lab', faq: 'FAQ', contacto: 'Contact',
+        gemelos: 'Demo', objetos: 'Lab 3D', faq: 'FAQ', contacto: 'Contact',
       },
       aria: {
         main: 'Main', openMenu: 'Open menu', closeMenu: 'Close menu',
@@ -954,7 +954,7 @@ const dict = {
       banner: { available: 'Me consulter sur ma disponibilité', location: 'Sant Feliu de Llobregat' },
       items: {
         inicio: 'Accueil', proyectos: 'Projets', sobre: 'Profil',
-        gemelos: 'Démo', objetos: 'Labo', faq: 'FAQ', contacto: 'Contact',
+        gemelos: 'Démo', objetos: 'Labo 3D', faq: 'FAQ', contacto: 'Contact',
       },
       aria: {
         main: 'Principale', openMenu: 'Ouvrir le menu', closeMenu: 'Fermer le menu',
