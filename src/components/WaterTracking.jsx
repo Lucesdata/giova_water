@@ -30,7 +30,7 @@ function Slider({ id, label, unit, value, min, max, onChange }) {
   );
 }
 
-function StageCard({ i, spec, row, cfg, copy, W, onChange }) {
+function StageCard({ i, spec, row, cfg, eff, copy, W, onChange }) {
   const id = row.id;
   const nameId = `wt-${id}`;
   const sizeKey = spec.size?.key;
@@ -55,14 +55,16 @@ function StageCard({ i, spec, row, cfg, copy, W, onChange }) {
             <div style={{ display: 'grid', gap: 4, width: 140 }}>
               <label htmlFor={`${nameId}-size`} className="label">{copy.sizeLabel} ({spec.size.unit})</label>
               <input id={`${nameId}-size`} type="number" inputMode="decimal" min={spec.size.min} max={spec.size.max} value={cfg[sizeKey]}
-                     onChange={(e) => onChange({ [sizeKey]: e.target.value })} />
+                     onChange={(e) => onChange({ [sizeKey]: e.target.value })}
+                     onBlur={() => onChange({ [sizeKey]: eff[sizeKey] })} />
             </div>
           )}
           {spec.dose && (
             <div style={{ display: 'grid', gap: 4, width: 140 }}>
               <label htmlFor={`${nameId}-dose`} className="label">{copy.doseLabel} (mg/L)</label>
               <input id={`${nameId}-dose`} type="number" inputMode="decimal" step="0.1" min={spec.dose.min} max={spec.dose.max} value={cfg.dose}
-                     onChange={(e) => onChange({ dose: e.target.value })} />
+                     onChange={(e) => onChange({ dose: e.target.value })}
+                     onBlur={() => onChange({ dose: eff.dose })} />
             </div>
           )}
           {spec.metric && (
@@ -132,7 +134,7 @@ export default function WaterTracking() {
           </div>
           <ol aria-label={W.trainLabel} style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 12 }}>
             {STAGE_IDS.map((id, i) => (
-              <StageCard key={id} i={i} spec={STAGE_SPEC[id]} row={result.stages[i]} cfg={plant.stages[id]}
+              <StageCard key={id} i={i} spec={STAGE_SPEC[id]} row={result.stages[i]} cfg={plant.stages[id]} eff={safe.stages[id]}
                          copy={W.stages[id]} W={W} onChange={setStage(id)} />
             ))}
           </ol>

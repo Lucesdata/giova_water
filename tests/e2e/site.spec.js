@@ -995,4 +995,12 @@ test.describe('watertracking', () => {
     await sec.getByRole('button', { name: 'Reiniciar planta' }).click();
     await expect(sec.getByRole('status')).toContainText('Cumple las comprobaciones');
   });
+
+  test('un valor fuera de límites se normaliza al salir del campo, para que lo mostrado sea lo calculado', async ({ page }) => {
+    await page.goto('/#watertracking');
+    const dose = page.locator('#wt-disinfection-dose');
+    await dose.fill('0');
+    await dose.blur();
+    await expect(dose).toHaveValue('0.1');
+  });
 });
