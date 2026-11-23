@@ -25,6 +25,10 @@ export type Dimension =
   | 'massFlow'
   | 'solidsLoading'
   | 'turbidity'
+  | 'rate'
+  | 'power'
+  | 'angularSpeed'
+  | 'viscosity'
   | 'dimensionless';
 
 interface UnitDef {
@@ -63,6 +67,13 @@ const UNITS = {
   'kg/(m2.d)': { dimension: 'solidsLoading', toBase: 1 / 86400, label: 'kg/(m²·d)' },
   'kg/(m2.h)': { dimension: 'solidsLoading', toBase: 1 / 3600, label: 'kg/(m²·h)' },
   NTU: { dimension: 'turbidity', toBase: 1, label: 'NTU' },
+  /** Gradiente de velocidad G. */
+  '1/s': { dimension: 'rate', toBase: 1, label: 's⁻¹' },
+  W: { dimension: 'power', toBase: 1, label: 'W' },
+  kW: { dimension: 'power', toBase: 1000, label: 'kW' },
+  'rad/s': { dimension: 'angularSpeed', toBase: 1, label: 'rad/s' },
+  rpm: { dimension: 'angularSpeed', toBase: (2 * Math.PI) / 60, label: 'rpm' },
+  'Pa.s': { dimension: 'viscosity', toBase: 1, label: 'Pa·s' },
   degC: { dimension: 'temperature', toBase: 1, label: '°C' },
   rad: { dimension: 'angle', toBase: 1, label: 'rad' },
   deg: { dimension: 'angle', toBase: Math.PI / 180, label: '°' },

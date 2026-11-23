@@ -67,8 +67,13 @@ export function changedPaths(a: unknown, b: unknown, prefix = ''): string[] {
 }
 
 /** Cambios geométricos que exigirían un grupo no permitido. */
-export function blockedChanges(before: unknown, after: unknown, allowed: ReadonlySet<ResizeGroup>): { path: string; groups: readonly ResizeGroup[] }[] {
+export function blockedChanges(
+  before: unknown,
+  after: unknown,
+  allowed: ReadonlySet<ResizeGroup>,
+  groupsFor: (path: string) => readonly ResizeGroup[] = groupsRequiredFor,
+): { path: string; groups: readonly ResizeGroup[] }[] {
   return changedPaths(before, after)
-    .map((path) => ({ path, groups: groupsRequiredFor(path) }))
+    .map((path) => ({ path, groups: groupsFor(path) }))
     .filter((c) => c.groups.some((g) => !allowed.has(g)));
 }

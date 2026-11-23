@@ -1,55 +1,17 @@
 import { useMemo, useState } from 'react';
 import { LEVEL_NAMES, type CheckStatus, type ValidationLevel } from '@eo/engineering-core';
-import { compareVariants, exportVariant, renderReport, type ClarifierDesign, type ClarifierVariant } from '@eo/equipment-library';
+import { compareVariantValues, exportVariantOf, renderReport } from '@eo/equipment-library';
+import type { AnyDesign, LabEquipment, LabVariant } from '../equipment';
 import { download, fmt, unit } from '../format';
 
 type Tab = 'dims' | 'hyd' | 'meas' | 'val' | 'cmp';
 
-const DIMS = [
-  'tank.diameter.theoretical',
-  'tank.diameter',
-  'civil.structuralOuterDiameter',
-  'civil.channelOuterDiameter',
-  'tank.depth',
-  'floor.dropAtSump',
-  'level.sumpBottom',
-  'feedwell.diameter',
-  'inlet.dn',
-  'effluent.dn',
-  'sludge.dn',
-  'weir.notchCount',
-  'arm.length',
-  'bridge.span',
-];
-const HYD = [
-  'flow.avg.Ls',
-  'flow.peak.Ls',
-  'area.required',
-  'tank.area',
-  'loading.surface.avg',
-  'loading.surface.peak',
-  'volume.gross',
-  'volume.effective',
-  'hrt.avg',
-  'hrt.peak',
-  'loading.weir.avg',
-  'loading.weir.peak',
-  'weir.head.peak',
-  'inlet.velocity.peak',
-  'inlet.velocity.avg',
-  'feedwell.downwardVelocity.peak',
-  'column.portVelocity.peak',
-  'launder.freeFall',
-  'solids.influentLoad.avg',
-  'loading.solids.avg',
-  'loading.solids.peak',
-  'volume.deduction.sludgeBlanket',
-  'sludgeBlanket.clearanceToFeedwell',
-];
-
 const STATUS_CLASS: Record<CheckStatus, string> = { PASS: 'ok', WARNING: 'warn', FAIL: 'fail', NOT_EVALUATED: 'ne' };
 
+type LabDesign = AnyDesign;
+
 export function ResultsPanel({
+  equipment,
   variant,
   design,
   variants,
@@ -58,9 +20,10 @@ export function ResultsPanel({
   onSelectComponent,
   onImport,
 }: {
-  variant: ClarifierVariant;
-  design: ClarifierDesign;
-  variants: ClarifierVariant[];
+  equipment: LabEquipment;
+  variant: LabVariant;
+  design: LabDesign;
+  variants: LabVariant[];
   compareIds: string[];
   onToggleCompare: (id: string) => void;
   onSelectComponent: (id: string) => void;
@@ -72,7 +35,7 @@ export function ResultsPanel({
   const s = design.summary;
 
   const cmpVariants = useMemo(() => variants.filter((v) => compareIds.includes(v.variantId)), [variants, compareIds]);
-  const rows = useMemo(() => compareVariants(cmpVariants), [cmpVariants]);
+  const rows = useMemo(() => compareVariantValues(cmpVariants, equipment.comparisonKeys), [cmpVariants, equipment]);
 
   const valueTable = (keys: string[]) => (
     <table className="vals">
@@ -143,11 +106,11 @@ export function ResultsPanel({
 
       {tab === 'dims' && (
         <section className="card">
-          {valueTable(DIMS)}
+          {valueTable(equipment.dimsKeys as string[])}
           <p className="muted small">Pulse una fila para ver su ecuación y dependencias.</p>
         </section>
       )}
-      {tab === 'hyd' && <section className="card">{valueTable(HYD)}</section>}
+      {tab === 'hyd' && <section className="card">{valueTable(equipment.hydKeys as string[])}</section>}
       {tab === 'meas' && (
         <section className="card">
           <table className="vals">
@@ -301,7 +264,7 @@ export function ResultsPanel({
       )}
 
       <section className="card actions">
-        <button onClick={() => download(`${variant.tag}.variant.json`, exportVariant(variant))}>Exportar JSON</button>
+        <button onClick={() => download(`${variant.tag}.variant.json`, exportVariantOf(equipment.definition, variant))}>Exportar JSON</button>
         <label className="file-btn">
           Importar JSON
           <input
@@ -314,7 +277,7 @@ export function ResultsPanel({
             }}
           />
         </label>
-        <button onClick={() => download(`${variant.tag}-memoria.md`, renderReport(design, variant), 'text/markdown')}>Memoria de cálculo (.md)</button>
+        <button onClick={() => download(`${variant.tag}-memoria.md`, renderReport(design, variant, equipment.reportRules), 'text/markdown')}>Memoria de cálculo (.md)</button>
         <p className="muted small mono">
           {variant.variantId}
           <br />

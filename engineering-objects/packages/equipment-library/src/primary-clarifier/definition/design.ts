@@ -14,8 +14,8 @@ import { constructiveChecks, measure, type Measurements } from '../civil/measure
 import { buildHydraulics } from '../hydraulics/geometry.js';
 import { geometryChecks } from '../mechanical/clearances.js';
 import { buildMechanical } from '../mechanical/geometry.js';
-import { COMPONENTS, COMPONENT_DEPENDENCIES, COMPONENT_IDS, type ComponentId, type Discipline } from './components.js';
-import { ENGINEERING_MODEL_VERSION, runEngine, type ResizeGroup, type ResolvedModel, type SizingDecisions } from './engine.js';
+import { COMPONENTS, COMPONENT_DEPENDENCIES, COMPONENT_IDS, type Discipline } from './components.js';
+import { ENGINEERING_MODEL_VERSION, runEngine, type CentralZoneStrategy, type ResizeGroup, type ResolvedModel, type SizingDecisions } from './engine.js';
 import { PROFILES, resolveCriteria, type Criterion, type CriterionKey, type DesignProfile } from './profiles.js';
 import { SCHEMA_VERSION, parseDesignInput, type DesignInput } from './schema.js';
 
@@ -30,7 +30,7 @@ export interface MotionDefinition {
 
 /** Definición de componente de ingeniería (spec §8). */
 export interface EngineeringComponent {
-  readonly id: ComponentId;
+  readonly id: string;
   readonly name: string;
   readonly discipline: Discipline;
   readonly materialIds: readonly string[];
@@ -55,31 +55,7 @@ export type PipelineStage =
   | 'MESH_GENERATION'
   | 'ASSEMBLY_VERIFICATION';
 
-export interface ClarifierDesign {
-  readonly input: DesignInput;
-  readonly profile: DesignProfile;
-  readonly criteria: Partial<Record<CriterionKey, Criterion>>;
-  readonly engineeringModelVersion: string;
-  readonly values: Readonly<Record<string, TracedValue>>;
-  readonly decisions: SizingDecisions;
-  readonly model: ResolvedModel;
-  readonly assembly: Assembly;
-  readonly components: readonly EngineeringComponent[];
-  readonly measurements: Measurements;
-  readonly checks: readonly CheckResult[];
-  readonly summary: ValidationSummary;
-  readonly sources: readonly SourceReference[];
-  readonly pipeline: readonly { stage: PipelineStage; ok: boolean; detail?: string }[];
-}
-
-export interface DesignOptions {
-  /** Decisiones congeladas (modos B y C de redimensionamiento). */
-  readonly fixed?: Partial<SizingDecisions>;
-  /** Contexto de redimensionamiento para informar de lo que las restricciones impiden. */
-  readonly resizeContext?: { readonly mode: 'B' | 'C'; readonly lockedGroups: readonly ResizeGroup[] };
-}
-
-const MOTION: Partial<Record<ComponentId, MotionDefinition>> = {
+const MOTION: Partial<Record<string, MotionDefinition>> = {
   'MEC-002': { type: 'rotation', dof: 1, axis: [0, 1, 0], origin: [0, 0, 0], note: 'Solo el eje de salida gira; la carcasa es fija.' },
   'MEC-003': { type: 'rotation', dof: 1, axis: [0, 1, 0], origin: [0, 0, 0] },
   'MEC-004': { type: 'rotation', dof: 1, axis: [0, 1, 0], origin: [0, 0, 0] },
@@ -87,7 +63,7 @@ const MOTION: Partial<Record<ComponentId, MotionDefinition>> = {
   'MEC-006': { type: 'rotation', dof: 1, axis: [0, 1, 0], origin: [0, 0, 0], note: 'Gira el barredor; deflector y caja son fijos.' },
 };
 
-const ASSEMBLY_CONSTRAINTS: Partial<Record<ComponentId, string[]>> = {
+const ASSEMBLY_CONSTRAINTS: Partial<Record<string, string[]>> = {
   'CIV-002': ['Apoya en CIV-001.', 'Coaxial con el eje Y del objeto.'],
   'CIV-005': ['Ménsula del muro CIV-002 (canal exterior).'],
   'HYD-001': ['La columna atraviesa la poceta CIV-004 y la losa CIV-001 (pasamuros).'],
@@ -102,16 +78,95 @@ const ASSEMBLY_CONSTRAINTS: Partial<Record<ComponentId, string[]>> = {
 };
 
 /**
- * Pipeline de regeneración (spec §6.4). Función pura y determinista: mismas entradas ⇒ mismo resultado.
+ * Resultado de diseño de un equipo circular de alimentación central. `input` es la entrada propia del
+ * equipo; `circularInput` es su adaptación al motor circular común (en el decantador primario, la misma).
  */
-export function designClarifier(rawInput: unknown, options: DesignOptions = {}): ClarifierDesign {
+export interface CircularDesign<I, P extends ProfileInfo = DesignProfile, Dc extends object = SizingDecisions> {
+  readonly input: I;
+  readonly circularInput: DesignInput;
+  readonly profile: P;
+  readonly criteria: Partial<Record<string, Criterion>>;
+  readonly engineeringModelVersion: string;
+  readonly values: Readonly<Record<string, TracedValue>>;
+  readonly decisions: Dc;
+  readonly model: ResolvedModel;
+  readonly assembly: Assembly;
+  readonly components: readonly EngineeringComponent[];
+  readonly measurements: Measurements;
+  readonly checks: readonly CheckResult[];
+  readonly summary: ValidationSummary;
+  readonly sources: readonly SourceReference[];
+  readonly pipeline: readonly { stage: PipelineStage; ok: boolean; detail?: string }[];
+}
+
+export type ClarifierDesign = CircularDesign<DesignInput, DesignProfile, SizingDecisions>;
+
+export interface DesignOptions {
+  /** Decisiones congeladas (modos B y C de redimensionamiento). */
+  readonly fixed?: Partial<Record<string, number>>;
+  /** Contexto de redimensionamiento para informar de lo que las restricciones impiden. */
+  readonly resizeContext?: { readonly mode: 'B' | 'C'; readonly lockedGroups: readonly ResizeGroup[] };
+}
+
+/** Lo mínimo que el pipeline necesita saber de un perfil de diseño. */
+export interface ProfileInfo {
+  readonly id: string;
+  readonly name: string;
+  readonly purpose: string;
+  readonly approval: 'DIDACTIC' | 'REFERENCE_RANGES' | 'REQUIRES_PROJECT_CRITERIA';
+  readonly hypotheses: readonly string[];
+}
+
+/** Catálogo de componentes de un equipo (identificadores, nombres, movimiento, dependencias). */
+export interface ComponentCatalog {
+  readonly ids: readonly string[];
+  readonly info: Readonly<Record<string, { readonly name: string; readonly discipline: Discipline }>>;
+  readonly dependencies: Readonly<Record<string, readonly string[]>>;
+  readonly motion: Readonly<Partial<Record<string, MotionDefinition>>>;
+  readonly constraints: Readonly<Partial<Record<string, readonly string[]>>>;
+}
+
+/**
+ * Especificación de un equipo para el pipeline circular común. Las extensiones (componentes,
+ * comprobaciones, decisiones extra) permiten añadir lo propio de cada equipo sin tocar lo común.
+ */
+export interface CircularEquipmentSpec<I, P extends ProfileInfo> {
+  readonly input: I;
+  readonly circularInput: DesignInput;
+  readonly profile: P;
+  /** Criterios para el informe (todos, incluidos los propios del equipo). */
+  readonly criteria: Partial<Record<string, Criterion>>;
+  /** Criterios con clave del motor común. */
+  readonly engineCriteria: Partial<Record<CriterionKey, Criterion>>;
+  readonly overrides: Readonly<Record<string, { readonly sourceId: string; readonly note: string }>>;
+  readonly schemaVersion: string;
+  readonly modelVersion: string;
+  readonly strategy?: CentralZoneStrategy;
+  readonly catalog: ComponentCatalog;
+  readonly didacticReference?: SourceReference;
+  /** Decisiones propias del equipo, leídas tras ejecutar el motor. */
+  readonly extraDecisions?: () => Record<string, number>;
+  /** Transforma o amplía la geometría común (p. ej. añadir el agitador de floculación). */
+  readonly buildGeometry?: (common: ComponentGeometry[], model: ResolvedModel) => ComponentGeometry[];
+  readonly extraGeometryChecks?: (model: ResolvedModel, assembly: Assembly, checks: CheckList) => void;
+  readonly extraConstructiveChecks?: (model: ResolvedModel, checks: CheckList) => void;
+  /** Fuentes usadas por las extensiones. */
+  readonly extraSources?: () => Iterable<string>;
+}
+
+/**
+ * Pipeline de regeneración (spec §6.4) común a los equipos circulares. Función pura y determinista.
+ */
+export function designCircularTank<I, P extends ProfileInfo, Dc extends object = SizingDecisions>(
+  spec: CircularEquipmentSpec<I, P>,
+  options: DesignOptions = {},
+): CircularDesign<I, P, Dc> {
   const pipeline: { stage: PipelineStage; ok: boolean; detail?: string }[] = [{ stage: 'INPUT', ok: true }];
-  const input = parseDesignInput(rawInput);
-  const criteria = resolveCriteria(input);
-  const profile = PROFILES[input.profileId];
+  const input = spec.circularInput;
+  const profile = spec.profile;
   const checks = new CheckList();
-  checks.add({ id: 'DATA-SCHEMA', level: 1, status: 'PASS', title: 'Esquema de entradas', message: `Entradas válidas (esquema ${SCHEMA_VERSION}).` });
-  for (const [k, o] of Object.entries(input.criteriaOverrides)) {
+  checks.add({ id: 'DATA-SCHEMA', level: 1, status: 'PASS', title: 'Esquema de entradas', message: `Entradas válidas (esquema ${spec.schemaVersion}).` });
+  for (const [k, o] of Object.entries(spec.overrides)) {
     const known = getReference(o.sourceId);
     checks.add({
       id: `DATA-OVERRIDE-SOURCE-${k}`,
@@ -124,13 +179,14 @@ export function designClarifier(rawInput: unknown, options: DesignOptions = {}):
   }
   pipeline.push({ stage: 'PARAMETER_VALIDATION', ok: true });
 
-  const { trace, decisions, model, sourcesUsed } = runEngine(input, criteria, options.fixed ?? {}, checks);
+  const { trace, decisions, model, sourcesUsed } = runEngine(input, spec.engineCriteria, (options.fixed ?? {}) as Partial<SizingDecisions>, checks, spec.strategy);
   pipeline.push({ stage: 'HYDRAULIC_CALCULATION', ok: true });
   pipeline.push({ stage: 'GEOMETRIC_RESOLUTION', ok: true });
 
   let componentsGeo: ComponentGeometry[] = [];
   try {
-    componentsGeo = [...buildCivil(model, input), ...buildHydraulics(model, input), ...buildMechanical(model, input)];
+    const common = [...buildCivil(model, input), ...buildHydraulics(model, input), ...buildMechanical(model, input)];
+    componentsGeo = spec.buildGeometry ? spec.buildGeometry(common, model) : common;
     pipeline.push({ stage: 'MESH_GENERATION', ok: true });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
@@ -141,11 +197,14 @@ export function designClarifier(rawInput: unknown, options: DesignOptions = {}):
 
   if (componentsGeo.length > 0) {
     geometryChecks(model, input, assembly, checks, trace.get('volume.gross'));
+    spec.extraGeometryChecks?.(model, assembly, checks);
   }
   pipeline.push({ stage: 'ASSEMBLY_VERIFICATION', ok: componentsGeo.length > 0 });
 
   const measurements = measure(model, input, assembly);
   constructiveChecks(model, input, measurements, checks);
+  spec.extraConstructiveChecks?.(model, checks);
+  for (const id of spec.extraSources?.() ?? []) sourcesUsed.add(id);
 
   // Estado documental
   const tbv = [...sourcesUsed].map((id) => getReference(id)).filter((r): r is SourceReference => !!r && r.verification === 'TO_VERIFY');
@@ -158,7 +217,7 @@ export function designClarifier(rawInput: unknown, options: DesignOptions = {}):
       profile.approval === 'DIDACTIC'
         ? 'Escenario didáctico: los resultados son una hipótesis de cálculo, no un diseño aprobado.'
         : profile.approval === 'REQUIRES_PROJECT_CRITERIA'
-          ? Object.keys(input.criteriaOverrides).length === 0
+          ? Object.keys(spec.overrides).length === 0
             ? 'Perfil de proyecto sin criterios introducidos.'
             : 'Criterios de proyecto introducidos por el usuario; su aprobación es responsabilidad del proyectista.'
           : profile.purpose,
@@ -172,30 +231,33 @@ export function designClarifier(rawInput: unknown, options: DesignOptions = {}):
   });
   pipeline.push({ stage: 'CONSTRUCTIVE_CHECKS', ok: true });
 
+  const cat = spec.catalog;
   const allChecks = checks.list();
   const components: EngineeringComponent[] = componentsGeo.map((cg) => {
-    const id = cg.componentId as ComponentId;
+    const id = cg.componentId;
     const mats = new Set<string>();
     walk(cg.root, (n) => {
       if (n.shape && n.role === 'solid') mats.add(n.materialId);
     });
     const q = measurements.components.find((c) => c.componentId === id);
+    const info = cat.info[id];
+    if (!info) throw new Error(`Componente ${id} fuera del catálogo del equipo`);
     return {
       id,
-      name: COMPONENTS[id].name,
-      discipline: COMPONENTS[id].discipline,
+      name: info.name,
+      discipline: info.discipline,
       materialIds: [...mats].sort(),
       massKg: q?.massKg ?? null,
       massStatus: q?.massStatus ?? 'NOT_EVALUATED',
       connections: cg.connections,
-      motion: MOTION[id] ?? { type: 'fixed', dof: 0 },
+      motion: cat.motion[id] ?? { type: 'fixed', dof: 0 },
       checkIds: allChecks.filter((c) => c.componentIds?.includes(id)).map((c) => c.id),
-      dependsOn: COMPONENT_DEPENDENCIES[id],
-      assemblyConstraints: ASSEMBLY_CONSTRAINTS[id] ?? [],
+      dependsOn: cat.dependencies[id] ?? [],
+      assemblyConstraints: cat.constraints[id] ?? [],
       geometryHash: cg.hash,
     };
   });
-  const missing = COMPONENT_IDS.filter((id) => !components.some((c) => c.id === id));
+  const missing = cat.ids.filter((id) => !components.some((c) => c.id === id));
   if (componentsGeo.length > 0) {
     checks.add({
       id: 'GEO-COMPONENT-INVENTORY',
@@ -230,15 +292,16 @@ export function designClarifier(rawInput: unknown, options: DesignOptions = {}):
   const finalChecks = checks.list();
   const sourceIds = new Set<string>([...sourcesUsed, ...finalChecks.map((c) => c.sourceId).filter((s): s is string => !!s)]);
   const sources = [...sourceIds].map((id) => getReference(id)).filter((r): r is SourceReference => !!r);
-  if (input.profileId === 'didactic') sources.unshift(REFERENCES['SPEC-DEC-002-DIDACTIC']);
+  if (spec.didacticReference) sources.unshift(spec.didacticReference);
 
   return {
-    input,
+    input: spec.input,
+    circularInput: input,
     profile,
-    criteria,
-    engineeringModelVersion: ENGINEERING_MODEL_VERSION,
+    criteria: spec.criteria,
+    engineeringModelVersion: spec.modelVersion,
     values: trace.toRecord(),
-    decisions,
+    decisions: { ...decisions, ...(spec.extraDecisions?.() ?? {}) } as unknown as Dc,
     model,
     assembly,
     components,
@@ -248,4 +311,37 @@ export function designClarifier(rawInput: unknown, options: DesignOptions = {}):
     sources,
     pipeline,
   };
+}
+
+/** Movimiento y restricciones de montaje de los componentes comunes del tanque circular. */
+export const CIRCULAR_MOTION = MOTION;
+export const CIRCULAR_ASSEMBLY_CONSTRAINTS = ASSEMBLY_CONSTRAINTS;
+
+const PRIMARY_CATALOG: ComponentCatalog = {
+  ids: COMPONENT_IDS,
+  info: COMPONENTS,
+  dependencies: COMPONENT_DEPENDENCIES,
+  motion: MOTION,
+  constraints: ASSEMBLY_CONSTRAINTS,
+};
+
+/** Decantador primario: el motor común con la estrategia de pozo de alimentación por defecto. */
+export function designClarifier(rawInput: unknown, options: DesignOptions = {}): ClarifierDesign {
+  const input = parseDesignInput(rawInput);
+  const criteria = resolveCriteria(input);
+  return designCircularTank<DesignInput, DesignProfile, SizingDecisions>(
+    {
+      input,
+      circularInput: input,
+      profile: PROFILES[input.profileId],
+      criteria,
+      engineCriteria: criteria,
+      overrides: input.criteriaOverrides,
+      schemaVersion: SCHEMA_VERSION,
+      modelVersion: ENGINEERING_MODEL_VERSION,
+      catalog: PRIMARY_CATALOG,
+      didacticReference: input.profileId === 'didactic' ? REFERENCES['SPEC-DEC-002-DIDACTIC'] : undefined,
+    },
+    options,
+  );
 }

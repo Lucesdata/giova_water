@@ -2,11 +2,16 @@ import { useCallback, useState } from 'react';
 import type { ResizeGroup, VariantMode } from '@eo/equipment-library';
 import { ParametersPanel } from './panels/ParametersPanel';
 import { ResultsPanel } from './panels/ResultsPanel';
+import { EQUIPMENT } from './equipment';
 import { useVariants } from './useVariants';
 import { Viewer, type ViewMode } from './viewer/Viewer';
 
 export function App() {
-  const vs = useVariants();
+  // Un almacén de variantes por equipo (los hooks no pueden ser condicionales).
+  const stores = [useVariants(EQUIPMENT[0]!), useVariants(EQUIPMENT[1]!)];
+  const [eqIndex, setEqIndex] = useState(0);
+  const equipment = EQUIPMENT[eqIndex]!;
+  const vs = stores[eqIndex]!;
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
   const [view, setView] = useState<ViewMode>('iso');
@@ -38,7 +43,23 @@ export function App() {
     <div className={`app ${leftOpen ? '' : 'no-left'} ${rightOpen ? '' : 'no-right'}`}>
       <header className="topbar">
         <div className="brand">
-          <span className="logo">◍</span> Object Lab <span className="muted">· Decantador primario circular</span>
+          <span className="logo">◍</span> Object Lab
+        </div>
+        <div className="equipment">
+          {EQUIPMENT.map((e, i) => (
+            <button
+              key={e.id}
+              className={i === eqIndex ? 'on' : ''}
+              onClick={() => {
+                setEqIndex(i);
+                setSelected(null);
+                setIsolated(null);
+                setCompareIds([]);
+              }}
+            >
+              {e.label}
+            </button>
+          ))}
         </div>
         <div className="variants">
           {vs.variants.map((v) => (
@@ -90,6 +111,9 @@ export function App() {
           <ParametersPanel
             variant={vs.selected}
             design={design}
+            groups={equipment.groups}
+            resizeGroups={equipment.resizeGroups}
+            quick={equipment.quick}
             onDerive={onDerive}
             onQuick={(lps, tag) => vs.derive(vs.variants[0]!, { tag, flow: { averageLps: lps } }, { mode: 'A' })}
             baseTag={vs.variants[0]!.tag}
@@ -102,7 +126,7 @@ export function App() {
       </aside>
 
       <main className="viewer">
-        <Viewer design={design} view={view} viewNonce={viewNonce} section={section} showDims={showDims} showWater={showWater} selectedId={selected} isolatedIds={isolated} onSelect={setSelected} />
+        <Viewer design={design} centralLabel={equipment.centralLabel} view={view} viewNonce={viewNonce} section={section} showDims={showDims} showWater={showWater} selectedId={selected} isolatedIds={isolated} onSelect={setSelected} />
         {vs.error && (
           <div className="toast" onClick={() => vs.setError(null)}>
             {vs.error}
@@ -143,6 +167,7 @@ export function App() {
         </button>
         {rightOpen && (
           <ResultsPanel
+            equipment={equipment}
             variant={vs.selected}
             design={design}
             variants={vs.variants}

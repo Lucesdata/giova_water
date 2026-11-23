@@ -1,67 +1,60 @@
 import { useCallback, useMemo, useState } from 'react';
-import {
-  DEC_005_DIDACTIC,
-  createBaseVariant,
-  createVariant,
-  importVariant,
-  regenerate,
-  type ClarifierDesign,
-  type ClarifierVariant,
-  type DeepPartial,
-  type DesignInputRaw,
-  type VariantOptions,
-} from '@eo/equipment-library';
+import { createBaseVariantOf, createVariantOf, importVariantOf, regenerateOf, type VariantOptions } from '@eo/equipment-library';
+import type { AnyDesign, LabEquipment, LabVariant } from './equipment';
+
+type LabDesign = AnyDesign;
 
 /**
- * Estado del laboratorio: lista inmutable de variantes. Generar una variante nunca modifica las
- * existentes; el diseño completo (geometría) se regenera bajo demanda y se memoiza por variante.
+ * Estado del laboratorio para un equipo: lista inmutable de variantes. Generar una variante nunca
+ * modifica las existentes; el diseño completo (geometría) se regenera bajo demanda y se memoiza.
  */
-export function useVariants() {
-  const [variants, setVariants] = useState<ClarifierVariant[]>(() => [createBaseVariant(DEC_005_DIDACTIC)]);
+export function useVariants(eq: LabEquipment) {
+  const def = eq.definition;
+  const [variants, setVariants] = useState<LabVariant[]>(() => [createBaseVariantOf(def, eq.preset) as LabVariant]);
   const [selectedId, setSelectedId] = useState<string>(() => variants[0]!.variantId);
   const [error, setError] = useState<string | null>(null);
-  const designs = useMemo(() => new Map<string, ClarifierDesign>(), []);
+  const designs = useMemo(() => new Map<string, LabDesign>(), []);
 
   const designOf = useCallback(
-    (v: ClarifierVariant) => {
+    (v: LabVariant) => {
       let d = designs.get(v.variantId);
       if (!d) {
-        d = regenerate(v);
+        d = regenerateOf(def, v);
         designs.set(v.variantId, d);
       }
       return d;
     },
-    [designs],
+    [designs, def],
   );
 
-  const add = useCallback((v: ClarifierVariant) => {
+  const add = useCallback((v: LabVariant) => {
     setVariants((prev) => (prev.some((x) => x.variantId === v.variantId) ? prev : [...prev, v]));
     setSelectedId(v.variantId);
   }, []);
 
   const derive = useCallback(
-    (parent: ClarifierVariant, changes: DeepPartial<DesignInputRaw>, opts: VariantOptions) => {
+    (parent: LabVariant, changes: unknown, opts: VariantOptions) => {
       try {
-        add(createVariant(parent, changes, opts));
+        add(createVariantOf(def, parent, changes, opts) as LabVariant);
         setError(null);
       } catch (e) {
         setError(e instanceof Error ? e.message : String(e));
       }
     },
-    [add],
+    [add, def],
   );
 
   const importJson = useCallback(
     (json: string) => {
       try {
-        const r = importVariant(json);
-        add(r.variant);
+        const r = importVariantOf(def, json);
+        add(r.variant as LabVariant);
         setError(r.notes.length ? r.notes.join(' ') : null);
       } catch (e) {
         setError(e instanceof Error ? e.message : String(e));
       }
     },
-    [add],
+    [add, def],
   );
 
   const selected = variants.find((v) => v.variantId === selectedId) ?? variants[0]!;
