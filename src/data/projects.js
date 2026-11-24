@@ -66,11 +66,3 @@ export const projectFromHash = (hash) =>
     : undefined;
 export const projectUrl = (p, loc = window.location) => `${loc.origin}${loc.pathname}${projectHash(p)}`;
 
-// Small drawing of each figure in the hero's "scale" tiles, by position:
-// one dot per plant / discharge, or a segmented line for the sewer network.
-export const SCOPE_MARKS = [
-  { kind: 'dots', n: 37 },
-  { kind: 'line', n: 0 },
-  { kind: 'dots', n: 10 },
-  { kind: 'dots', n: 16 },
-];

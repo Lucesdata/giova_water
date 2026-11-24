@@ -15,7 +15,7 @@ function Budgets({ b }) {
   return (
     <section aria-labelledby="m-budgets" style={{ margin: '0 0 28px', border: '1px solid var(--line-hi)', background: 'var(--bg-2)', padding: 20 }}>
       <h3 id="m-budgets" className="label-accent" style={{ margin: '0 0 6px', fontWeight: 400 }}>{b.label}</h3>
-      <p style={{ margin: '0 0 8px', fontFamily: 'var(--f-mono)', fontSize: 17, color: 'var(--ink)' }}>{b.title}</p>
+      <p style={{ margin: '0 0 8px', fontSize: 17, fontWeight: 600, color: 'var(--ink)' }}>{b.title}</p>
       <p className="prose" style={{ margin: '0 0 16px', maxWidth: 720 }}>{b.intro}</p>
       <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 230px), 1fr))' }}>
         {b.items.map((it, i) => (
@@ -39,7 +39,7 @@ function Timeline({ tl, done, statusLabel }) {
   return (
     <section aria-labelledby="m-phases" style={{ margin: '0 0 28px' }}>
       <h3 id="m-phases" className="label-accent" style={{ margin: '0 0 6px', fontWeight: 400 }}>{tl.label}</h3>
-      <p style={{ margin: '0 0 8px', fontFamily: 'var(--f-mono)', fontSize: 17, color: 'var(--ink)' }}>{tl.title}</p>
+      <p style={{ margin: '0 0 8px', fontSize: 17, fontWeight: 600, color: 'var(--ink)' }}>{tl.title}</p>
       <p className="prose" style={{ margin: '0 0 16px', maxWidth: 720 }}>{tl.intro}</p>
       <ol style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 10 }}>
         {tl.items.map((it, i) => {
@@ -214,10 +214,10 @@ export default function ProjectModal({ project, onClose }) {
 
           <div className="modal-body">
             <h2 id="modal-title" style={{
-              margin: '0 0 8px', fontFamily: 'var(--f-mono)', fontWeight: 500,
-              fontSize: 'clamp(22px, 3vw, 32px)', letterSpacing: '-0.02em', lineHeight: 1.15, textWrap: 'balance',
+              margin: '0 0 8px', fontWeight: 600,
+              fontSize: 'clamp(22px, 3vw, 32px)', letterSpacing: '-0.025em', lineHeight: 1.15, textWrap: 'balance',
             }}>{i18n.title}</h2>
-            <p className="mono" style={{ margin: '0 0 24px', fontSize: 15, color: 'var(--accent)', lineHeight: 1.5 }}>{i18n.role}</p>
+            <p style={{ margin: '0 0 24px', fontSize: 16, color: 'var(--accent)', lineHeight: 1.5 }}>{i18n.role}</p>
 
             <dl style={{
               display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 150px), 1fr))', gap: 16, margin: '0 0 24px',

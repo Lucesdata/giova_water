@@ -2,10 +2,9 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
 import { LangProvider } from '../../src/i18n.jsx';
-import Faq from '../../src/components/Faq.jsx';
+import { Contact } from '../../src/components/Contact.jsx';
 import fs from 'node:fs';
 import path from 'node:path';
-import { dictionary } from '../../src/i18n.jsx';
 import { Reveal } from '../../src/components/primitives.jsx';
 
 let observers;
@@ -79,18 +78,17 @@ describe('motion rules (stylesheet)', () => {
   });
 });
 
-describe('Faq', () => {
-  it('lists a short set of questions as native disclosure elements, with no closing CTA repeating Contact', () => {
+describe('Preguntas frecuentes (dentro de Contacto)', () => {
+  it('lists a short set of questions as native disclosure elements, under the #faq anchor', () => {
     motion(true);
-    const { container } = wrap(<Faq />);
-    const n = container.querySelectorAll('details.faq-item').length;
+    const { container } = wrap(<Contact />);
+    const n = container.querySelectorAll('#faq details.faq-item').length;
     expect(n).toBeGreaterThanOrEqual(3);
     expect(n).toBeLessThanOrEqual(4);
-    expect(screen.queryByRole('link', { name: 'Consultar un proyecto' })).toBeNull();
   });
   it('does not claim procurement powers', () => {
     motion(true);
-    wrap(<Faq />);
+    wrap(<Contact />);
     expect(screen.getByText(/Mi participación es técnica/)).toBeTruthy();
   });
 });

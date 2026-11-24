@@ -7,7 +7,8 @@ const WIDTHS = [
   { name: 'escritorio-1024', width: 1024, height: 768 },
   { name: 'escritorio-1440', width: 1440, height: 900 },
 ];
-const SECTION_IDS = ['inicio', 'proyectos', 'sobre', 'gemelos', 'objetos', 'faq', 'contacto'];
+const SECTION_IDS = ['inicio', 'proyectos', 'sobre', 'gemelos', 'contacto'];
+const NAV_IDS = SECTION_IDS.slice(1);
 
 async function seedLang(page, lang = 'es') {
   await page.addInitScript((l) => { localStorage.setItem('giova_water:lang', l); }, lang);
@@ -23,7 +24,11 @@ function watch(page) {
   const problems = [];
   page.on('console', (m) => { if (m.type() === 'error') problems.push(`console: ${m.text()}`); });
   page.on('pageerror', (e) => problems.push(`pageerror: ${e.message}`));
-  page.on('requestfailed', (r) => { problems.push(`requestfailed: ${r.url()}`); });
+  page.on('requestfailed', (r) => {
+    // The browser cancels media range requests when a video pauses off screen: that is not a failure.
+    if (r.resourceType() === 'media' && /ERR_ABORTED/.test(r.failure()?.errorText || '')) return;
+    problems.push(`requestfailed: ${r.url()} ${r.failure()?.errorText || ''}`);
+  });
   page.on('response', (r) => { if (r.status() >= 400) problems.push(`${r.status()}: ${r.url()}`); });
   return problems;
 }
@@ -34,10 +39,9 @@ const FEATURED = ['3 plantas de lixiviados · BMA', 'Monitoreo y automatización
 test.beforeEach(async ({ page }) => { await seedLang(page, 'es'); await offlineFonts(page); });
 
 test.describe('estructura', () => {
-  test('seven sections in the requested order, a skip link and one h1', async ({ page }) => {
+  test('five sections in the requested order, a skip link and one h1', async ({ page }) => {
     await page.goto('/');
-    // Solo las secciones de primer nivel: el hero lleva dentro «scope» y «cycle».
-    await expect(page.locator('main > section')).toHaveCount(7);
+    await expect(page.locator('main > section')).toHaveCount(5);
     const ids = await page.locator('main > section').evaluateAll((els) => els.map((e) => e.id));
     expect(ids).toEqual(SECTION_IDS);
     await expect(page.locator('h1')).toHaveCount(1);
@@ -45,26 +49,29 @@ test.describe('estructura', () => {
     await expect(page.locator('a.skip-link')).toHaveCount(1);
   });
 
-  test('the nav numbers follow the page order', async ({ page }) => {
+  test('a single-row header: logo, four plain links and the language switch; no numbers, clock or settings', async ({ page }) => {
     await page.goto('/');
     const items = await page.locator('nav a.nav-link').allTextContents();
-    expect(items.map((t) => t.replace(/\s+/g, '').trim())).toEqual(
-      ['00Inicio', '01Proyectos', '02Perfil', '03Demo', '04Preguntas', '05Contacto']);
+    expect(items.map((t) => t.trim())).toEqual(['Proyectos', 'Perfil', 'Digital', 'Contacto']);
+    await expect(page.locator('nav .logo')).toHaveAttribute('href', '#inicio');
+    await expect(page.locator('nav.site-nav')).not.toContainText(/\d{2}|UTC|SCROLL/);
+    await expect(page.getByRole('button', { name: /ajustes/i })).toHaveCount(0);
+    await expect(page.locator('.grid-bg, [data-remotion-canvas], .__remotion-player')).toHaveCount(0);
   });
 
-  for (const [lang, h1, projects, demo] of [
-    ['en', 'Water engineering, from need to operation.', 'Projects', 'Demo'],
-    ['fr', 'Ingénierie de l’eau', 'Projets', 'Démo'],
+  for (const [lang, h1, projects, digital] of [
+    ['en', 'Water engineering, from need to operation.', 'Projects', 'Digital'],
+    ['fr', 'Ingénierie de l’eau', 'Projets', 'Numérique'],
   ]) {
-    test(`${lang.toUpperCase()}: html lang, h1, nav, demo controls and project cards are translated`, async ({ page }) => {
+    test(`${lang.toUpperCase()}: html lang, h1, nav and sections are translated`, async ({ page }) => {
       await page.goto('/');
       await page.getByRole('button', { name: lang.toUpperCase(), exact: true }).click();
       await expect(page.locator('html')).toHaveAttribute('lang', lang);
       await expect(page.locator('h1')).toContainText(h1);
       await expect(page.locator('nav a.nav-link', { hasText: projects })).toBeVisible();
-      await expect(page.locator('nav a.nav-link', { hasText: demo })).toBeVisible();
-      await expect(page.locator('#gemelos .seg button')).toHaveCount(5);
-      await expect(page.locator('main')).not.toContainText(/ Mostrando | Ver detalle | Qué cambió /);
+      await expect(page.locator('nav a.nav-link', { hasText: digital })).toBeVisible();
+      await expect(page.locator('#gemelos video')).toHaveCount(1);
+      await expect(page.locator('main')).not.toContainText(/ Mostrando | Ver detalle | Hablemos /);
       await expect(page.locator('#contacto')).not.toContainText('CET');
     });
   }
@@ -73,7 +80,7 @@ test.describe('estructura', () => {
     const problems = watch(page);
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-    for (const id of SECTION_IDS) await page.locator(`#${id}`).scrollIntoViewIfNeeded();
+    for (const id of [...SECTION_IDS, 'objetos', 'faq']) await page.locator(`#${id}`).scrollIntoViewIfNeeded();
     expect(problems).toEqual([]);
   });
 });
@@ -85,8 +92,8 @@ test.describe('anclas y cabecera', () => {
     return page.evaluate((i) => {
       const nav = document.querySelector('nav').getBoundingClientRect().bottom;
       const sec = document.getElementById(i);
-      const title = sec.querySelector('h1, h2').getBoundingClientRect();
-      const label = sec.querySelector('.label-accent, .label')?.getBoundingClientRect();
+      const title = sec.querySelector('h1, h2, h3').getBoundingClientRect();
+      const label = sec.querySelector('.eyebrow, .label')?.getBoundingClientRect();
       return { nav, secTop: sec.getBoundingClientRect().top, titleTop: title.top, titleBottom: title.bottom, labelTop: label?.top ?? title.top, vh: innerHeight };
     }, id);
   }
@@ -95,31 +102,39 @@ test.describe('anclas y cabecera', () => {
     test(`${vp.name}: pulsar un enlace deja el rótulo y el título completos bajo la cabecera`, async ({ page }) => {
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await page.goto('/');
-      for (const id of SECTION_IDS) {
+      for (const id of NAV_IDS) {
         if (vp.width < 769) { await openMenu(page); await page.locator(`#menu-movil a.menu-link[href="#${id}"]`).click(); }
         else await page.locator(`nav a.nav-link[href="#${id}"]`).click();
-        await page.waitForTimeout(900);
+        // Smooth scrolling: wait until the section settles under the header.
+        await expect.poll(async () => { const q = await placement(page, id); return Math.abs(q.secTop - q.nav); }, { message: `${id} borde de sección`, timeout: 5000 }).toBeLessThanOrEqual(2);
         const p = await placement(page, id);
-        expect(Math.abs(p.secTop - p.nav), `${id} borde de sección`).toBeLessThanOrEqual(2);
         expect(p.titleTop, `${id} título`).toBeGreaterThanOrEqual(p.nav);
         expect(p.labelTop, `${id} rótulo`).toBeGreaterThanOrEqual(p.nav);
         expect(p.titleBottom, `${id} título visible`).toBeLessThanOrEqual(p.vh);
       }
     });
 
-    test(`${vp.name}: abrir la URL con fragmento deja la misma posición`, async ({ page }) => {
+    test(`${vp.name}: abrir la URL con fragmento deja la misma posición, también en los enlaces antiguos`, async ({ page }) => {
       await page.setViewportSize({ width: vp.width, height: vp.height });
-      for (const id of SECTION_IDS) {
+      for (const id of [...SECTION_IDS, 'objetos', 'metodo']) {
         await page.goto(`/#${id}`);
         await page.waitForLoadState('networkidle');
-        await page.waitForTimeout(1300);
+        // A hash-only change scrolls smoothly within the same document: wait for it to settle.
+        await expect.poll(async () => { const q = await placement(page, id); return Math.abs(q.secTop - q.nav); }, { message: `${id} borde de sección`, timeout: 5000 }).toBeLessThanOrEqual(2);
         const p = await placement(page, id);
-        expect(Math.abs(p.secTop - p.nav), `${id} borde de sección`).toBeLessThanOrEqual(2);
         expect(p.titleTop, `${id} título`).toBeGreaterThanOrEqual(p.nav);
         expect(p.labelTop, `${id} rótulo`).toBeGreaterThanOrEqual(p.nav);
       }
     });
   }
+
+  test('the old #faq link lands on the questions, now inside Contact', async ({ page }) => {
+    await page.goto('/#faq');
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(1300);
+    await expect(page.locator('#faq h3')).toBeInViewport();
+    await expect(page.locator('nav a.nav-link[href="#contacto"]')).toHaveAttribute('aria-current', 'page');
+  });
 
   test('the offset exists once: scroll-padding from the real header height, no section margins', async ({ page }) => {
     await page.goto('/');
@@ -134,7 +149,7 @@ test.describe('anclas y cabecera', () => {
 
   test('the active section indicator follows the scroll', async ({ page }) => {
     await page.goto('/');
-    for (const id of ['proyectos', 'sobre', 'gemelos', 'objetos', 'faq', 'contacto']) {
+    for (const id of NAV_IDS) {
       await page.locator(`nav a.nav-link[href="#${id}"]`).click();
       await expect(page.locator(`nav a.nav-link[href="#${id}"]`)).toHaveAttribute('aria-current', 'page');
     }
@@ -171,10 +186,10 @@ test.describe('movimiento', () => {
   });
 
   test('content is readable at once when jumping far down (no waiting for an animation)', async ({ page }) => {
-    await page.goto('/#faq');
+    await page.goto('/#contacto');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(500);
-    await expect.poll(() => page.locator('#faq .reveal').first().evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
+    await expect.poll(() => page.locator('#contacto .reveal').first().evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
   });
 
   test('smooth scrolling only when motion is allowed', async ({ page }) => {
@@ -184,18 +199,16 @@ test.describe('movimiento', () => {
     expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe('auto');
   });
 
-  test('with prefers-reduced-motion everything is visible, nothing animates, the demo starts paused', async ({ page }) => {
+  test('with prefers-reduced-motion everything is visible, nothing animates and the video does not start', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/');
     await expect(page.locator('.reveal:not(.is-in)')).toHaveCount(0);
     const running = await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running' && a.effect?.getComputedTiming().iterations === Infinity).length);
     expect(running).toBe(0);
-    await page.locator('#gemelos').scrollIntoViewIfNeeded();
-    await expect(page.getByRole('button', { name: 'Reanudar simulación' })).toBeVisible();
-    await page.waitForTimeout(2500);
-    await expect(page.locator('#gemelos')).toContainText('muestra #0');
-    // The decorative scroll background is not mounted at all.
-    await expect(page.locator('[data-remotion-canvas], .__remotion-player')).toHaveCount(0);
+    await page.locator('#gemelos video').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(800);
+    expect(await page.locator('#gemelos video').evaluate((v) => v.paused)).toBe(true);
+    await expect(page.getByRole('button', { name: 'Reproducir video' })).toBeVisible();
   });
 
   test('no scroll hijacking: wheel scrolling moves the page by the wheel delta', async ({ page }) => {
@@ -204,6 +217,25 @@ test.describe('movimiento', () => {
     const before = await page.evaluate(() => scrollY);
     await page.mouse.wheel(0, 300);
     await expect.poll(() => page.evaluate(() => scrollY)).toBe(before + 300);
+  });
+});
+
+test.describe('inicio: cifras y método', () => {
+  test('four static key figures, each linked to its project sheet', async ({ page }) => {
+    await page.goto('/');
+    const figs = page.locator('#inicio .figure');
+    await expect(figs).toHaveCount(4);
+    await expect(page.locator('#inicio .figure-v')).toHaveText(['37', '9 097 m', '10', '16 / 16']);
+    await expect(page.locator('#inicio .figures button')).toHaveCount(0);
+    await figs.nth(2).getByRole('link').click();
+    await expect(page.getByRole('dialog').getByRole('heading', { level: 2 })).toHaveText('Monitoreo y automatización de PTAP rurales · UAESP, Cali');
+  });
+
+  test('the method shows five stages, each with evidence that opens a project', async ({ page }) => {
+    await page.goto('/#metodo');
+    const steps = page.locator('#metodo .cycle-step');
+    await expect(steps).toHaveCount(5);
+    for (let i = 0; i < 5; i++) await expect(steps.nth(i).locator('a.cycle-proof')).toHaveAttribute('href', /^#proyecto\/[a-z0-9-]+$/);
   });
 });
 
@@ -227,8 +259,8 @@ test.describe('proyectos', () => {
 
   test('filters keep correct counters and narrow the grid', async ({ page }) => {
     await page.goto('/');
-    const names = await page.locator('#proyectos .filter-btn').allTextContents();
-    expect(names.map((n) => n.replace(/\s+/g, ' ').replace(/\s?\[/, ' [').trim())).toEqual(['Todos [7]', 'Agua y saneamiento [5]', 'Digital e IoT [3]']);
+    const names = await page.locator('#proyectos .filter-btn').evaluateAll((els) => els.map((e) => `${e.firstChild.textContent.trim()} (${e.querySelector('.filter-count').textContent})`));
+    expect(names).toEqual(['Todos (7)', 'Agua y saneamiento (5)', 'Digital e IoT (3)']);
     const cards = page.locator('#proyectos article');
     await page.getByRole('button', { name: /Digital e IoT/ }).click();
     await expect(cards).toHaveCount(3);
@@ -339,7 +371,6 @@ test.describe('proyectos', () => {
     await page.goto('/');
     const card = page.locator('#proyectos article', { hasText: 'UAESP' }).first();
     await expect(card.locator('img')).toBeVisible();
-    await expect(card).toContainText('Fotografía real');
     await expect(card).toContainText('Responsable del proyecto');
     await card.locator('a.card-open').click();
     const modal = page.getByRole('dialog');
@@ -358,14 +389,14 @@ test.describe('proyectos', () => {
     await expect(modal).not.toContainText('Todavía no hay documentos');
   });
 
-  test('cards with a real photograph say so; IOTIO and the sewer plan keep the conceptual scheme', async ({ page }) => {
+  test('cards show their photograph without a badge; the twin capture and the conceptual schemes are labelled', async ({ page }) => {
     await page.goto('/#proyectos');
     await page.getByRole('button', { name: /Ver todos los proyectos/ }).click();
     const cards = page.locator('#proyectos article');
     for (const title of ['PTAR y alcantarillado', 'PTAPs rurales · UAESP', '3 plantas de lixiviados', 'Monitoreo y automatización de PTAP rurales']) {
       const c = cards.filter({ hasText: title }).first();
       await expect(c.locator('img'), title).toBeVisible();
-      await expect(c, title).toContainText('Fotografía real');
+      await expect(c, title).not.toContainText('Fotografía real');
     }
     // The twin is a software capture, not a photograph: its badge says so.
     const twin = cards.filter({ hasText: 'Gemelo digital' }).first();
@@ -397,7 +428,6 @@ test.describe('proyectos', () => {
     await page.getByRole('button', { name: /Ver todos los proyectos/ }).click();
     const card = page.locator('#proyectos article', { hasText: '3 plantas de lixiviados' });
     await expect(card.locator('img')).toBeVisible();
-    await expect(card).toContainText('Fotografía real');
     await expect.poll(() => card.locator('img').evaluate((el) => el.complete && el.naturalWidth > 0)).toBe(true);
     await card.locator('a.card-open').click();
     const modal = page.getByRole('dialog');
@@ -422,9 +452,7 @@ test.describe('proyectos', () => {
     await modal.getByRole('link', { name: 'Consultar un proyecto' }).click();
     await expect(modal).toHaveCount(0);
     await expect(page).toHaveURL(/#contacto$/);
-    await page.waitForTimeout(900);
-    const gap = await page.evaluate(() => Math.abs(document.getElementById('contacto').getBoundingClientRect().top - document.querySelector('nav').getBoundingClientRect().bottom));
-    expect(gap).toBeLessThanOrEqual(2);
+    await expect.poll(() => page.evaluate(() => Math.abs(document.getElementById('contacto').getBoundingClientRect().top - document.querySelector('nav').getBoundingClientRect().bottom)), { timeout: 5000 }).toBeLessThanOrEqual(2);
   });
 
   test('focus stays inside the open project (Tab and Shift+Tab wrap)', async ({ page }) => {
@@ -520,12 +548,13 @@ test.describe('perfil y trayectoria', () => {
     await expect(rows.nth(1)).not.toHaveAttribute('open', '');
   });
 
-  test('the method section is gone, the contracting note stays and points to the hero chain', async ({ page }) => {
+  test('the contracting note stays and points to the method on the home section', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('.method-stage')).toHaveCount(0);
     await expect(page.locator('#sobre')).not.toContainText('Cuatro etapas');
     await expect(page.locator('#sobre')).toContainText('Las decisiones de contratación y adjudicación corresponden a cada entidad');
-    await expect(page.locator('#sobre .profile-text a.text-link')).toHaveAttribute('href', '#inicio');
+    await expect(page.locator('#sobre .profile-text a.text-link')).toHaveAttribute('href', '#metodo');
+    await expect(page.locator('#inicio #metodo')).toHaveCount(1);
   });
 
   test('the profile has no competences block repeating the projects; the chronology lists five roles', async ({ page }) => {
@@ -547,99 +576,72 @@ test.describe('perfil y trayectoria', () => {
   });
 });
 
-test.describe('demo de gemelo digital', () => {
-  const value = (page, label) => page.locator('#gemelos [role=progressbar]', { }).evaluateAll((els, l) => {
-    const el = els.find((e) => e.getAttribute('aria-label') === l); return el ? el.getAttribute('aria-valuenow') : null;
-  }, label);
-
-  test('always shows the illustrative, not-for-sizing label and says it is simulated', async ({ page }) => {
-    await page.goto('/');
-    await expect(page.locator('#gemelos')).toContainText('Simulación ilustrativa; no usar para dimensionamiento.');
-    await expect(page.locator('#gemelos')).toContainText('Demo · datos simulados');
-    for (const name of ['Demanda alta', 'Caudal reducido']) {
-      await page.getByRole('button', { name }).click();
-      await expect(page.locator('#gemelos')).toContainText('Simulación ilustrativa; no usar para dimensionamiento.');
+test.describe('operación digital', () => {
+  test('the real SCADA footage has a visible pause control and no overflow at any width', async ({ page }) => {
+    for (const vp of WIDTHS) {
+      await page.setViewportSize({ width: vp.width, height: vp.height });
+      await page.goto('/');
+      const video = page.locator('#gemelos video');
+      await expect(video).toHaveCount(1);
+      await expect(video).toHaveJSProperty('muted', true);
+      await expect(page.locator('#gemelos .media-badge-top')).toContainText('Video real');
+      const toggle = page.locator('#gemelos .video-toggle');
+      await toggle.scrollIntoViewIfNeeded();
+      const box = await toggle.boundingBox();
+      expect(box.height, vp.name).toBeGreaterThanOrEqual(44);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), vp.name).toBe(true);
     }
   });
 
-  test('scenarios change values coherently and explain what changed and what to review', async ({ page }) => {
-    await page.goto('/#gemelos');
-    const normalQ = Number(await value(page, 'CAUDAL Q'));
-    const normalP = Number(await value(page, 'PRESIÓN P'));
-    await page.getByRole('button', { name: 'Demanda alta' }).click();
-    await expect(page.getByRole('button', { name: 'Demanda alta' })).toHaveAttribute('aria-pressed', 'true');
-    expect(Number(await value(page, 'CAUDAL Q'))).toBeGreaterThan(normalQ + 5);
-    expect(Number(await value(page, 'PRESIÓN P'))).toBeLessThan(normalP - 0.5);
-    await expect(page.locator('#gemelos [role=status]')).toContainText('Sube el caudal, baja la presión');
-    await expect(page.locator('#gemelos [role=status]')).toContainText('Qué debería revisar el operador');
-    await expect(page.locator('#gemelos')).toContainText('ATENCIÓN');
-    await page.getByRole('button', { name: 'Caudal reducido' }).click();
-    expect(Number(await value(page, 'CAUDAL Q'))).toBeLessThan(normalQ - 10);
-    await expect(page.locator('#gemelos [role=status]')).toContainText('El caudal cae por debajo del rango esperado');
+  test('the pause button stops the footage and play restarts it', async ({ page }) => {
+    await page.goto('/');
+    const video = page.locator('#gemelos video');
+    const toggle = page.locator('#gemelos .video-toggle');
+    await toggle.scrollIntoViewIfNeeded();
+    await expect.poll(() => video.evaluate((v) => !v.paused)).toBe(true);
+    await toggle.click();
+    await expect.poll(() => video.evaluate((v) => v.paused)).toBe(true);
+    await toggle.click();
+    await expect.poll(() => video.evaluate((v) => !v.paused)).toBe(true);
   });
 
-  test('pause stops the updates, resume restarts them, reset recovers the initial state', async ({ page }) => {
+  test('says it is real UAESP footage, lists the six supervised variables and links to the project', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/#gemelos');
-    const sample = async () => Number((/#(\d+)/.exec(await page.locator('#gemelos').innerText()) || [])[1]);
-    await expect.poll(sample, { timeout: 5000 }).toBeGreaterThan(0);
-    await page.getByRole('button', { name: 'Pausar simulación' }).click();
-    await expect(page.getByRole('button', { name: 'Reanudar simulación' })).toBeVisible();
-    const frozen = await sample();
-    const frozenQ = await value(page, 'CAUDAL Q');
-    await page.waitForTimeout(2600);
-    expect(await sample()).toBe(frozen);
-    expect(await value(page, 'CAUDAL Q')).toBe(frozenQ);
-    await page.getByRole('button', { name: 'Reanudar simulación' }).click();
-    await expect.poll(sample, { timeout: 5000 }).toBeGreaterThan(frozen);
-    await page.getByRole('button', { name: 'Demanda alta' }).click();
-    await page.getByRole('button', { name: 'Restablecer' }).click();
-    await expect(page.getByRole('button', { name: 'Operación normal' })).toHaveAttribute('aria-pressed', 'true');
-    expect(await sample()).toBeLessThanOrEqual(1);
-    await expect(page.getByRole('button', { name: 'Pausar simulación' })).toBeVisible();
+    await expect(page.locator('#gemelos figcaption').first()).toContainText('video real de la UAESP');
+    await expect(page.locator('#gemelos .pill-list li')).toHaveCount(6);
+    await page.getByRole('link', { name: 'Ver el proyecto UAESP' }).click();
+    await expect(page).toHaveURL(/#proyecto\/monitoreo-automatizacion-uaesp$/);
   });
 
-  test('says it is simulated once, shortly, and explains each scenario in two readable cards', async ({ page }) => {
+  test('shows the actual twin (La Soledad capture, simulated values) and links to its sheet', async ({ page }) => {
     await page.goto('/#gemelos');
-    await expect(page.locator('#gemelos .chip', { hasText: 'Demo · datos simulados' })).toHaveCount(1);
-    const intro = await page.locator('#gemelos > p.prose').innerText();
-    expect(intro.length).toBeLessThan(330);
-    const cards = page.locator('#gemelos [role=status] p');
-    await expect(cards).toHaveCount(2);
-    await expect(cards.nth(0)).toContainText('Qué cambió');
-    await expect(cards.nth(1)).toContainText('Qué debería revisar el operador');
-    await page.getByRole('button', { name: 'Demanda alta' }).click();
-    await expect(cards.nth(0)).toContainText('Sube el caudal');
-  });
-
-  test('shows the actual twin (La Soledad capture, simulated values) next to the panel and links to its sheet', async ({ page }) => {
-    await page.goto('/#gemelos');
-    const real = page.locator('#gemelos .twin-real');
-    await expect(real).toBeVisible();
+    const real = page.locator('#gemelos article', { hasText: 'La Soledad' });
     await real.scrollIntoViewIfNeeded();
     await expect.poll(() => real.locator('img').evaluate((el) => el.complete && el.naturalWidth > 0)).toBe(true);
     await expect(real).toContainText('Captura de la plataforma');
-    await expect(real).toContainText('datos simulados');
+    await expect(real).toContainText('simulados');
     await expect(real).toContainText('23');
     await expect(real).not.toContainText('Vorágine');
     await real.getByRole('link', { name: /Ver el proyecto/ }).click();
     await expect(page.getByRole('dialog').getByRole('heading', { level: 2 })).toHaveText('Gemelo digital · PTAP La Soledad');
   });
 
-  test('the demo panel starts higher on a phone and nothing overflows horizontally', async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
+  test('there is no simulated dashboard and nothing claims a live connection', async ({ page }) => {
     await page.goto('/#gemelos');
-    await page.waitForTimeout(400);
-    const top = await page.locator('#gemelos .seg').first().evaluate((el) => el.getBoundingClientRect().top);
-    expect(top).toBeLessThan(844 * 1.15);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    const sec = page.locator('#gemelos');
+    await expect(sec.locator('[role=progressbar], canvas')).toHaveCount(0);
+    const t = await sec.innerText();
+    expect(t).not.toMatch(/LIVE|ONLINE|UPTIME|latencia|tiempo real|en vivo|no usar para dimensionamiento/i);
   });
 
-  test('the section does not claim a plant connection or a 3D scene', async ({ page }) => {
-    await page.goto('/#gemelos');
-    const t = await page.locator('#gemelos').innerText();
-    expect(t).not.toMatch(/LIVE|ONLINE|UPTIME|latencia|tiempo real|en vivo/i);
-    await expect(page.locator('#gemelos canvas')).toHaveCount(1);
-    await expect(page.locator('#gemelos')).toContainText('no es un modelo 3D');
+  test('the 3D lab lists two pieces of equipment with links into the lab', async ({ page }) => {
+    await page.goto('/#objetos');
+    const cards = page.locator('#objetos .eo-card');
+    await expect(cards).toHaveCount(2);
+    await expect(cards.nth(0).locator('a.btn')).toHaveAttribute('href', '/engineering-objects/?equipo=primary-clarifier');
+    await expect(cards.nth(1).locator('a.btn')).toHaveAttribute('href', '/engineering-objects/?equipo=clariflocculator');
+    await expect(page.locator('#objetos')).toContainText('no un diseño aprobado');
   });
 });
 
@@ -738,7 +740,7 @@ test.describe('responsive y accesibilidad', () => {
 
       const small = await page.evaluate(() => {
         const out = [];
-        document.querySelectorAll('button, a.btn, .filter-btn, .chip-btn, summary, input:not([type=checkbox]), select, textarea, nav a.nav-link').forEach((el) => {
+        document.querySelectorAll('button, a.btn, a.text-link, .figure-link, .filter-btn, summary, input, select, textarea, nav a.nav-link, nav .logo').forEach((el) => {
           const r = el.getBoundingClientRect();
           if (r.width === 0 || r.height === 0) return;
           if (r.height < 43.5) out.push(`${el.tagName.toLowerCase()} "${(el.textContent || el.id || '').trim().slice(0, 24)}" h=${r.height.toFixed(1)}`);
@@ -781,9 +783,9 @@ test.describe('responsive y accesibilidad', () => {
     for (const vp of [WIDTHS[4], WIDTHS[3], WIDTHS[1]]) {
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await page.goto('/');
-      await page.addStyleTag({ content: '.hero-copy *{color:transparent!important;border-color:transparent!important;background:transparent!important}.hero-copy .btn{background:transparent!important}' });
+      await page.addStyleTag({ content: '.hero-copy *,.hero-copy *::after{color:transparent!important;border-color:transparent!important;background:transparent!important}.hero-copy .btn{background:transparent!important}' });
       await page.waitForTimeout(300);
-      const boxes = await page.evaluate(() => [...document.querySelectorAll('.hero-copy h1, .hero-copy p, .hero-copy .label, .hero-copy .label-accent')].map((e) => { const r = e.getBoundingClientRect(); return { x: r.left, y: r.top + scrollY, w: r.width, h: r.height }; }));
+      const boxes = await page.evaluate(() => [...document.querySelectorAll('.hero-copy h1, .hero-copy p, .hero-copy li')].map((e) => { const r = e.getBoundingClientRect(); return { x: r.left, y: r.top + scrollY, w: r.width, h: r.height }; }));
       const shot = await page.screenshot({ fullPage: true });
       const worst = await page.evaluate(async ({ b64, boxes }) => {
         const img = new Image(); img.src = 'data:image/png;base64,' + b64; await img.decode();
@@ -805,41 +807,6 @@ test.describe('responsive y accesibilidad', () => {
     const [a, b] = await page.locator('.hero-actions a.btn').evaluateAll((els) => els.map((e) => e.getBoundingClientRect()));
     expect(b.top).toBeGreaterThan(a.bottom + 8);
     expect(Math.abs(a.left - b.left)).toBeLessThan(1);
-  });
-
-  test('the hero shows the real SCADA footage with a visible pause control and no overflow at any width', async ({ page }) => {
-    for (const vp of WIDTHS) {
-      await page.setViewportSize({ width: vp.width, height: vp.height });
-      await page.goto('/');
-      const video = page.locator('#inicio figure video');
-      await expect(video).toHaveCount(1);
-      await expect(video).toHaveJSProperty('muted', true);
-      await expect(page.locator('#inicio figure .hero-video-badge')).toContainText('Video real');
-      const toggle = page.locator('#inicio figure .hero-video-toggle');
-      await toggle.scrollIntoViewIfNeeded();
-      const box = await toggle.boundingBox();
-      expect(box.height, vp.name).toBeGreaterThanOrEqual(44);
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), vp.name).toBe(true);
-    }
-  });
-
-  test('the pause button stops the footage and play restarts it', async ({ page }) => {
-    await page.goto('/');
-    const video = page.locator('#inicio figure video');
-    const toggle = page.locator('#inicio figure .hero-video-toggle');
-    await toggle.scrollIntoViewIfNeeded();
-    await expect.poll(() => video.evaluate((v) => !v.paused)).toBe(true);
-    await toggle.click();
-    await expect.poll(() => video.evaluate((v) => v.paused)).toBe(true);
-    await toggle.click();
-    await expect.poll(() => video.evaluate((v) => !v.paused)).toBe(true);
-  });
-
-  test('the hero says it is real footage and lists the supervised variables', async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
-    await expect(page.locator('#inicio figure')).toContainText('Video real de la UAESP');
-    await expect(page.locator('#inicio figure .hero-vars li')).toHaveCount(6);
   });
 
   test('projects grid uses 1, 2 and 3 columns by width', async ({ page }) => {
@@ -889,97 +856,28 @@ test.describe('responsive y accesibilidad', () => {
   });
 });
 
-test.describe('anuncios sobre el video SCADA', () => {
-  const box = (page) => page.locator('#inicio .hero-video');
-  const rect = (loc) => loc.evaluate((el) => { const r = el.getBoundingClientRect(); return { l: r.left, t: r.top, r: r.right, b: r.bottom }; });
-  const inside = (a, o) => a.l >= o.l - 1 && a.t >= o.t - 1 && a.r <= o.r + 1 && a.b <= o.b + 1;
-  const overlaps = (a, c) => a.l < c.r && a.r > c.l && a.t < c.b && a.b > c.t;
-
-  for (const vp of [WIDTHS[1], WIDTHS[2], WIDTHS[4]]) {
-    test(`${vp.name}: cada callout cabe en el video y no tapa el botón de pausa`, async ({ page }) => {
-      await page.setViewportSize({ width: vp.width, height: vp.height });
-      await page.goto('/');
-      await box(page).scrollIntoViewIfNeeded();
-      await page.locator('.hero-video-toggle').click();   // fija el cuadro: sin carreras con el ciclo
-      for (let i = 0; i < 6; i++) {
-        await page.locator('.hero-vars button').nth(i).click();
-        const callout = page.locator('.scada-callout');
-        await expect(callout).toBeVisible();
-        const [c, v, t] = await Promise.all([rect(callout), rect(box(page)), rect(page.locator('.hero-video-toggle'))]);
-        expect(inside(c, v), `${vp.name} variable ${i + 1} dentro del video`).toBe(true);
-        expect(overlaps(c, t), `${vp.name} variable ${i + 1} sin tapar el botón`).toBe(false);
-      }
-    });
+test.describe('accesibilidad automática (axe)', () => {
+  const RULES = { runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] };
+  for (const vp of [WIDTHS[1], WIDTHS[4]]) {
+    for (const lang of ['es', 'en', 'fr']) {
+      test(`${vp.name} ${lang}: la página completa no tiene violaciones`, async ({ page }) => {
+        await seedLang(page, lang);
+        await page.emulateMedia({ reducedMotion: 'reduce' });   // everything visible at once
+        await page.setViewportSize({ width: vp.width, height: vp.height });
+        await page.goto('/');
+        await page.addScriptTag({ path: 'node_modules/axe-core/axe.min.js' });
+        const result = await page.evaluate((r) => window.axe.run(document, r), RULES);
+        expect(result.violations.map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
+      });
+    }
   }
 
-  test('clic en «Turbiedad» salta a esa variable: callout, aria-pressed y anuncio al lector de pantalla', async ({ page }) => {
-    await page.goto('/');
-    await box(page).scrollIntoViewIfNeeded();
-    const btn = page.getByRole('button', { name: 'Turbiedad', exact: true });
-    await btn.click();
-    await expect(btn).toHaveAttribute('aria-pressed', 'true');
-    const callout = page.locator('.scada-callout');
-    await expect(callout.locator('.scada-name')).toHaveText('Turbiedad');
-    await expect(callout).toHaveAttribute('role', 'status');
-    await expect.poll(() => page.locator('#inicio .hero-video video').evaluate((v) => v.currentTime)).toBeGreaterThan(4.3);
-  });
-
-  test('el ciclo automático avanza solo y no se anuncia', async ({ page }) => {
-    await page.goto('/');
-    await box(page).scrollIntoViewIfNeeded();
-    await expect.poll(() => page.locator('#inicio .hero-video video').evaluate((v) => !v.paused)).toBe(true);
-    await expect(page.locator('.scada-name')).not.toHaveText('Caudal', { timeout: 6000 });
-    await expect(page.locator('.scada-callout')).not.toHaveAttribute('role', 'status');
-  });
-
-  test('la pausa detiene video y callouts (mismo reloj)', async ({ page }) => {
-    await page.goto('/');
-    await box(page).scrollIntoViewIfNeeded();
-    await expect.poll(() => page.locator('#inicio .hero-video video').evaluate((v) => !v.paused)).toBe(true);
-    await page.locator('.hero-video-toggle').click();
-    const name = await page.locator('.scada-name, .scada-end-title').first().textContent();
-    await page.waitForTimeout(2600);
-    expect(await page.locator('.scada-name, .scada-end-title').first().textContent()).toBe(name);
-  });
-
-  test('con movimiento reducido el video no arranca y el callout 01 queda estático y visible', async ({ page }) => {
+  test('la ficha de proyecto abierta no tiene violaciones', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto('/');
-    await box(page).scrollIntoViewIfNeeded();
-    await page.waitForTimeout(800);
-    expect(await page.locator('#inicio .hero-video video').evaluate((v) => v.paused)).toBe(true);
-    const callout = page.locator('.scada-callout');
-    await expect(callout.locator('.scada-name')).toHaveText('Caudal');
-    expect(await callout.evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
-    const running = await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running' && a.effect?.getComputedTiming().iterations === Infinity).length);
-    expect(running).toBe(0);
-    await page.getByRole('button', { name: 'Turbiedad', exact: true }).click();   // las etiquetas siguen saltando
-    await expect(callout.locator('.scada-name')).toHaveText('Turbiedad');
+    await page.goto('/#proyecto/monitoreo-automatizacion-uaesp');
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await page.addScriptTag({ path: 'node_modules/axe-core/axe.min.js' });
+    const result = await page.evaluate((r) => window.axe.run('[role=dialog]', r), RULES);
+    expect(result.violations.map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
   });
-
-  test('el chip dice que son rótulos ilustrativos y que es una grabación; el cierre enlaza a la ficha UAESP', async ({ page }) => {
-    await page.goto('/');
-    await box(page).scrollIntoViewIfNeeded();
-    await expect(page.locator('.scada-note')).toHaveText('Rótulos ilustrativos');
-    await expect(page.locator('.scada-rec')).toContainText('grabación');
-    await page.locator('.hero-video-toggle').click();
-    await page.evaluate(() => { document.querySelector('#inicio .hero-video video').currentTime = 14.6; });
-    const link = page.locator('.scada-end a.btn');
-    await expect(link).toHaveAttribute('href', '#proyecto/monitoreo-automatizacion-uaesp');
-  });
-
-  for (const palette of ['instrument', 'teal', 'copper', 'paper']) {
-    test(`axe: sin violaciones con el callout visible en la paleta ${palette}`, async ({ page }) => {
-      const problems = watch(page);
-      await page.goto('/');
-      await page.evaluate((p) => document.documentElement.setAttribute('data-palette', p), palette);
-      await box(page).scrollIntoViewIfNeeded();
-      await page.locator('.hero-video-toggle').click();
-      await page.getByRole('button', { name: 'pH', exact: true }).click();
-      await page.addScriptTag({ path: 'node_modules/axe-core/axe.min.js' });
-      const result = await page.evaluate(() => window.axe.run('#inicio .hero-video, #inicio .hero-vars', { runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] }));
-      expect(result.violations.map((v) => `${v.id}: ${v.nodes.length}`), palette).toEqual([]);
-      expect(problems).toEqual([]);
-    });
-  }
 });

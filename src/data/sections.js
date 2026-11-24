@@ -1,15 +1,15 @@
-// Page sections in reading order. The numbers drive the nav, the scroll rail and
-// the section labels, so they always agree with the order on the page.
-// `sobre` and `gemelos` keep their old ids so existing links still work.
+// Page sections in reading order. They drive the nav, the active-section
+// indicator and the footer. `sobre` and `gemelos` keep their old ids so existing
+// links still work; the old `#objetos` and `#faq` links land on blocks inside
+// the Digital and Contact sections.
 export const SECTIONS = [
-  { id: 'inicio', n: '00' },
-  { id: 'proyectos', n: '01' },
-  { id: 'sobre', n: '02' },
-  { id: 'gemelos', n: '03' },
-  { id: 'objetos', n: '04' },
-  { id: 'faq', n: '05' },
-  { id: 'contacto', n: '06' },
+  { id: 'inicio' },
+  { id: 'proyectos' },
+  { id: 'sobre' },
+  { id: 'gemelos' },
+  { id: 'contacto' },
 ];
 
 export const SECTION_IDS = SECTIONS.map((s) => s.id);
-export const sectionNumber = (id) => SECTIONS.find((s) => s.id === id)?.n ?? '';
+// The nav leaves out Inicio: the logo already goes there.
+export const NAV_SECTIONS = SECTIONS.filter((s) => s.id !== 'inicio');

@@ -1,9 +1,9 @@
 import React, { useState, useRef } from 'react';
-import { SectionIndex, StatusDot, Logo, Copyable, Reveal } from './primitives.jsx';
+import { SectionHeader, Logo, Copyable, Reveal } from './primitives.jsx';
 import { useT } from '../i18n.jsx';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
 import { CONTACT, whatsappUrl, telUrl, validateContact, buildMailto } from '../lib/contact.js';
-import { SECTIONS, sectionNumber } from '../data/sections.js';
+import { NAV_SECTIONS } from '../data/sections.js';
 
 const GITHUB_URL = 'https://github.com/Lucesdata';
 
@@ -30,6 +30,7 @@ export function Contact() {
   const card = t('contact.card');
   const F = t('contact.form');
   const types = Array.isArray(F.types) ? F.types : [];
+  const faqItems = t('faq.items');
 
   const onChange = (k) => (e) => {
     const next = { ...form, [k]: e.target.value };
@@ -61,41 +62,33 @@ export function Contact() {
 
   return (
     <section id="contacto" className="section" aria-labelledby="contact-title">
-      <Reveal style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '180px 1fr', gap: 32, marginBottom: 48 }}>
-        <SectionIndex n={sectionNumber('contacto')} kicker={t('contact.kicker')} title={t('contact.title')} />
-        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-          <h2 id="contact-title" className="h2">
-            {t('contact.h2a')} <span style={{ fontFamily: 'var(--f-serif)', fontStyle: 'italic', color: 'var(--accent)' }}>{t('contact.h2b')}</span>
-          </h2>
-          <StatusDot label={card.availableLong} />
-        </div>
-      </Reveal>
+      <SectionHeader id="contact-title" eyebrow={t('contact.kicker')} title={t('contact.h2')} lead={t('contact.lead')} />
 
       <div style={{
-        display: 'grid', gap: isMobile ? 32 : 48,
+        display: 'grid', gap: isMobile ? 32 : '32px 48px',
         gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : '340px minmax(0, 1fr)',
-        gridTemplateAreas: isMobile ? '"card" "form" "map"' : '"card form" "map form"',
+        gridTemplateAreas: isMobile ? '"card" "form" "faq"' : '"card form" "faq form"',
         alignItems: 'start',
       }}>
-        <Reveal style={{ ...area('card'), border: '1px solid var(--line-hi)', background: 'var(--bg-1)' }}>
-          <div className="mono" style={{ padding: '10px 16px', borderBottom: '1px solid var(--line)', fontSize: 12, color: 'var(--ink-2)' }}>{card.header}</div>
-          <dl style={{ margin: 0, padding: 16, display: 'grid', gap: 16 }}>
+        <Reveal className="card" style={area('card')}>
+          <div className="card-head">{card.header}</div>
+          <dl style={{ margin: 0, padding: 20, display: 'grid', gap: 18 }}>
             <div>
-              <dt className="label-accent" style={{ marginBottom: 4 }}>{card.email}</dt>
+              <dt className="label" style={{ marginBottom: 4 }}>{card.email}</dt>
               <dd style={{ margin: 0, display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0 12px' }}>
-                <a href={`mailto:${CONTACT.email}`} className="mono text-link" style={{ fontSize: 14 }}>{CONTACT.email}</a>
-                <Copyable value={CONTACT.email} ariaLabel={t('common.copyEmail')}><span className="mono" style={{ fontSize: 12 }}>{t('common.copy')}</span></Copyable>
+                <a href={`mailto:${CONTACT.email}`} className="text-link" style={{ fontSize: 15 }}>{CONTACT.email}</a>
+                <Copyable value={CONTACT.email} ariaLabel={t('common.copyEmail')}><span style={{ fontSize: 13 }}>{t('common.copy')}</span></Copyable>
               </dd>
             </div>
             <div>
-              <dt className="label-accent" style={{ marginBottom: 4 }}>{card.tel}</dt>
+              <dt className="label" style={{ marginBottom: 4 }}>{card.tel}</dt>
               <dd style={{ margin: 0, display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0 12px' }}>
-                <a href={telUrl()} className="mono text-link" style={{ fontSize: 14 }}>{CONTACT.phone}</a>
-                <Copyable value={CONTACT.phone} ariaLabel={t('common.copyPhone')}><span className="mono" style={{ fontSize: 12 }}>{t('common.copy')}</span></Copyable>
+                <a href={telUrl()} className="text-link" style={{ fontSize: 15 }}>{CONTACT.phone}</a>
+                <Copyable value={CONTACT.phone} ariaLabel={t('common.copyPhone')}><span style={{ fontSize: 13 }}>{t('common.copy')}</span></Copyable>
               </dd>
             </div>
             <div>
-              <dt className="label-accent" style={{ marginBottom: 4 }}>{card.whatsapp}</dt>
+              <dt className="label" style={{ marginBottom: 4 }}>{card.whatsapp}</dt>
               <dd style={{ margin: 0 }}>
                 <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="btn" style={{ width: '100%', justifyContent: 'center' }}>
                   {card.whatsappCta} <span aria-hidden="true">↗</span>
@@ -103,21 +96,19 @@ export function Contact() {
               </dd>
             </div>
             <div>
-              <dt className="label-accent" style={{ marginBottom: 4 }}>{card.location}</dt>
-              <dd className="mono" style={{ margin: 0, fontSize: 13, color: 'var(--ink)', lineHeight: 1.5, whiteSpace: 'pre-line' }}>{card.locationValue}</dd>
+              <dt className="label" style={{ marginBottom: 4 }}>{card.location}</dt>
+              <dd style={{ margin: 0, fontSize: 15, color: 'var(--ink)', lineHeight: 1.5, whiteSpace: 'pre-line' }}>{card.locationValue}</dd>
             </div>
             <div>
-              <dt className="label-accent" style={{ marginBottom: 4 }}>{card.hours}</dt>
-              <dd className="mono" style={{ margin: 0, fontSize: 13, color: 'var(--ink-1)' }}>{card.hoursValue}</dd>
+              <dt className="label" style={{ marginBottom: 4 }}>{card.hours}</dt>
+              <dd style={{ margin: 0, fontSize: 15, color: 'var(--ink-1)' }}>{card.hoursValue}</dd>
             </div>
           </dl>
         </Reveal>
 
-        <Reveal delay={120} style={area('form')}>
-        <form ref={formRef} onSubmit={onSubmit} noValidate style={{ border: '1px solid var(--line-hi)', background: 'var(--bg-1)' }}>
-          <div className="mono" style={{ padding: '10px 20px', borderBottom: '1px solid var(--line)', fontSize: 12, color: 'var(--ink-2)' }}>
-            {F.header}
-          </div>
+        <Reveal style={area('form')}>
+        <form ref={formRef} onSubmit={onSubmit} noValidate className="card">
+          <div className="card-head">{F.header}</div>
           <div style={{ padding: isMobile ? 16 : 24 }}>
             {attempted && invalidCount > 0 && (
               <p role="alert" className="form-summary">{F.errors.summary}</p>
@@ -143,10 +134,10 @@ export function Contact() {
             <Field id="f-msg" label={`${F.msg} *`} error={errText('msg')}>
               <textarea id="f-msg" name="message" rows={5} value={form.msg} onChange={onChange('msg')} maxLength={1000} placeholder={F.msgPh}
                 aria-required="true" aria-invalid={!!errors.msg} aria-describedby={errors.msg ? 'f-msg-err' : undefined}/>
-              <div className="mono" style={{ textAlign: 'right', fontSize: 12, color: 'var(--ink-2)', marginTop: 4 }}>{form.msg.length}/1000</div>
+              <div style={{ textAlign: 'right', fontSize: 12, color: 'var(--ink-2)', marginTop: 4 }}>{form.msg.length}/1000</div>
             </Field>
 
-            <p className="prose" style={{ margin: '0 0 16px' }}>{F.explain}</p>
+            <p className="prose" style={{ margin: '0 0 16px', fontSize: 15 }}>{F.explain}</p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', paddingTop: 16, borderTop: '1px solid var(--line)' }}>
               <button type="submit" className="btn primary">{F.prepare}</button>
               <span style={{ color: 'var(--ink-1)', fontSize: 14 }}>
@@ -160,67 +151,55 @@ export function Contact() {
         </form>
         </Reveal>
 
-        <Reveal delay={200} style={{ ...area('map'), border: '1px solid var(--line)', padding: 16, background: 'var(--bg-1)' }}>
-          <div className="mono" style={{ fontSize: 12, color: 'var(--ink-2)', marginBottom: 8 }}>{card.geo}</div>
-          <svg viewBox="0 0 240 100" width="100%" height="90" role="img" aria-label={card.mapAlt} style={{ display: 'block' }}>
-            <defs>
-              <pattern id="geodot" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-                <circle cx="1" cy="1" r="0.5" fill="var(--line-2)"/>
-              </pattern>
-            </defs>
-            <rect width="240" height="100" fill="url(#geodot)"/>
-            <path d="M 0 50 Q 60 40 120 55 T 240 50" stroke="var(--line-hi)" strokeWidth="0.6" fill="none"/>
-            <circle cx="165" cy="52" r="4" fill="var(--accent)"/>
-            <text x="155" y="42" fontFamily="JetBrains Mono" fontSize="9" fill="var(--ink-1)">BCN</text>
-            <circle cx="56" cy="68" r="2.5" fill="var(--accent-2)" opacity="0.8"/>
-            <text x="38" y="84" fontFamily="JetBrains Mono" fontSize="9" fill="var(--ink-1)">CALI</text>
-            <line x1="56" y1="68" x2="165" y2="52" stroke="var(--accent-line)" strokeDasharray="2 2" strokeWidth="0.6"/>
-          </svg>
-        </Reveal>
+        <div id="faq" style={area('faq')} role="region" aria-labelledby="faq-title">
+          <h3 id="faq-title" className="eyebrow" style={{ margin: '0 0 8px' }}>{t('faq.title')}</h3>
+          {(Array.isArray(faqItems) ? faqItems : []).map((it) => (
+            <details key={it.q} className="faq-item">
+              <summary>
+                <span>{it.q}</span>
+                <span className="faq-icon" aria-hidden="true">+</span>
+              </summary>
+              <p className="prose">{it.a}</p>
+            </details>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
 export function Footer() {
-  const { isMobile } = useBreakpoint();
   const t = useT();
   return (
-    <footer style={{ borderTop: '1px solid var(--line)', padding: '40px 0 24px', marginTop: 40 }}>
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, minmax(0, 1fr))' : '2fr 1fr 1fr 1fr', gap: isMobile ? 24 : 32, marginBottom: 32 }}>
-        <div style={isMobile ? { gridColumn: '1 / -1' } : undefined}>
-          <Logo label={t('nav.aria.home')} />
-          <p style={{ margin: '16px 0 0', color: 'var(--ink-1)', fontSize: 13, lineHeight: 1.6, maxWidth: 340 }}>
-            {t('footer.about')}
-          </p>
+    <footer className="site-footer">
+      <div className="site-footer-inner">
+        <div className="footer-grid">
+          <div className="footer-brand">
+            <Logo label={t('nav.aria.home')} />
+            <p>{t('footer.about')}</p>
+          </div>
+          <nav aria-label={t('footer.sections')}>
+            <h2 className="label">{t('footer.sections')}</h2>
+            <ul className="footer-list">
+              {NAV_SECTIONS.map(({ id }) => (
+                <li key={id}><a href={`#${id}`} className="footer-link">{t(`nav.items.${id}`)}</a></li>
+              ))}
+            </ul>
+          </nav>
+          <div>
+            <h2 className="label">{t('footer.direct')}</h2>
+            <ul className="footer-list">
+              <li><a href={`mailto:${CONTACT.email}`} className="footer-link">{CONTACT.email}</a></li>
+              <li><a href={telUrl()} className="footer-link">{CONTACT.phone}</a></li>
+              <li><a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="footer-link">WhatsApp</a></li>
+              <li><a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="footer-link">{t('footer.github')}</a></li>
+            </ul>
+          </div>
         </div>
-        <nav aria-label={t('footer.sections')}>
-          <div className="label-accent" style={{ marginBottom: 8 }}>{t('footer.sections')}</div>
-          <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', fontFamily: 'var(--f-mono)', fontSize: 13 }}>
-            {SECTIONS.map(({ id }) => (
-              <li key={id}><a href={`#${id}`} className="footer-link">{t(`nav.items.${id}`)}</a></li>
-            ))}
-          </ul>
-        </nav>
-        <div>
-          <div className="label-accent" style={{ marginBottom: 8 }}>{t('footer.direct')}</div>
-          <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', fontFamily: 'var(--f-mono)', fontSize: 13 }}>
-            <li><a href={`mailto:${CONTACT.email}`} className="footer-link">{CONTACT.email}</a></li>
-            <li><a href={telUrl()} className="footer-link">{CONTACT.phone}</a></li>
-            <li><a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="footer-link">WhatsApp</a></li>
-            <li><a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="footer-link">{t('footer.github')}</a></li>
-          </ul>
+        <div className="footer-bottom">
+          <span>{t('footer.copy')}</span>
+          <span>{t('footer.note')}</span>
         </div>
-        <div>
-          <div className="label-accent" style={{ marginBottom: 8 }}>{t('footer.meta')}</div>
-          <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 6, fontFamily: 'var(--f-mono)', fontSize: 13, color: 'var(--ink-1)' }}>
-            <li>{t('footer.langs')}</li>
-            <li style={{ lineHeight: 1.5 }}>{t('footer.note')}</li>
-          </ul>
-        </div>
-      </div>
-      <div style={{ borderTop: '1px solid var(--line)', paddingTop: 14, fontFamily: 'var(--f-mono)', fontSize: 12, color: 'var(--ink-2)' }}>
-        {t('footer.copy')}
       </div>
     </footer>
   );

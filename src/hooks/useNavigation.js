@@ -43,7 +43,8 @@ export function useInitialHashScroll() {
       if (userMoved) return;
       document.getElementById(id)?.scrollIntoView({ block: 'start', behavior: 'instant' });
     };
-    const events = ['wheel', 'touchstart', 'keydown', 'mousedown'];
+    // Going to another fragment (a link, the address bar) also means the reader moved.
+    const events = ['wheel', 'touchstart', 'keydown', 'mousedown', 'hashchange'];
     events.forEach((e) => window.addEventListener(e, stop, { passive: true, once: true }));
     align();
     const timers = [setTimeout(align, 250), setTimeout(align, 900)];

@@ -47,7 +47,7 @@ describe('i18n', () => {
   it('resolves objects (used by destructured labels)', () => {
     render(
       <LangProvider>
-        <Probe k="hero.video" />
+        <Probe k="digital.scada" />
       </LangProvider>
     );
     const parsed = JSON.parse(screen.getByTestId('out').textContent);
@@ -119,10 +119,10 @@ describe('dictionary completeness', () => {
   it('resolves sampled keys in every language through t()', async () => {
     const mod = await import('../../src/i18n.jsx');
     const sampleKeys = [
-      'nav.items.inicio', 'hero.h1', 'hero.intro', 'hero.video.fig',
-      'about.card.formationValue', 'projects.h2a', 'projects.data.P-007.budgets.title', 'twins.scenarios.items.alta.name',
+      'nav.items.inicio', 'hero.h1', 'hero.intro', 'digital.scada.fig',
+      'about.card.formationValue', 'projects.h2', 'projects.data.P-007.budgets.title', 'digital.twin.title',
       'projects.data.P-001.title', 'projects.data.P-007.title',
-      'twins.badge', 'contact.form.prepare', 'footer.copy', 'common.tweaks',
+      'digital.intro', 'objects.h2', 'contact.form.prepare', 'footer.copy', 'common.copy',
     ];
     for (const lang of ['es', 'en', 'fr']) {
       const probe = { current: null };

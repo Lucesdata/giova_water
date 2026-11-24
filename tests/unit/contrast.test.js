@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 
-// WCAG AA contrast for text tokens in every palette, read from the real CSS.
+// WCAG AA contrast for the text and control tokens, read from the real CSS.
 const css = fs.readFileSync(path.resolve(__dirname, '../../src/styles/tokens.css'), 'utf8');
 
 function parsePalettes() {
@@ -56,23 +56,6 @@ describe('contraste de controles (WCAG 1.4.11, 3:1)', () => {
     });
     it(`${name}: anillo de foco (--accent) sobre --bg ≥ 3:1`, () => {
       expect(ratio(tokens.accent, tokens.bg)).toBeGreaterThanOrEqual(3);
-    });
-  }
-});
-
-describe('callouts sobre el video SCADA (≥ 4.5:1 en las cuatro paletas)', () => {
-  const palettes = parsePalettes();
-  // The callout paints --bg at 88 % over the video; worst case is a white frame behind it.
-  const over = (bg, a, under = 255) => '#' + [1, 3, 5].map((i) => Math.round(parseInt(bg.slice(i, i + 2), 16) * a + under * (1 - a)).toString(16).padStart(2, '0')).join('');
-  for (const [name, t] of Object.entries(palettes)) {
-    const surface = name === 'paper' ? t['bg-1'] : over(t.bg, 0.88);
-    for (const fg of ['ink', 'ink-1', 'ink-2', 'accent']) {
-      it(`${name}: --${fg} sobre el fondo del callout ≥ 4.5:1`, () => {
-        expect(ratio(t[fg], surface)).toBeGreaterThanOrEqual(4.5);
-      });
-    }
-    it(`${name}: el texto de la etiqueta (--bg) sobre el relleno --accent ≥ 4.5:1`, () => {
-      expect(ratio(t.bg, t.accent)).toBeGreaterThanOrEqual(4.5);
     });
   }
 });

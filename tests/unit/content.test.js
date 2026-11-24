@@ -34,10 +34,11 @@ describe('contenido público: lo que NO debe aparecer', () => {
     const t = text(lang);
     expect(t).not.toMatch(/abril 2026|april 2026|avril 2026/i);
   });
-  it.each(LANGS)('%s: el panel de gemelos no sugiere conexión real', (lang) => {
-    const tw = JSON.stringify(dictionary[lang].twins);
-    expect(tw).not.toMatch(/LIVE|ONLINE|UPTIME|LATENCY|latencia|ingesta OK|tiempo real|real time|temps réel|en vivo/i);
-    expect(dictionary[lang].twins.badge.length).toBeGreaterThan(0);
+  it.each(LANGS)('%s: la sección digital no sugiere conexión real ni conserva textos de la demo simulada', (lang) => {
+    const d = JSON.stringify(dictionary[lang].digital);
+    expect(d).not.toMatch(/LIVE|ONLINE|UPTIME|LATENCY|latencia|ingesta OK|tiempo real|real time|temps réel|en vivo/i);
+    expect(dictionary[lang].twins).toBeUndefined();
+    expect(JSON.stringify(dictionary[lang])).not.toMatch(/no usar para dimensionamiento|do not use for sizing|ne pas utiliser pour le dimensionnement/i);
   });
   it.each(LANGS)('%s: la portada no promete vídeo ni transmisión en directo', (lang) => {
     expect(JSON.stringify(dictionary[lang].hero)).not.toMatch(/LIVE|STREAMING|SCADA streaming/i);
@@ -117,7 +118,6 @@ describe('laboratorio de objetos de ingeniería', () => {
       expect(e.imgAlt.length).toBeGreaterThan(20);
       expect(e.metrics).toHaveLength(4);
     }
-    expect(o.features).toHaveLength(4);
     expect(o.note).toMatch(/aprobad|approved|approuvée/);
   });
   it('el laboratorio está publicado como página estática', () => {
@@ -128,10 +128,10 @@ describe('laboratorio de objetos de ingeniería', () => {
 });
 
 describe('estructura de la página', () => {
-  it('secciones en el orden pedido y con numeración consecutiva', async () => {
-    const { SECTIONS } = await import('../../src/data/sections.js');
-    expect(SECTIONS.map((x) => x.id)).toEqual(['inicio', 'proyectos', 'sobre', 'gemelos', 'objetos', 'faq', 'contacto']);
-    expect(SECTIONS.map((x) => x.n)).toEqual(['00', '01', '02', '03', '04', '05', '06']);
+  it('cinco secciones en el orden pedido, con su nombre en el menú en los tres idiomas', async () => {
+    const { SECTIONS, NAV_SECTIONS } = await import('../../src/data/sections.js');
+    expect(SECTIONS.map((x) => x.id)).toEqual(['inicio', 'proyectos', 'sobre', 'gemelos', 'contacto']);
+    expect(NAV_SECTIONS.map((x) => x.id)).toEqual(['proyectos', 'sobre', 'gemelos', 'contacto']);
     for (const lang of LANGS) for (const { id } of SECTIONS) {
       expect(dictionary[lang].nav.items[id], `${lang} nav.items.${id}`).toBeTruthy();
     }
@@ -159,14 +159,12 @@ describe('estructura de la página', () => {
     const roles = dictionary[lang].about.timeline.rows.map((r) => r.role).join(' ');
     if (lang !== 'en') expect(roles).not.toMatch(/Project Lead|Technical Director|Water & Sanitation|\bSpecialist\b/);
   });
-  it.each(LANGS)('%s: la demo conserva la etiqueta persistente y tres escenarios completos', (lang) => {
-    const t = dictionary[lang].twins;
-    expect(t.disclaimer.length).toBeGreaterThan(20);
-    for (const id of ['normal', 'alta', 'reducido']) {
-      const s = t.scenarios.items[id];
-      expect(s.name && s.changed && s.check, `${lang} ${id}`).toBeTruthy();
+  it.each(LANGS)('%s: cada sección tiene un título de una sola pieza (sin palabras sueltas en cursiva)', (lang) => {
+    const d = dictionary[lang];
+    for (const k of ['projects', 'about', 'digital', 'objects', 'contact']) {
+      expect(d[k].h2, `${lang} ${k}.h2`).toMatch(/\S/);
+      expect(d[k].h2a, `${lang} ${k}.h2a`).toBeUndefined();
     }
-    expect(t.scenarios.pause && t.scenarios.reset).toBeTruthy();
   });
 });
 
@@ -292,7 +290,7 @@ describe('insignia de portada: fotografía o captura', () => {
   });
 });
 
-describe('demo de gemelos: gemelo real (La Soledad)', () => {
+describe('sección digital: gemelo real (La Soledad)', () => {
   it.each(LANGS)('%s: P-003 es el gemelo de La Soledad, con las cifras de la captura y sin las no respaldadas', (lang) => {
     const d = dictionary[lang].projects.data['P-003'];
     expect(JSON.stringify(d)).not.toMatch(/Vor.gine/);
@@ -305,14 +303,15 @@ describe('demo de gemelos: gemelo real (La Soledad)', () => {
     expect(projectsData.find((p) => p.id === 'P-003').slug).toBe('gemelo-digital-la-voragine');
   });
   it.each(LANGS)('%s: el bloque del gemelo real tiene textos, dice que los valores son simulados y no sugiere conexión', (lang) => {
-    const r = dictionary[lang].twins.real;
+    const r = dictionary[lang].digital.twin;
     for (const k of ['kicker', 'title', 'body', 'cta']) expect(r[k], `${lang}.${k}`).toMatch(/\S/);
     expect(JSON.stringify(r)).not.toMatch(/LIVE|ONLINE|UPTIME|LATENCY|latencia|tiempo real|real time|temps réel|en vivo/i);
     expect(r.body).toMatch(/simul/i);
   });
-  it.each(LANGS)('%s: la introducción de la demo es corta y sigue diciendo que el panel no es un modelo 3D', (lang) => {
-    const intro = dictionary[lang].twins.intro;
-    expect(intro.length).toBeLessThan(330);
-    expect(intro).toMatch(/3D/);
+  it.each(LANGS)('%s: la introducción de la sección es corta y el video se presenta como grabación real', (lang) => {
+    const d = dictionary[lang].digital;
+    expect(d.intro.length).toBeLessThan(330);
+    expect(d.scada.vars).toHaveLength(6);
+    expect(d.scada.body).toMatch(/[Gg]rabación|[Rr]ecording|[Ee]nregistrement/);
   });
 });
