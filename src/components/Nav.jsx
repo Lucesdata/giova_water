@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Logo, StatusDot } from './primitives.jsx';
 import { useT, useLang } from '../i18n.jsx';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
-import { useNavHeight } from '../hooks/useNavigation.js';
+import { useNavHeight, alignToSection } from '../hooks/useNavigation.js';
 import { SECTIONS } from '../data/sections.js';
 
 const ITEMS = SECTIONS;
@@ -135,7 +135,14 @@ export default function Nav({ active }) {
               <a
                 key={it.id}
                 href={`#${it.id}`}
-                onClick={() => setOpen(false)}
+                onClick={(e) => {
+                  // The menu covers the whole page: close it and land on the
+                  // section directly instead of smooth-scrolling behind it.
+                  e.preventDefault();
+                  setOpen(false);
+                  if (window.location.hash !== `#${it.id}`) window.history.pushState(null, '', `#${it.id}`);
+                  alignToSection(it.id);
+                }}
                 aria-current={active === it.id ? 'page' : undefined}
                 className="menu-link"
                 style={{

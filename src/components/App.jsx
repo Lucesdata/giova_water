@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useActiveSection, useScrollProgress } from './primitives.jsx';
 import { SECTIONS, SECTION_IDS } from '../data/sections.js';
 import { projectFromHash, projectHash } from '../data/projects.js';
-import { useInitialHashScroll } from '../hooks/useNavigation.js';
+import { useInitialHashScroll, useSectionLinkAlignment, alignToSection } from '../hooks/useNavigation.js';
 import { useT } from '../i18n.jsx';
 import Nav from './Nav.jsx';
 import Hero from './Hero.jsx';
@@ -119,6 +119,7 @@ const TWEAKS_STORAGE = 'giova_water:tweaks';
 export default function App() {
   const active = useActiveSection(SECTION_IDS);
   useInitialHashScroll();
+  useSectionLinkAlignment();
   const { isMobile } = useBreakpoint();
   const [tweaks, setTweaks] = useState(() => {
     if (typeof window === 'undefined') return TWEAK_DEFAULTS;
@@ -147,9 +148,9 @@ export default function App() {
     if (!target && window.history.state?.modal) { window.history.back(); return; }
     window.history.replaceState(null, '', target || '#proyectos');
     setOpenProject(null);
-    requestAnimationFrame(() => {
-      document.getElementById((target || '#proyectos').slice(1))?.scrollIntoView({ block: 'start' });
-    });
+    // The modal covered the page, so there is nothing to animate past: jump, and
+    // keep the section in place while the content above it settles.
+    requestAnimationFrame(() => alignToSection((target || '#proyectos').slice(1)));
   }, []);
 
   useEffect(() => {
